@@ -72,9 +72,9 @@ function queueToStatuses(queue: OperationsQueue): PropertyReviewStatus[] | undef
   }
 }
 
-function valuationSummary(propertyId: string): { state: string; record?: ValuationRecord } {
+async function valuationSummary(propertyId: string): Promise<{ state: string; record?: ValuationRecord }> {
   try {
-    const record = OracleService.getLatestValuation(propertyId);
+    const record = await OracleService.getLatestValuation(propertyId);
     if (record.status === 'manual_review') {
       return { state: 'manual_review', record };
     }
@@ -125,7 +125,7 @@ export class OperationalPropertyController {
     const data: OperationalPropertyListItem[] = result.data.map((p) => {
       const owner = ownerById.get(p.ownerId);
       const wallet = owner?.walletAddress ?? '';
-      const v = valuationSummary(p.id);
+      const v = await valuationSummary(p.id);
       const kycApproved = owner?.kycStatus === 'approved';
 
       return {
@@ -166,7 +166,7 @@ export class OperationalPropertyController {
     }
 
     const owner = await userRepository.findById(row.ownerId);
-    const v = valuationSummary(id);
+    const v = await valuationSummary(id);
 
     return {
       ...base,
