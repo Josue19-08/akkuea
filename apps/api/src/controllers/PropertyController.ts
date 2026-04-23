@@ -565,68 +565,71 @@ export class PropertyController {
         amount: data.shares,
       });
 
-      const result = await db.transaction<{ newBalance: number }>(async (tx) => {
-        const [existingOwnership] = await tx
-          .select()
-          .from(shareOwnerships)
-          .where(
-            and(eq(shareOwnerships.propertyId, property.id), eq(shareOwnerships.ownerId, buyer.id)),
-          )
-          .limit(1);
+      function txFn<T>(tx: any): Promise<{ newBalance: number }> {
+        return (async () => {
+          const [existingOwnership] = await tx
+            .select()
+            .from(shareOwnerships)
+            .where(
+              and(eq(shareOwnerships.propertyId, property.id), eq(shareOwnerships.ownerId, buyer.id)),
+            )
+            .limit(1);
 
-        const [updatedProperty] = await tx
-          .update(properties)
-          .set({ availableShares: property.availableShares - data.shares })
-          .where(eq(properties.id, property.id))
-          .returning();
+          const [updatedProperty] = await tx
+            .update(properties)
+            .set({ availableShares: property.availableShares - data.shares })
+            .where(eq(properties.id, property.id))
+            .returning();
 
-        if (!updatedProperty) {
-          throw new Error('Failed to update available shares');
-        }
+          if (!updatedProperty) {
+            throw new Error('Failed to update available shares');
+          }
 
-        const [ownership] = existingOwnership
-          ? await tx
-              .update(shareOwnerships)
-              .set({
-                shares: existingOwnership.shares + data.shares,
-                purchasePrice: (
-                  parseFloat(existingOwnership.purchasePrice) + parseFloat(totalPurchasePrice)
-                ).toFixed(2),
-              })
-              .where(eq(shareOwnerships.id, existingOwnership.id))
-              .returning()
-          : await tx
-              .insert(shareOwnerships)
-              .values({
-                propertyId: property.id,
-                ownerId: buyer.id,
-                shares: data.shares,
-                purchasePrice: totalPurchasePrice,
-              })
-              .returning();
+          const [ownership] = existingOwnership
+            ? await tx
+                .update(shareOwnerships)
+                .set({
+                  shares: existingOwnership.shares + data.shares,
+                  purchasePrice: (
+                    parseFloat(existingOwnership.purchasePrice) + parseFloat(totalPurchasePrice)
+                  ).toFixed(2),
+                })
+                .where(eq(shareOwnerships.id, existingOwnership.id))
+                .returning()
+            : await tx
+                .insert(shareOwnerships)
+                .values({
+                  propertyId: property.id,
+                  ownerId: buyer.id,
+                  shares: data.shares,
+                  purchasePrice: totalPurchasePrice,
+                })
+                .returning();
 
-        if (!ownership) {
-          throw new Error('Failed to persist share ownership');
-        }
+          if (!ownership) {
+            throw new Error('Failed to persist share ownership');
+          }
 
-        await tx.insert(transactions).values({
-          type: 'buy_shares',
-          hash: transactionHash,
-          fromUserId: buyer.id,
-          toUserId: property.ownerId,
-          amount: totalPurchasePrice,
-          asset: property.tokenAddress ?? 'USDC',
-          status: 'pending',
-          metadata: {
-            propertyId: property.id,
-            shares: data.shares,
-          },
-        });
+          await tx.insert(transactions).values({
+            type: 'buy_shares',
+            hash: transactionHash,
+            fromUserId: buyer.id,
+            toUserId: property.ownerId,
+            amount: totalPurchasePrice,
+            asset: property.tokenAddress ?? 'USDC',
+            status: 'pending',
+            metadata: {
+              propertyId: property.id,
+              shares: data.shares,
+            },
+          });
 
-        return {
-          newBalance: ownership.shares,
-        } as { newBalance: number };
-      });
+          return {
+            newBalance: ownership.shares,
+          };
+        })();
+      }
+      const result = await db.transaction(txFn);
 
       logger.info('Share purchase completed successfully', {
         operation: 'BUY_SHARES',
