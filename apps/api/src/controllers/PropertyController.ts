@@ -1,4 +1,3 @@
-import { randomBytes } from 'node:crypto';
 import type {
   PropertyInfo,
   ShareOwnership as SharedShareOwnership,
@@ -13,6 +12,7 @@ import { and, eq } from 'drizzle-orm';
 import { logger } from '../services/logger';
 import { db } from '../db';
 import { tokenizationService, type TokenizationResponse } from '../services/TokenizationService';
+import { stellarService } from '../services/StellarService';
 import {
   propertyRepository,
   type PropertyFilter,
@@ -132,10 +132,6 @@ function mapShareOwnershipToShared(
     purchasedAt: ownership.purchasedAt.toISOString(),
     lastDividendClaimed: ownership.lastDividendClaimed?.toISOString(),
   };
-}
-
-function generateTransactionHash(): string {
-  return randomBytes(32).toString('hex');
 }
 
 /**
@@ -543,9 +539,31 @@ export class PropertyController {
         ]);
       }
 
+      if (!property.tokenAddress || property.sorobanPropertyId === null) {
+        throw new ValidationError('Property must be tokenized before shares can be purchased', [
+          {
+            field: 'id',
+            message: 'Property must be tokenized on-chain before buyShares can execute',
+          },
+        ]);
+      }
+
+      const owner = await userRepository.findById(property.ownerId);
+      if (!owner) {
+        throw new NotFoundError('Property owner', property.ownerId);
+      }
+
       const buyer = await userRepository.getOrCreateByWallet(data.buyer);
       const totalPurchasePrice = (parseFloat(property.pricePerShare) * data.shares).toFixed(2);
-      const transactionHash = generateTransactionHash();
+      const { adminPublicKey, adminSecret } = stellarService.getMintingConfig();
+      const { txHash: transactionHash } = await stellarService.mintPropertyShares({
+        contractId: property.tokenAddress,
+        adminPublicKey,
+        adminSecret,
+        sorobanPropertyId: property.sorobanPropertyId,
+        recipient: data.buyer,
+        amount: data.shares,
+      });
 
       const result = await db.transaction(async (tx) => {
         const [existingOwnership] = await tx
