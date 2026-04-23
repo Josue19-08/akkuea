@@ -565,7 +565,7 @@ export class PropertyController {
         amount: data.shares,
       });
 
-      const result = await db.transaction(async (tx) => {
+      const result = await db.transaction<{ newBalance: number }>(async (tx) => {
         const [existingOwnership] = await tx
           .select()
           .from(shareOwnerships)
@@ -625,7 +625,7 @@ export class PropertyController {
 
         return {
           newBalance: ownership.shares,
-        };
+        } as { newBalance: number };
       });
 
       logger.info('Share purchase completed successfully', {
