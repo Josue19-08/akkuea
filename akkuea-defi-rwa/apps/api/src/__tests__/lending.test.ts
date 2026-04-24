@@ -3,6 +3,7 @@ import { Elysia } from 'elysia';
 import { lendingRoutes } from '../routes/lending';
 import { errorHandler } from '../middleware/errorHandler';
 import { CreatePoolDto, DepositDto, WithdrawDto, BorrowDto, RepayDto } from '../dto/lending.dto';
+import jwt from 'jsonwebtoken';
 
 // Valid Stellar address for testing
 const VALID_STELLAR_ADDRESS = 'GAAZI4TCR3TY5OJHCTJC2A4QSY6CJWJH5IAJTGKIN2ER7LBNVKOCCWN7';
@@ -148,12 +149,18 @@ describe('Lending Routes', () => {
     });
 
     it('should reject invalid body with validation error', async () => {
+      // Mock valid token for validation test
+      const validToken = jwt.sign(
+        { id: VALID_UUID, walletAddress: VALID_STELLAR_ADDRESS },
+        process.env.JWT_SECRET || 'super-secret-default-key-for-dev'
+      );
+      
       const response = await app.handle(
         new Request('http://localhost/lending/pools', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-user-id': VALID_UUID,
+            'Authorization': `Bearer ${validToken}`,
           },
           body: JSON.stringify({ name: '' }),
         }),
@@ -184,12 +191,17 @@ describe('Lending Routes', () => {
     });
 
     it('should reject invalid amount', async () => {
+      const validToken = jwt.sign(
+        { id: VALID_UUID, walletAddress: VALID_STELLAR_ADDRESS },
+        process.env.JWT_SECRET || 'super-secret-default-key-for-dev'
+      );
+      
       const response = await app.handle(
         new Request(`http://localhost/lending/pools/${VALID_UUID}/deposit`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-user-id': VALID_UUID,
+            'Authorization': `Bearer ${validToken}`,
           },
           body: JSON.stringify({ amount: '0' }),
         }),
@@ -230,12 +242,16 @@ describe('Lending Routes', () => {
     });
 
     it('should reject invalid body', async () => {
+      const validToken = jwt.sign(
+        { id: VALID_UUID, walletAddress: VALID_STELLAR_ADDRESS },
+        process.env.JWT_SECRET || 'super-secret-default-key-for-dev'
+      );
       const response = await app.handle(
         new Request(`http://localhost/lending/pools/${VALID_UUID}/borrow`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-user-id': VALID_UUID,
+            'Authorization': `Bearer ${validToken}`,
           },
           body: JSON.stringify({ borrowAmount: '0' }),
         }),
@@ -299,6 +315,7 @@ describe.skipIf(!process.env.DATABASE_URL)('Lending Integration Tests (DB requir
   let app: any;
   let testUserId: string;
   let testPoolId: string;
+  let testToken: string;
 
   beforeAll(async () => {
     app = new Elysia().use(errorHandler).use(lendingRoutes);
@@ -309,6 +326,11 @@ describe.skipIf(!process.env.DATABASE_URL)('Lending Integration Tests (DB requir
       walletAddress: VALID_STELLAR_ADDRESS,
     });
     testUserId = user.id;
+    
+    testToken = jwt.sign(
+      { id: testUserId, walletAddress: VALID_STELLAR_ADDRESS },
+      process.env.JWT_SECRET || 'super-secret-default-key-for-dev'
+    );
   });
 
   afterAll(async () => {
@@ -351,7 +373,7 @@ describe.skipIf(!process.env.DATABASE_URL)('Lending Integration Tests (DB requir
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-user-id': testUserId,
+          'Authorization': `Bearer ${testToken}`,
         },
         body: JSON.stringify({
           name: 'Integration Test Pool',
@@ -387,7 +409,7 @@ describe.skipIf(!process.env.DATABASE_URL)('Lending Integration Tests (DB requir
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-user-id': testUserId,
+          'Authorization': `Bearer ${testToken}`,
         },
         body: JSON.stringify({ amount: '1000' }),
       }),
@@ -411,7 +433,7 @@ describe.skipIf(!process.env.DATABASE_URL)('Lending Integration Tests (DB requir
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-user-id': testUserId,
+          'Authorization': `Bearer ${testToken}`,
         },
         body: JSON.stringify({
           borrowAmount: '300',
@@ -440,7 +462,7 @@ describe.skipIf(!process.env.DATABASE_URL)('Lending Integration Tests (DB requir
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-user-id': testUserId,
+          'Authorization': `Bearer ${testToken}`,
         },
         body: JSON.stringify({ amount: '100' }),
       }),
@@ -462,7 +484,7 @@ describe.skipIf(!process.env.DATABASE_URL)('Lending Integration Tests (DB requir
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-user-id': testUserId,
+          'Authorization': `Bearer ${testToken}`,
         },
         body: JSON.stringify({ amount: '9999' }),
       }),
@@ -494,7 +516,7 @@ describe.skipIf(!process.env.DATABASE_URL)('Lending Integration Tests (DB requir
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-user-id': testUserId,
+          'Authorization': `Bearer ${testToken}`,
         },
         body: JSON.stringify({ amount: '200' }),
       }),
@@ -516,7 +538,7 @@ describe.skipIf(!process.env.DATABASE_URL)('Lending Integration Tests (DB requir
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-user-id': testUserId,
+          'Authorization': `Bearer ${testToken}`,
         },
         body: JSON.stringify({ amount: '99999' }),
       }),

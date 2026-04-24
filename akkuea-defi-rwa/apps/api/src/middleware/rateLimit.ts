@@ -24,10 +24,6 @@ function getIdentifier(request: Request, keyGenerator?: (request: Request) => st
   if (keyGenerator) {
     return keyGenerator(request);
   }
-  const userAddress = request.headers.get('x-user-address');
-  if (userAddress) {
-    return `user:${userAddress}`;
-  }
   return `ip:${getClientIP(request)}`;
 }
 

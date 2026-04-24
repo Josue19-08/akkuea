@@ -1,6 +1,7 @@
 import { describe, expect, it, beforeAll, afterAll } from 'bun:test';
 import { Elysia } from 'elysia';
 import { propertyRoutes } from '../routes/properties';
+import jwt from 'jsonwebtoken';
 
 // Skip tests if DATABASE_URL is not set (required for integration tests)
 const skipIfNoDatabase = !process.env.DATABASE_URL;
@@ -12,9 +13,14 @@ const NON_EXISTENT_UUID = '550e8400-e29b-41d4-a716-446655440999';
 describe.skipIf(skipIfNoDatabase)('Property Routes Integration Tests', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let app: any;
+  let testToken: string;
 
   beforeAll(() => {
     app = new Elysia().use(propertyRoutes);
+    testToken = jwt.sign(
+      { id: VALID_UUID, walletAddress: 'GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' },
+      process.env.JWT_SECRET || 'super-secret-default-key-for-dev'
+    );
   });
 
   afterAll(() => {
@@ -103,7 +109,7 @@ describe.skipIf(skipIfNoDatabase)('Property Routes Integration Tests', () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-user-address': 'GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+            'Authorization': `Bearer ${testToken}`,
           },
           body: JSON.stringify(propertyData),
         }),
@@ -122,7 +128,7 @@ describe.skipIf(skipIfNoDatabase)('Property Routes Integration Tests', () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-user-address': 'test-user-address',
+            'Authorization': 'Bearer invalid-token',
           },
           body: JSON.stringify({ name: '' }),
         }),
@@ -142,7 +148,7 @@ describe.skipIf(skipIfNoDatabase)('Property Routes Integration Tests', () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            'x-user-address': 'test-user-address',
+            'Authorization': 'Bearer invalid-token',
           },
           body: JSON.stringify({ name: 'Updated Name' }),
         }),
@@ -153,7 +159,7 @@ describe.skipIf(skipIfNoDatabase)('Property Routes Integration Tests', () => {
       expect(body.code).toBe('VALIDATION_ERROR');
     });
 
-    it('should return 401 when x-user-address header is missing with valid UUID', async () => {
+    it('should return 401 when Authorization header is missing with valid UUID', async () => {
       const response = await app.handle(
         new Request(`http://localhost/properties/${VALID_UUID}`, {
           method: 'PUT',
@@ -173,7 +179,7 @@ describe.skipIf(skipIfNoDatabase)('Property Routes Integration Tests', () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            'x-user-address': 'GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+            'Authorization': `Bearer ${testToken}`,
           },
           body: JSON.stringify({ name: 'Updated Property Name' }),
         }),
@@ -192,7 +198,7 @@ describe.skipIf(skipIfNoDatabase)('Property Routes Integration Tests', () => {
         new Request('http://localhost/properties/invalid-id', {
           method: 'DELETE',
           headers: {
-            'x-user-address': 'test-user-address',
+            'Authorization': `Bearer ${testToken}`,
           },
         }),
       );
@@ -202,7 +208,7 @@ describe.skipIf(skipIfNoDatabase)('Property Routes Integration Tests', () => {
       expect(body.code).toBe('VALIDATION_ERROR');
     });
 
-    it('should return 401 when x-user-address header is missing', async () => {
+    it('should return 401 when Authorization header is missing', async () => {
       const response = await app.handle(
         new Request(`http://localhost/properties/${VALID_UUID}`, {
           method: 'DELETE',
@@ -217,7 +223,7 @@ describe.skipIf(skipIfNoDatabase)('Property Routes Integration Tests', () => {
         new Request(`http://localhost/properties/${NON_EXISTENT_UUID}`, {
           method: 'DELETE',
           headers: {
-            'x-user-address': 'some-user-address',
+            'Authorization': `Bearer ${testToken}`,
           },
         }),
       );
@@ -249,6 +255,7 @@ describe.skipIf(skipIfNoDatabase)('Property Routes Integration Tests', () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${testToken}`,
           },
           body: JSON.stringify({}),
         }),
@@ -317,6 +324,7 @@ describe.skipIf(skipIfNoDatabase)('Property Routes Integration Tests', () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${testToken}`,
           },
           body: JSON.stringify({ buyer: 'buyer-address', shares: 10 }),
         }),

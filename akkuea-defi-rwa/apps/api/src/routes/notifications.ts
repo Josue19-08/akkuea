@@ -1,6 +1,6 @@
 import { Elysia } from 'elysia';
 import { z } from 'zod';
-import { validate, uuidParamSchema } from '../middleware';
+import { validate, uuidParamSchema, authPlugin } from '../middleware';
 import { NotificationController } from '../controllers/NotificationController';
 
 const notificationQuerySchema = z.object({
@@ -13,6 +13,7 @@ const markMultipleAsReadSchema = z.object({
 });
 
 export const notificationRoutes = new Elysia({ prefix: '/notifications' })
+  .use(authPlugin)
   // GET /notifications - Get user's notifications
   .use(validate({ query: notificationQuerySchema }))
   .get('/', async (ctx) => NotificationController.getUserNotifications(ctx))

@@ -13,6 +13,7 @@ function isApiErrorLike(e: unknown): e is { statusCode: number; code: string; me
 }
 
 export const errorHandler = new Elysia().onError({ as: 'global' }, ({ error, code, set }) => {
+  console.error("errorHandler caught:", error, code);
   // Handle custom ApiError instances (including duck-typed for cross-module tests)
   if (error instanceof ApiError || isApiErrorLike(error)) {
     const err = error as {

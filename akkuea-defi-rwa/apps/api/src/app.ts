@@ -6,6 +6,7 @@ import { userRoutes } from './routes/users';
 import { kycRoutes } from './routes/kyc';
 import { webhookRoutes } from './routes/webhooks';
 import { internalOperationsRoutes } from './routes/internalOperations';
+import { authRoutes } from './routes/auth';
 import { errorHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware';
 
@@ -17,6 +18,7 @@ const app = new Elysia()
   .use(requestLogger)
   .use(cors())
   .use(errorHandler)
+  .use(authRoutes)
   .use(propertyRoutes)
   .use(lendingRoutes)
   .use(userRoutes)
