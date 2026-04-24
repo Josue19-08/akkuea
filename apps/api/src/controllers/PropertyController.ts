@@ -228,9 +228,7 @@ export class PropertyController {
       );
 
       const mappedProperties = await Promise.all(
-        result.data.map((row) =>
-          mapPropertyToPropertyInfo(row, row.ownerWalletAddress),
-        ),
+        result.data.map((row) => mapPropertyToPropertyInfo(row, row.ownerWalletAddress)),
       );
 
       const response: PaginatedResponse<PropertyInfo> = {
