@@ -1,11 +1,13 @@
-import { describe, expect, it } from 'bun:test';
+import { describe, expect, it, beforeAll } from 'bun:test';
 import { Elysia } from 'elysia';
 import { kycRoutes } from '../routes/kyc';
 import { errorHandler } from '../middleware/errorHandler';
 import { VALID_UUID, NON_EXISTENT_UUID } from '@real-estate-defi/shared';
 
+import { userRepository } from '../repositories/UserRepository';
+import { VALID_STELLAR_ADDRESS } from '@real-estate-defi/shared';
+
 const skipIfNoDatabase = !process.env.DATABASE_URL;
-const VALID_USER_ID = VALID_UUID;
 const NON_EXISTENT_USER_ID = NON_EXISTENT_UUID;
 const NON_EXISTENT_DOC_ID = NON_EXISTENT_UUID;
 
@@ -14,6 +16,14 @@ function createApp() {
 }
 
 describe('KYC Routes', () => {
+  let testUserId = VALID_UUID;
+
+  beforeAll(async () => {
+    if (!skipIfNoDatabase) {
+      const user = await userRepository.getOrCreateByWallet(VALID_STELLAR_ADDRESS);
+      testUserId = user.id;
+    }
+  });
   describe('GET /kyc/status/:userId', () => {
     it.skipIf(skipIfNoDatabase)('returns 404 for non-existent user', async () => {
       const app = createApp();
@@ -33,13 +43,8 @@ describe('KYC Routes', () => {
     it.skipIf(skipIfNoDatabase)('returns status and documents for existing user', async () => {
       const app = createApp();
       const response = await app.handle(
-        new Request(`http://localhost/kyc/status/${VALID_USER_ID}`),
+        new Request(`http://localhost/kyc/status/${testUserId}`),
       );
-      if (response.status === 404) {
-        // User may not exist in test DB
-        expect(response.status).toBe(404);
-        return;
-      }
       expect(response.status).toBe(200);
       const body = (await response.json()) as {
         status: string;
@@ -68,7 +73,7 @@ describe('KYC Routes', () => {
     it('returns 400 when file is missing', async () => {
       const app = createApp();
       const formData = new FormData();
-      formData.set('userId', VALID_USER_ID);
+      formData.set('userId', testUserId);
       formData.set('documentType', 'passport');
       const response = await app.handle(
         new Request('http://localhost/kyc/upload', {
@@ -84,7 +89,7 @@ describe('KYC Routes', () => {
     it.skipIf(skipIfNoDatabase)('returns 400 for invalid file type (.exe)', async () => {
       const app = createApp();
       const formData = new FormData();
-      formData.set('userId', VALID_USER_ID);
+      formData.set('userId', testUserId);
       formData.set('documentType', 'passport');
       formData.set('file', new File(['fake'], 'virus.exe', { type: 'application/x-msdownload' }));
       const response = await app.handle(
@@ -101,7 +106,7 @@ describe('KYC Routes', () => {
     it.skipIf(skipIfNoDatabase)('returns 400 for oversized file (over 10MB)', async () => {
       const app = createApp();
       const formData = new FormData();
-      formData.set('userId', VALID_USER_ID);
+      formData.set('userId', testUserId);
       formData.set('documentType', 'passport');
       const bigSize = 11 * 1024 * 1024;
       const bigBlob = new Blob([new Uint8Array(bigSize)]);
@@ -120,7 +125,7 @@ describe('KYC Routes', () => {
     it.skipIf(skipIfNoDatabase)('returns 200 with documentId for valid PDF upload', async () => {
       const app = createApp();
       const formData = new FormData();
-      formData.set('userId', VALID_USER_ID);
+      formData.set('userId', testUserId);
       formData.set('documentType', 'passport');
       const pdfContent = new Uint8Array([0x25, 0x50, 0x44, 0x46]); // %PDF
       formData.set('file', new File([pdfContent], 'id.pdf', { type: 'application/pdf' }));
@@ -130,10 +135,6 @@ describe('KYC Routes', () => {
           body: formData,
         }),
       );
-      if (response.status === 404) {
-        expect(response.status).toBe(404);
-        return;
-      }
       expect(response.status).toBe(200);
       const body = (await response.json()) as { documentId?: string; submissionId?: string };
       expect(body.documentId).toBeDefined();
@@ -171,7 +172,7 @@ describe('KYC Routes', () => {
     it.skipIf(skipIfNoDatabase)('admin can approve document', async () => {
       const app = createApp();
       const statusRes = await app.handle(
-        new Request(`http://localhost/kyc/status/${VALID_USER_ID}`),
+        new Request(`http://localhost/kyc/status/${testUserId}`),
       );
       if (statusRes.status !== 200) return;
       const statusBody = (await statusRes.json()) as { documents: { id: string }[] };
@@ -192,7 +193,7 @@ describe('KYC Routes', () => {
     it.skipIf(skipIfNoDatabase)('admin can reject with reason', async () => {
       const app = createApp();
       const statusRes = await app.handle(
-        new Request(`http://localhost/kyc/status/${VALID_USER_ID}`),
+        new Request(`http://localhost/kyc/status/${testUserId}`),
       );
       if (statusRes.status !== 200) return;
       const statusBody = (await statusRes.json()) as { documents: { id: string }[] };
@@ -225,7 +226,7 @@ describe('KYC Routes', () => {
     it('returns 429 after exceeding upload rate limit', async () => {
       const app = createApp();
       const formData = new FormData();
-      formData.set('userId', VALID_USER_ID);
+      formData.set('userId', testUserId);
       formData.set('documentType', 'passport');
       formData.set('file', new File(['x'], 'x.pdf', { type: 'application/pdf' }));
 
