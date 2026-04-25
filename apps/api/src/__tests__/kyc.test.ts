@@ -2,25 +2,24 @@ import { describe, expect, it, beforeAll } from 'bun:test';
 import { Elysia } from 'elysia';
 import { kycRoutes } from '../routes/kyc';
 import { errorHandler } from '../middleware/errorHandler';
-import { VALID_UUID, NON_EXISTENT_UUID } from '@real-estate-defi/shared';
-
+import { VALID_UUID, NON_EXISTENT_UUID, VALID_STELLAR_ADDRESS } from '@real-estate-defi/shared';
 import { userRepository } from '../repositories/UserRepository';
-import { VALID_STELLAR_ADDRESS } from '@real-estate-defi/shared';
 
 const skipIfNoDatabase = !process.env.DATABASE_URL;
+const TEST_WALLET = VALID_STELLAR_ADDRESS.replace('7LBN', '7KYC'); // Unique wallet for KYC tests
 const NON_EXISTENT_USER_ID = NON_EXISTENT_UUID;
-const NON_EXISTENT_DOC_ID = NON_EXISTENT_UUID;
+const NON_EXISTENT_DOC_ID = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
 
 function createApp() {
   return new Elysia().use(errorHandler).use(kycRoutes);
 }
 
-describe('KYC Routes', () => {
+describe.skipIf(skipIfNoDatabase)('KYC Routes', () => {
   let testUserId = VALID_UUID;
 
   beforeAll(async () => {
     if (!skipIfNoDatabase) {
-      const user = await userRepository.getOrCreateByWallet(VALID_STELLAR_ADDRESS);
+      const user = await userRepository.getOrCreateByWallet(TEST_WALLET);
       testUserId = user.id;
     }
   });
