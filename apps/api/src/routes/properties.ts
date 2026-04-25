@@ -52,7 +52,8 @@ const buySharesSchema = z.object({
 // GET /properties - list with filters
 const listPropertiesRoute = new Elysia()
   .use(validateQuery(propertyQuerySchema))
-  .get('/', async ({ validatedQuery, set }) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  .get('/', async ({ validatedQuery, set }: any) => {
     try {
       return await PropertyController.getProperties(validatedQuery!);
     } catch (error) {
@@ -65,7 +66,8 @@ const listPropertiesRoute = new Elysia()
 // GET /properties/:id - get single property
 const getPropertyRoute = new Elysia()
   .use(validateParams(uuidParamSchema))
-  .get('/:id', async ({ validatedParams, set }) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  .get('/:id', async ({ validatedParams, set }: any) => {
     try {
       return await PropertyController.getProperty(validatedParams!.id);
     } catch (error) {
@@ -194,7 +196,8 @@ const buySharesRoute = new Elysia()
 // GET /properties/:id/shares/:owner - get user shares
 const getUserSharesRoute = new Elysia()
   .use(validateParams(ownerParamSchema))
-  .get('/:id/shares/:owner', async ({ validatedParams, set }) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  .get('/:id/shares/:owner', async ({ validatedParams, set }: any) => {
     try {
       return await PropertyController.getUserShares(validatedParams!.id, validatedParams!.owner);
     } catch (error) {

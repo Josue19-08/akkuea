@@ -3,7 +3,7 @@ import { Elysia } from 'elysia';
 import { authRoutes } from '../routes/auth';
 import { Keypair } from 'stellar-sdk';
 import { jwt } from '@elysiajs/jwt';
-import { mock, spyOn } from 'bun:test';
+import { spyOn } from 'bun:test';
 import { userRepository } from '../repositories/UserRepository';
 import { errorHandler } from '../middleware/errorHandler';
 import { challengeStore } from '../controllers/AuthController';
@@ -33,6 +33,7 @@ describe('Auth Routes Integration Tests', () => {
       displayName: 'Mock User',
       createdAt: new Date(),
       updatedAt: new Date(),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any));
   });
 
@@ -79,6 +80,7 @@ describe('Auth Routes Integration Tests', () => {
     );
 
     expect(sessionRes.status).toBe(200);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sessionData = await sessionRes.json() as { token: string, user: any };
     expect(sessionData.token).toBeDefined();
     expect(sessionData.user.walletAddress).toBe(stellarAddress);
