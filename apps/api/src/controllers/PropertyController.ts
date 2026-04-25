@@ -17,6 +17,7 @@ import {
   propertyRepository,
   type PropertyFilter,
   type PaginatedResult,
+  type PropertyListRow,
 } from '../repositories/PropertyRepository';
 import { userRepository } from '../repositories/UserRepository';
 import {
@@ -27,6 +28,10 @@ import {
   type NewProperty,
   type PropertyDocument,
 } from '../db/schema';
+import { cacheService } from '../services/CacheService';
+
+const PROPERTIES_CACHE_TTL = 30; // seconds
+const PROPERTIES_CACHE_PREFIX = 'properties:list:';
 
 /**
  * DTO for creating a property
@@ -87,9 +92,8 @@ async function mapPropertyToPropertyInfo(
   property: Property & { documents?: PropertyDocument[] },
   ownerAddress?: string,
 ): Promise<PropertyInfo> {
-  // Get owner's wallet address if not provided
   let walletAddress = ownerAddress;
-  if (!walletAddress) {
+  if (walletAddress === undefined) {
     const owner = await userRepository.findById(property.ownerId);
     walletAddress = owner?.walletAddress ?? '';
   }
@@ -106,7 +110,7 @@ async function mapPropertyToPropertyInfo(
     availableShares: property.availableShares,
     pricePerShare: property.pricePerShare, // Already a string in DB
     images: property.images,
-    documents: (property.documents ?? []).map((doc) => ({
+    documents: (property.documents ?? []).map((doc: PropertyDocument) => ({
       id: doc.id,
       type: doc.type,
       name: doc.name,
@@ -199,27 +203,47 @@ export class PropertyController {
         filter.verified = true;
       }
 
-      const result: PaginatedResult<Property> = await propertyRepository.findPaginated(
+      // Build a stable cache key from pagination + filter params
+      const cacheKey =
+        `${PROPERTIES_CACHE_PREFIX}` +
+        `${pagination.page}:${pagination.limit}:` +
+        `${filter.ownerId ?? ''}:${filter.city ?? ''}:${filter.country ?? ''}:` +
+        `${filter.propertyType ?? ''}:${filter.minPricePerShare ?? ''}:` +
+        `${filter.maxPricePerShare ?? ''}:${filter.minAvailableShares ?? ''}:` +
+        `${filter.hasAvailableShares ?? ''}:${filter.verified ?? ''}`;
+
+      const cached = await cacheService.get<PaginatedResponse<PropertyInfo>>(cacheKey);
+      if (cached) {
+        logger.info('Properties served from cache', { operation: 'READ', entity: 'property' });
+        return cached;
+      }
+
+      const result: PaginatedResult<PropertyListRow> = await propertyRepository.findPaginated(
         pagination,
         Object.keys(filter).length > 0 ? filter : undefined,
       );
 
-      // Map properties to PropertyInfo
-      const properties = await Promise.all(
-        result.data.map((property) => mapPropertyToPropertyInfo(property)),
+      const mappedProperties = await Promise.all(
+        result.data.map((row) =>
+          mapPropertyToPropertyInfo(row, row.ownerWalletAddress),
+        ),
       );
+
+      const response: PaginatedResponse<PropertyInfo> = {
+        data: mappedProperties,
+        pagination: result.pagination,
+      };
+
+      await cacheService.set(cacheKey, response, PROPERTIES_CACHE_TTL);
 
       logger.info('Properties fetched successfully', {
         operation: 'READ',
         entity: 'property',
-        count: properties.length,
+        count: mappedProperties.length,
         duration: Date.now() - startTime,
       });
 
-      return {
-        data: properties,
-        pagination: result.pagination,
-      };
+      return response;
     } catch (error) {
       logger.error('Failed to fetch properties', { error, operation: 'READ', entity: 'property' });
       throw error;
@@ -325,6 +349,8 @@ export class PropertyController {
       const property = await propertyRepository.create(newProperty);
       const propertyInfo = await mapPropertyToPropertyInfo(property, userAddress);
 
+      await cacheService.invalidate(`${PROPERTIES_CACHE_PREFIX}*`);
+
       logger.info('Property created successfully', {
         operation: 'CREATE',
         entity: 'property',
@@ -396,6 +422,8 @@ export class PropertyController {
 
       const propertyInfo = await mapPropertyToPropertyInfo(updatedProperty, userAddress);
 
+      await cacheService.invalidate(`${PROPERTIES_CACHE_PREFIX}*`);
+
       logger.info('Property updated successfully', {
         operation: 'UPDATE',
         entity: 'property',
@@ -456,6 +484,8 @@ export class PropertyController {
       if (!deleted) {
         throw new Error('Failed to delete property');
       }
+
+      await cacheService.invalidate(`${PROPERTIES_CACHE_PREFIX}*`);
 
       logger.info('Property deleted successfully', {
         operation: 'DELETE',
@@ -639,6 +669,8 @@ export class PropertyController {
         shares: data.shares,
         duration: Date.now() - startTime,
       });
+
+      await cacheService.invalidate(`${PROPERTIES_CACHE_PREFIX}*`);
 
       return {
         transactionHash,

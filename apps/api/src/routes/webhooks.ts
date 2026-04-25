@@ -5,7 +5,8 @@ import { rateLimit } from '../middleware';
 
 export const webhookRoutes = new Elysia({ prefix: '/webhooks' }).post(
   '/transactions',
-  async ({ body, headers }) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async ({ body, headers }: any) => {
     return await webhookController.handleTransactionWebhook({
       body: body as WebhookPayload,
       headers,
