@@ -20,6 +20,12 @@ export const webhookRoutes = new Elysia({ prefix: '/webhooks' }).post(
       set.status = 500;
       return { success: false, error: 'INTERNAL_ERROR', message: 'An unexpected error occurred' };
     }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async ({ body, headers }: any) => {
+    return await webhookController.handleTransactionWebhook({
+      body: body as WebhookPayload,
+      headers,
+    });
   },
   {
     body: t.Object({

@@ -110,7 +110,7 @@ async function mapPropertyToPropertyInfo(
     availableShares: property.availableShares,
     pricePerShare: property.pricePerShare, // Already a string in DB
     images: property.images,
-    documents: (property.documents ?? []).map((doc) => ({
+    documents: (property.documents ?? []).map((doc: PropertyDocument) => ({
       id: doc.id,
       type: doc.type,
       name: doc.name,
@@ -575,7 +575,8 @@ export class PropertyController {
       const totalPurchasePrice = (parseFloat(property.pricePerShare) * data.shares).toFixed(2);
       const transactionHash = generateTransactionHash();
 
-      const result = await db.transaction(async (tx) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result = await db.transaction(async (tx: any) => {
         const [existingOwnership] = await tx
           .select()
           .from(shareOwnerships)
