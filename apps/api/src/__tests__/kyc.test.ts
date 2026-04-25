@@ -6,7 +6,8 @@ import { VALID_UUID, NON_EXISTENT_UUID, VALID_STELLAR_ADDRESS } from '@real-esta
 import { userRepository } from '../repositories/UserRepository';
 
 const skipIfNoDatabase = !process.env.DATABASE_URL;
-const TEST_WALLET = VALID_STELLAR_ADDRESS.replace('7LBN', '7KYC'); // Unique wallet for KYC tests
+// Real Stellar address for KYC tests (must pass checksum validation)
+const TEST_WALLET = 'GCUEMLJWVYG7MUELRSWAP66D3LIUJ3UZNW4G3RD2LTKUVURGTNKGIITU';
 const NON_EXISTENT_USER_ID = NON_EXISTENT_UUID;
 const NON_EXISTENT_DOC_ID = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
 

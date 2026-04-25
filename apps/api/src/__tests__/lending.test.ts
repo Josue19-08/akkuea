@@ -4,7 +4,7 @@ import { lendingRoutes } from '../routes/lending';
 import { errorHandler } from '../middleware/errorHandler';
 import { CreatePoolDto, DepositDto, WithdrawDto, BorrowDto, RepayDto } from '../dto/lending.dto';
 import { VALID_STELLAR_ADDRESS, VALID_UUID } from '@real-estate-defi/shared';
-const TEST_WALLET = VALID_STELLAR_ADDRESS.replace('7LBN', '7LEN'); // Unique wallet for lending tests
+const TEST_WALLET = 'GCO5CVUVFNX4KZQMYCALTJ5QSG6USOVLFQ74AQCCX7TGJKBNZ33KC5ZC'; // Unique wallet for lending tests
 
 describe('Lending DTO Validation', () => {
   describe('CreatePoolDto', () => {
