@@ -171,15 +171,26 @@ describe('KYC Routes', () => {
 
     it.skipIf(skipIfNoDatabase)('admin can approve document', async () => {
       const app = createApp();
-      const statusRes = await app.handle(
-        new Request(`http://localhost/kyc/status/${testUserId}`),
+
+      // 1. Upload a document first
+      const formData = new FormData();
+      formData.set('userId', testUserId);
+      formData.set('documentType', 'passport');
+      const pdfContent = new Uint8Array([0x25, 0x50, 0x44, 0x46]);
+      formData.set('file', new File([pdfContent], 'id.pdf', { type: 'application/pdf' }));
+
+      const uploadRes = await app.handle(
+        new Request('http://localhost/kyc/upload', {
+          method: 'POST',
+          body: formData,
+        }),
       );
-      if (statusRes.status !== 200) return;
-      const statusBody = (await statusRes.json()) as { documents: { id: string }[] };
-      const docId = statusBody.documents?.[0]?.id;
-      if (!docId) return;
+      expect(uploadRes.status).toBe(200);
+      const { documentId } = (await uploadRes.json()) as { documentId: string };
+
+      // 2. Now verify it
       const response = await app.handle(
-        new Request(`http://localhost/kyc/verify/${docId}`, {
+        new Request(`http://localhost/kyc/verify/${documentId}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ verified: true }),
@@ -192,15 +203,26 @@ describe('KYC Routes', () => {
 
     it.skipIf(skipIfNoDatabase)('admin can reject with reason', async () => {
       const app = createApp();
-      const statusRes = await app.handle(
-        new Request(`http://localhost/kyc/status/${testUserId}`),
+
+      // 1. Upload a document first
+      const formData = new FormData();
+      formData.set('userId', testUserId);
+      formData.set('documentType', 'id_card');
+      const pdfContent = new Uint8Array([0x25, 0x50, 0x44, 0x46]);
+      formData.set('file', new File([pdfContent], 'id.pdf', { type: 'application/pdf' }));
+
+      const uploadRes = await app.handle(
+        new Request('http://localhost/kyc/upload', {
+          method: 'POST',
+          body: formData,
+        }),
       );
-      if (statusRes.status !== 200) return;
-      const statusBody = (await statusRes.json()) as { documents: { id: string }[] };
-      const docId = statusBody.documents?.[0]?.id;
-      if (!docId) return;
+      expect(uploadRes.status).toBe(200);
+      const { documentId } = (await uploadRes.json()) as { documentId: string };
+
+      // 2. Now reject it
       const response = await app.handle(
-        new Request(`http://localhost/kyc/verify/${docId}`, {
+        new Request(`http://localhost/kyc/verify/${documentId}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ verified: false, notes: 'Document expired' }),

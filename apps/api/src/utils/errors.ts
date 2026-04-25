@@ -61,22 +61,30 @@ export function handleError(error: unknown): ErrorResponse {
     };
   }
 
-  if (isAppError(error)) {
+  const err = error as any;
+  if (
+    typeof err === 'object' &&
+    err !== null &&
+    'message' in err &&
+    'statusCode' in err &&
+    'code' in err
+  ) {
     return {
       success: false,
-      error: String(error.code),
-      message: error.message,
-      statusCode: error.status,
+      error: String(err.code),
+      message: String(err.message),
+      statusCode: Number(err.statusCode),
       timestamp,
     };
   }
 
-  if (error instanceof AppError) {
+  if (isAppError(error)) {
+    const err = error as { status?: number; statusCode?: number; code: string; message: string };
     return {
       success: false,
-      error: error.code,
-      message: error.message,
-      statusCode: error.statusCode,
+      error: String(err.code),
+      message: err.message,
+      statusCode: err.status || err.statusCode || 500,
       timestamp,
     };
   }
