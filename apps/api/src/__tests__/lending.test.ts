@@ -440,6 +440,9 @@ describe.skipIf(!process.env.DATABASE_URL)('Lending Integration Tests (DB requir
         body: JSON.stringify({ amount: '100' }),
       }),
     );
+    if (response.status !== 200) {
+      console.error('LENDING REPAY FAIL:', response.status, await response.json());
+    }
     expect(response.status).toBe(200);
     const position = await response.json();
     expect(parseFloat(position.principal)).toBeCloseTo(200);
