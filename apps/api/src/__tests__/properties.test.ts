@@ -1,7 +1,9 @@
 import { describe, expect, it, beforeAll, afterAll } from 'bun:test';
 import { Elysia } from 'elysia';
 import { propertyRoutes } from '../routes/properties';
-import { VALID_UUID, NON_EXISTENT_UUID } from '@real-estate-defi/shared';
+import { VALID_UUID, NON_EXISTENT_UUID, VALID_STELLAR_ADDRESS } from '@real-estate-defi/shared';
+import { userRepository } from '../repositories/UserRepository';
+import { errorHandler } from '../middleware/errorHandler';
 
 // Skip tests if DATABASE_URL is not set (required for integration tests)
 const skipIfNoDatabase = !process.env.DATABASE_URL;
@@ -9,9 +11,14 @@ const skipIfNoDatabase = !process.env.DATABASE_URL;
 describe.skipIf(skipIfNoDatabase)('Property Routes Integration Tests', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let app: any;
+  let testUserId = VALID_UUID;
 
-  beforeAll(() => {
-    app = new Elysia().use(propertyRoutes);
+  beforeAll(async () => {
+    app = new Elysia().use(errorHandler).use(propertyRoutes);
+    if (!skipIfNoDatabase) {
+      const user = await userRepository.getOrCreateByWallet(VALID_STELLAR_ADDRESS);
+      testUserId = user.id;
+    }
   });
 
   afterAll(() => {
@@ -100,7 +107,7 @@ describe.skipIf(skipIfNoDatabase)('Property Routes Integration Tests', () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-user-address': 'GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+            'x-user-address': VALID_STELLAR_ADDRESS,
           },
           body: JSON.stringify(propertyData),
         }),
@@ -170,7 +177,7 @@ describe.skipIf(skipIfNoDatabase)('Property Routes Integration Tests', () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            'x-user-address': 'GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+            'x-user-address': VALID_STELLAR_ADDRESS,
           },
           body: JSON.stringify({ name: 'Updated Property Name' }),
         }),
