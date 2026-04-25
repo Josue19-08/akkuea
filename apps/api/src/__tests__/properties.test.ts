@@ -11,13 +11,10 @@ const skipIfNoDatabase = !process.env.DATABASE_URL;
 describe.skipIf(skipIfNoDatabase)('Property Routes Integration Tests', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let app: any;
-  let testUserId = VALID_UUID;
-
   beforeAll(async () => {
     app = new Elysia().use(errorHandler).use(propertyRoutes);
     if (!skipIfNoDatabase) {
-      const user = await userRepository.getOrCreateByWallet(VALID_STELLAR_ADDRESS);
-      testUserId = user.id;
+      await userRepository.getOrCreateByWallet(VALID_STELLAR_ADDRESS);
     }
   });
 
