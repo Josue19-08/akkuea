@@ -494,9 +494,7 @@ describe.skipIf(!process.env.DATABASE_URL)('Lending Integration Tests (DB requir
 
   it('should get user deposits in pool', async () => {
     const response = await app.handle(
-      new Request(
-        `http://localhost/lending/pools/${testPoolId}/user/${VALID_STELLAR_ADDRESS}/deposits`,
-      ),
+      new Request(`http://localhost/lending/pools/${testPoolId}/user/${TEST_WALLET}/deposits`),
     );
     expect(response.status).toBe(200);
     const deposits = await response.json();
@@ -507,9 +505,7 @@ describe.skipIf(!process.env.DATABASE_URL)('Lending Integration Tests (DB requir
 
   it('should get user borrows in pool', async () => {
     const response = await app.handle(
-      new Request(
-        `http://localhost/lending/pools/${testPoolId}/user/${VALID_STELLAR_ADDRESS}/borrows`,
-      ),
+      new Request(`http://localhost/lending/pools/${testPoolId}/user/${TEST_WALLET}/borrows`),
     );
     expect(response.status).toBe(200);
     const borrows = await response.json();
@@ -530,15 +526,13 @@ describe.skipIf(!process.env.DATABASE_URL)('Lending Integration Tests (DB requir
 
   it('should return position summary for a seeded user', async () => {
     const response = await app.handle(
-      new Request(
-        `http://localhost/lending/pools/${testPoolId}/user/${VALID_STELLAR_ADDRESS}/summary`,
-      ),
+      new Request(`http://localhost/lending/pools/${testPoolId}/user/${TEST_WALLET}/summary`),
     );
     expect(response.status).toBe(200);
     const summary = await response.json();
     expect(summary.poolId).toBe(testPoolId);
     expect(summary.userId).toBe(testUserId);
-    expect(summary.walletAddress).toBe(VALID_STELLAR_ADDRESS);
+    expect(summary.walletAddress).toBe(TEST_WALLET);
     expect(summary.depositCount).toBeGreaterThan(0);
     expect(summary.borrowCount).toBeGreaterThan(0);
     expect(parseFloat(summary.totalDeposits)).toBeGreaterThan(0);
@@ -569,9 +563,7 @@ describe.skipIf(!process.env.DATABASE_URL)('Lending Integration Tests (DB requir
     expect(parseFloat(pool.availableLiquidity)).toBe(800);
 
     const borrowsRes = await app.handle(
-      new Request(
-        `http://localhost/lending/pools/${testPoolId}/user/${VALID_STELLAR_ADDRESS}/borrows`,
-      ),
+      new Request(`http://localhost/lending/pools/${testPoolId}/user/${TEST_WALLET}/borrows`),
     );
     const borrows = await borrowsRes.json();
     expect(Array.isArray(borrows)).toBe(true);
