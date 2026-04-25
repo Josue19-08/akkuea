@@ -69,11 +69,14 @@ export function handleError(error: unknown): ErrorResponse {
 
   // If it's something that looks like our app errors (from local or shared)
   if (err && typeof err === 'object' && ('code' in err || 'errorCode' in err)) {
+    if (process.env.CI) {
+      console.error('[CI-DEBUG] Handled AppError:', { code, statusCode, message });
+    }
     return {
       success: false,
       error: String(code),
       message: String(message),
-      statusCode: statusCode === 0 ? 500 : statusCode,
+      statusCode: statusCode <= 0 ? 500 : statusCode,
       timestamp,
     };
   }
