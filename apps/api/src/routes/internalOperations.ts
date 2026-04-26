@@ -25,7 +25,8 @@ const reviewBodySchema = z.object({
 });
 
 const internalKeyAuth = new Elysia({ name: 'internal-operations-auth' }).onBeforeHandle(
-  ({ headers, set }) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ({ headers, set }: any) => {
     if (!isInternalOperationsAuthorized(headers as Record<string, string | undefined>)) {
       set.status = 403;
       return {

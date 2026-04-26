@@ -3,6 +3,9 @@ import { Elysia } from 'elysia';
 import { propertyRoutes } from '../routes/properties';
 import jwt from 'jsonwebtoken';
 import { VALID_UUID, NON_EXISTENT_UUID } from '@real-estate-defi/shared';
+const TEST_WALLET = 'GCVCMAB2RFWXYUOURL7XY3MW6LZUK6FQ5T6E7UFRHH4Y6OL43WER4QYF'; // Unique wallet for property tests
+import { userRepository } from '../repositories/UserRepository';
+import { errorHandler } from '../middleware/errorHandler';
 
 // Skip tests if DATABASE_URL is not set (required for integration tests)
 const skipIfNoDatabase = !process.env.DATABASE_URL;
@@ -12,10 +15,13 @@ describe.skipIf(skipIfNoDatabase)('Property Routes Integration Tests', () => {
   let app: any;
   let testToken: string;
 
-  beforeAll(() => {
-    app = new Elysia().use(propertyRoutes);
+  beforeAll(async () => {
+    app = new Elysia().use(errorHandler).use(propertyRoutes);
+    if (!skipIfNoDatabase) {
+      await userRepository.getOrCreateByWallet(TEST_WALLET);
+    }
     testToken = jwt.sign(
-      { id: VALID_UUID, walletAddress: 'GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' },
+      { id: VALID_UUID, walletAddress: TEST_WALLET },
       process.env.JWT_SECRET || 'super-secret-default-key-for-dev'
     );
   });
@@ -73,13 +79,22 @@ describe.skipIf(skipIfNoDatabase)('Property Routes Integration Tests', () => {
         new Request(`http://localhost/properties/${NON_EXISTENT_UUID}`),
       );
 
+      if (response.status !== 404) {
+        console.error('PROPERTY GET 404 FAIL:', response.status, await response.json());
+      }
       expect(response.status).toBe(404);
+      const body = await response.json();
+      // Support both local ApiError ('NOT_FOUND') and shared NotFoundError ('E5000')
+      expect(['NOT_FOUND', 'E5000']).toContain(body.error);
     });
 
     it('should return property when valid UUID is provided', async () => {
       const response = await app.handle(new Request(`http://localhost/properties/${VALID_UUID}`));
 
       // May return 404 if property doesn't exist in seed data, but should not be 400
+      if (response.status !== 200 && response.status !== 404) {
+        console.error('PROPERTIES GET FAIL:', response.status, await response.json());
+      }
       expect(response.status === 200 || response.status === 404).toBe(true);
     });
   });
