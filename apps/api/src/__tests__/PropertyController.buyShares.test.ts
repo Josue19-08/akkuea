@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { afterEach, beforeEach, describe, expect, it, spyOn, mock } from 'bun:test';
 
 // Mock the DB module BEFORE importing any internal files to override the Proxy export
