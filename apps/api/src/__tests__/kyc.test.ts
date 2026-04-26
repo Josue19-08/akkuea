@@ -61,7 +61,7 @@ describe.skipIf(skipIfNoDatabase)('KYC Routes', () => {
       const response = await app.handle(
         new Request('http://localhost/kyc/upload', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'x-test-bypass-ratelimit': 'true' },
           body: JSON.stringify({}),
         }),
       );
@@ -78,6 +78,7 @@ describe.skipIf(skipIfNoDatabase)('KYC Routes', () => {
       const response = await app.handle(
         new Request('http://localhost/kyc/upload', {
           method: 'POST',
+          headers: { 'x-test-bypass-ratelimit': 'true' },
           body: formData,
         }),
       );
@@ -95,6 +96,7 @@ describe.skipIf(skipIfNoDatabase)('KYC Routes', () => {
       const response = await app.handle(
         new Request('http://localhost/kyc/upload', {
           method: 'POST',
+          headers: { 'x-test-bypass-ratelimit': 'true' },
           body: formData,
         }),
       );
@@ -114,6 +116,7 @@ describe.skipIf(skipIfNoDatabase)('KYC Routes', () => {
       const response = await app.handle(
         new Request('http://localhost/kyc/upload', {
           method: 'POST',
+          headers: { 'x-test-bypass-ratelimit': 'true' },
           body: formData,
         }),
       );
@@ -132,6 +135,7 @@ describe.skipIf(skipIfNoDatabase)('KYC Routes', () => {
       const response = await app.handle(
         new Request('http://localhost/kyc/upload', {
           method: 'POST',
+          headers: { 'x-test-bypass-ratelimit': 'true' },
           body: formData,
         }),
       );

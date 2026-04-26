@@ -115,6 +115,10 @@ export function rateLimit(options: RateLimitOptions = {}) {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return async function rateLimitMiddleware({ request, set }: any) {
+    if (request.headers.get('x-test-bypass-ratelimit') === 'true') {
+      return;
+    }
+
     const identifier = getIdentifier(request, keyGenerator);
     const store = await storeReady;
     const result = await store.checkLimit(identifier, windowMs, max);

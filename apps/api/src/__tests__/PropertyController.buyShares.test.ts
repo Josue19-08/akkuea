@@ -70,9 +70,12 @@ describe.skipIf(skipIfNoDatabase)('PropertyController.buyShares', () => {
           }),
         }),
         insert: () => ({
-          values: async (vals: any) => {
+          values: (vals: any) => {
             capturedInsert = vals;
-            return [{ shares: 2 }];
+            const res = [{ shares: 2 }];
+            return Object.assign(Promise.resolve(res), {
+              returning: async () => res,
+            });
           },
         }),
       };
