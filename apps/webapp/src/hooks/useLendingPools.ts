@@ -77,7 +77,6 @@ export function useLendingPools(
   const {
     connectionStatus,
     isPolling,
-    data: livePoolData,
     refresh,
   } = useLiveUpdates(fetchPoolsOnly, {
     endpoint: SSE_ENDPOINT,
@@ -138,18 +137,16 @@ export function useLendingPools(
       }
     }
 
-    load();
+    const timer = setTimeout(() => {
+      void load();
+    }, 0);
 
     return () => {
+      clearTimeout(timer);
       cancelled = true;
     };
   }, [userAddress, fetchKey]);
 
-  useEffect(() => {
-    if (livePoolData && livePoolData.length > 0) {
-      setPools(livePoolData);
-    }
-  }, [livePoolData]);
 
   const refetchWithLive = useCallback(() => {
     refetch();

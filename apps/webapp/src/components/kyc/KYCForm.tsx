@@ -6,7 +6,7 @@ import StepOne from "./StepOne";
 import StepTwo from "./StepTwo";
 import StepThree from "./StepThree";
 import StepFour from "./StepFour";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { KycFormData, kycSchema } from "@/schemas/kyc.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -23,7 +23,8 @@ export default function KYCForm() {
     mode: "onBlur",
   });
 
-  const { handleSubmit, watch, reset, trigger, getValues } = methods;
+  const { handleSubmit, control, reset, trigger, getValues } = methods;
+  const formValues = useWatch({ control });
 
   // load saved component on mount
   useEffect(() => {
@@ -48,17 +49,15 @@ export default function KYCForm() {
 
   // Auto-save form changes
   useEffect(() => {
-    const subscription = watch((value) => {
+    if (formValues) {
       const payload = {
-        formValues: value,
+        formValues,
         currentStep,
       };
 
       localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(payload));
-    });
-
-    return () => subscription.unsubscribe();
-  }, [watch, currentStep]);
+    }
+  }, [formValues, currentStep]);
 
   // Function to go to to the next page
   const handleNext = async () => {

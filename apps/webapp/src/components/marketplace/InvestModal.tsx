@@ -56,11 +56,15 @@ export function InvestModal({
       return;
     }
 
-    setTokens(1);
-    setPaymentMethod("usdc");
-    setIsSubmitting(false);
-    setError(null);
-    setTxHash(null);
+    const timer = setTimeout(() => {
+      setTokens(1);
+      setPaymentMethod("usdc");
+      setIsSubmitting(false);
+      setError(null);
+      setTxHash(null);
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, [isOpen, property.id]);
 
   const maxTokens = property.availableShares;
