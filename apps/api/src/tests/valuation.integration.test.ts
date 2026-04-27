@@ -6,7 +6,7 @@
  *
  * Skip gracefully when DATABASE_URL is absent (e.g. pure unit-test CI runs).
  */
-import { describe, test, expect, beforeAll, afterAll } from 'bun:test';
+import { describe, test, expect, afterAll } from 'bun:test';
 import { ValuationRepository } from '../repositories/ValuationRepository';
 import { closeDatabaseConnection } from '../db';
 import type { ValuationRecord } from '@real-estate-defi/shared';
