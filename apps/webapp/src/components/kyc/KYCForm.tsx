@@ -32,19 +32,23 @@ export default function KYCForm() {
 
     if (!saved) return;
 
-    try {
-      const parsed = JSON.parse(saved);
+    const timer = setTimeout(() => {
+      try {
+        const parsed = JSON.parse(saved);
 
-      if (parsed.formValues) {
-        reset(parsed.formValues);
-      }
+        if (parsed.formValues) {
+          reset(parsed.formValues);
+        }
 
-      if (typeof parsed.currentStep === "number") {
-        setCurrentStep(parsed.currentStep);
+        if (typeof parsed.currentStep === "number") {
+          setCurrentStep(parsed.currentStep);
+        }
+      } catch {
+        console.error("Invalid form data");
       }
-    } catch {
-      console.error("Invalid form data");
-    }
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, [reset]);
 
   // Auto-save form changes
