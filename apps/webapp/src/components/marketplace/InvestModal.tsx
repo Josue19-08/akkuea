@@ -11,11 +11,15 @@ import {
 } from "lucide-react";
 import type { PropertyInfo } from "@real-estate-defi/shared";
 import { Badge, Button, Input, Modal } from "@/components/ui";
-import { formatCurrency, truncateAddress, cn, getExplorerUrl } from "@/lib/utils";
+import {
+  formatCurrency,
+  truncateAddress,
+  cn,
+  getExplorerUrl,
+} from "@/lib/utils";
 import { useWallet } from "@/components/auth/hooks";
 import { propertyApi } from "@/services/api/properties";
 import { getPropertyImage, getPropertyTypeLabel } from "./marketplace.utils";
-
 
 export interface InvestModalProps {
   property: PropertyInfo;

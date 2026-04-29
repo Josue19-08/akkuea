@@ -275,7 +275,9 @@ export class LendingController {
 
     const position = await lendingRepository.liquidate(poolId, borrowerId);
     if (!position) {
-      throw ApiError.notFound(`Borrow position for borrower ${borrowerId} in pool ${poolId} not found`);
+      throw ApiError.notFound(
+        `Borrow position for borrower ${borrowerId} in pool ${poolId} not found`,
+      );
     }
 
     await cacheService.invalidate(`${POOLS_CACHE_PREFIX}*`);

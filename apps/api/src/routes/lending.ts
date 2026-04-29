@@ -1,6 +1,12 @@
 import { Elysia } from 'elysia';
 import { z } from 'zod';
-import { validate, uuidParamSchema, paginationQuerySchema, rateLimit, authPlugin } from '../middleware';
+import {
+  validate,
+  uuidParamSchema,
+  paginationQuerySchema,
+  rateLimit,
+  authPlugin,
+} from '../middleware';
 import { LendingController } from '../controllers/LendingController';
 import { positionService } from '../services/PositionService';
 import { isLiquidatorAuthorized } from '../utils/liquidatorAuth';
@@ -75,7 +81,6 @@ export const lendingRoutes = new Elysia({ prefix: '/lending' })
   .use(validate({ query: poolQuerySchema }))
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   .get('/pools', async (ctx: any) => LendingController.getPools(ctx))
-
 
   // GET /pools/:id - Get single pool
   .use(validate({ params: poolIdParamSchema }))

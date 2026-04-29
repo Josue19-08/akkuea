@@ -78,24 +78,27 @@ const getPropertyRoute = new Elysia()
   });
 
 // POST /properties - create property
-const createPropertyRoute = new Elysia().use(authPlugin).use(validateBody(createPropertySchema)).post(
-  '/',
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async ({ validatedBody, set, getAuthenticatedUser }: any) => {
-    try {
-      const { walletAddress: userAddress } = await getAuthenticatedUser();
-      if (!userAddress) {
-        throw new UnauthorizedError('User address is required for authentication');
+const createPropertyRoute = new Elysia()
+  .use(authPlugin)
+  .use(validateBody(createPropertySchema))
+  .post(
+    '/',
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async ({ validatedBody, set, getAuthenticatedUser }: any) => {
+      try {
+        const { walletAddress: userAddress } = await getAuthenticatedUser();
+        if (!userAddress) {
+          throw new UnauthorizedError('User address is required for authentication');
+        }
+        return await PropertyController.createProperty(validatedBody!, userAddress);
+      } catch (error) {
+        const errorResponse = handleError(error);
+        set.status = errorResponse.statusCode;
+        return errorResponse;
       }
-      return await PropertyController.createProperty(validatedBody!, userAddress);
-    } catch (error) {
-      const errorResponse = handleError(error);
-      set.status = errorResponse.statusCode;
-      return errorResponse;
-    }
-  },
-  { beforeHandle: [rateLimit()] },
-);
+    },
+    { beforeHandle: [rateLimit()] },
+  );
 
 // PUT /properties/:id - update property
 const updatePropertyRoute = new Elysia()
@@ -141,25 +144,28 @@ const deletePropertyRoute = new Elysia()
   });
 
 // POST /properties/:id/tokenize - tokenize property
-const tokenizePropertyRoute = new Elysia().use(authPlugin).use(validateParams(uuidParamSchema)).post(
-  '/:id/tokenize',
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async ({ validatedParams, body, set, getAuthenticatedUser }: any) => {
-    try {
-      const { walletAddress: userAddress } = await getAuthenticatedUser();
-      return await PropertyController.tokenizeProperty(
-        validatedParams!.id,
-        body as unknown,
-        userAddress,
-      );
-    } catch (error) {
-      const errorResponse = handleError(error);
-      set.status = errorResponse.statusCode;
-      return errorResponse;
-    }
-  },
-  { beforeHandle: [rateLimit()] },
-);
+const tokenizePropertyRoute = new Elysia()
+  .use(authPlugin)
+  .use(validateParams(uuidParamSchema))
+  .post(
+    '/:id/tokenize',
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async ({ validatedParams, body, set, getAuthenticatedUser }: any) => {
+      try {
+        const { walletAddress: userAddress } = await getAuthenticatedUser();
+        return await PropertyController.tokenizeProperty(
+          validatedParams!.id,
+          body as unknown,
+          userAddress,
+        );
+      } catch (error) {
+        const errorResponse = handleError(error);
+        set.status = errorResponse.statusCode;
+        return errorResponse;
+      }
+    },
+    { beforeHandle: [rateLimit()] },
+  );
 
 // POST /properties/:id/buy-shares - buy property shares
 const buySharesRoute = new Elysia()

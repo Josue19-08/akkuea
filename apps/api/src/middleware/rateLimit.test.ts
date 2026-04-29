@@ -202,8 +202,6 @@ describe('rateLimit middleware', () => {
 
       expect(result2).toBeUndefined();
     });
-
-
   });
 
   describe('Retry-After header', () => {

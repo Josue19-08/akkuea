@@ -15,7 +15,7 @@ describe('Auth Routes Integration Tests', () => {
       jwt({
         name: 'jwt',
         secret: 'test-secret',
-      })
+      }),
     )
     .use(authRoutes);
 
@@ -27,27 +27,30 @@ describe('Auth Routes Integration Tests', () => {
     stellarAddress = keypair.publicKey();
     // Clear any leftover challenges between tests
     challengeStore.clear();
-    spyOn(userRepository, 'getOrCreateByWallet').mockImplementation(async (address) => ({
-      id: 'mock-user-id',
-      walletAddress: address,
-      displayName: 'Mock User',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any));
+    spyOn(userRepository, 'getOrCreateByWallet').mockImplementation(
+      async (address) =>
+        ({
+          id: 'mock-user-id',
+          walletAddress: address,
+          displayName: 'Mock User',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        }) as any,
+    );
   });
 
   it('POST /auth/challenge should return a nonce', async () => {
-    console.log("stellarAddress:", stellarAddress);
+    console.log('stellarAddress:', stellarAddress);
     const response = await app.handle(
       new Request('http://localhost/auth/challenge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stellarAddress }),
-      })
+      }),
     );
 
-    const data = await response.json() as { nonce: string, expiresAt: number };
+    const data = (await response.json()) as { nonce: string; expiresAt: number };
     if (response.status !== 200) console.log(data);
     expect(response.status).toBe(200);
     expect(data.nonce).toBeDefined();
@@ -62,9 +65,9 @@ describe('Auth Routes Integration Tests', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stellarAddress }),
-      })
+      }),
     );
-    const { nonce } = await challengeRes.json() as { nonce: string };
+    const { nonce } = (await challengeRes.json()) as { nonce: string };
 
     // 2. Sign challenge
     const signatureBuffer = keypair.sign(Buffer.from(nonce));
@@ -76,12 +79,12 @@ describe('Auth Routes Integration Tests', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stellarAddress, signature }),
-      })
+      }),
     );
 
     expect(sessionRes.status).toBe(200);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const sessionData = await sessionRes.json() as { token: string, user: any };
+    const sessionData = (await sessionRes.json()) as { token: string; user: any };
     expect(sessionData.token).toBeDefined();
     expect(sessionData.user.walletAddress).toBe(stellarAddress);
   });
@@ -93,9 +96,9 @@ describe('Auth Routes Integration Tests', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stellarAddress }),
-      })
+      }),
     );
-    const { nonce } = await challengeRes.json() as { nonce: string };
+    const { nonce } = (await challengeRes.json()) as { nonce: string };
 
     // 2. Sign with a DIFFERENT key
     const badKeypair = Keypair.random();
@@ -108,7 +111,7 @@ describe('Auth Routes Integration Tests', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stellarAddress, signature: badSignature }),
-      })
+      }),
     );
 
     expect(sessionRes.status).toBe(401);
@@ -123,7 +126,7 @@ describe('Auth Routes Integration Tests', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stellarAddress, signature }),
-      })
+      }),
     );
 
     expect(sessionRes.status).toBe(401);
@@ -136,9 +139,9 @@ describe('Auth Routes Integration Tests', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stellarAddress }),
-      })
+      }),
     );
-    const { nonce } = await challengeRes.json() as { nonce: string };
+    const { nonce } = (await challengeRes.json()) as { nonce: string };
 
     // 2. Manually expire the stored challenge by setting expiresAt in the past
     challengeStore.set(stellarAddress, { nonce, expiresAt: Date.now() - 1000 });
@@ -153,11 +156,11 @@ describe('Auth Routes Integration Tests', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stellarAddress, signature }),
-      })
+      }),
     );
 
     expect(sessionRes.status).toBe(401);
-    const body = await sessionRes.json() as { error: string };
+    const body = (await sessionRes.json()) as { error: string };
     expect(body.error).toBe('CHALLENGE_EXPIRED');
   });
 
@@ -168,9 +171,9 @@ describe('Auth Routes Integration Tests', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stellarAddress }),
-      })
+      }),
     );
-    const { nonce } = await challengeRes.json() as { nonce: string };
+    const { nonce } = (await challengeRes.json()) as { nonce: string };
 
     // 2. Sign and verify (first use — should succeed)
     const signatureBuffer = keypair.sign(Buffer.from(nonce));
@@ -181,7 +184,7 @@ describe('Auth Routes Integration Tests', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stellarAddress, signature }),
-      })
+      }),
     );
     expect(firstRes.status).toBe(200);
 
@@ -191,11 +194,11 @@ describe('Auth Routes Integration Tests', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stellarAddress, signature }),
-      })
+      }),
     );
 
     expect(secondRes.status).toBe(401);
-    const body = await secondRes.json() as { error: string };
+    const body = (await secondRes.json()) as { error: string };
     expect(body.error).toBe('CHALLENGE_NOT_FOUND');
   });
 
@@ -205,7 +208,7 @@ describe('Auth Routes Integration Tests', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stellarAddress: 'INVALID_ADDRESS' }),
-      })
+      }),
     );
 
     expect(sessionRes.status).toBe(400);

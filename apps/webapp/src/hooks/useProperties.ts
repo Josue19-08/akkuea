@@ -85,7 +85,6 @@ export function useProperties(
     return () => clearTimeout(timer);
   }, [fetchProperties]);
 
-
   const refetch = useCallback(async () => {
     await fetchProperties();
     refresh();

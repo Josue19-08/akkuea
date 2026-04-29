@@ -88,7 +88,11 @@ export class OracleService {
   }
 
   // REQ-005: Flag a valuation for manual review
-  static async flagForManualReview(id: string, propertyId: string, reason: string): Promise<ValuationRecord> {
+  static async flagForManualReview(
+    id: string,
+    propertyId: string,
+    reason: string,
+  ): Promise<ValuationRecord> {
     const updated = await ValuationRepository.updateStatus(id, propertyId, 'manual_review', reason);
     if (!updated) {
       throw new Error(`Valuation ${id} not found for property ${propertyId}`);

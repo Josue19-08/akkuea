@@ -13,6 +13,7 @@
     "test:ci": "bun test --max-concurrency=1",
     "lint": "eslint .",
     "format": "prettier --write \"src/**/*.{ts,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,json}\"",
     "type-check": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "bun run src/db/migrate.ts",

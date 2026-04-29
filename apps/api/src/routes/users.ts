@@ -34,7 +34,6 @@ export const userRoutes = new Elysia({ prefix: '/users' })
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   .post('/', async (ctx: any) => UserController.create(ctx))
 
-
   // GET /users/:id - Get user by ID
   .use(validate({ params: uuidParamSchema }))
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -51,7 +50,7 @@ export const userRoutes = new Elysia({ prefix: '/users' })
   .post('/auth', async (ctx: any) => UserController.authenticateByWallet(ctx), {
     beforeHandle: [rateLimit()],
   })
-  
+
   // Protected Routes
   .use(authPlugin)
   // GET /users/me - Get current user profile
