@@ -1,59 +1,76 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { afterEach, beforeEach, describe, expect, it, spyOn, mock } from 'bun:test';
-
-// Mock the DB module BEFORE importing any internal files to override the Proxy export
-export let mockTxImpl: any = null;
-mock.module('../db', () => ({
-  db: {
-    transaction: async (fn: any) => {
-      if (mockTxImpl) return mockTxImpl(fn);
-      return fn({});
-    }
-  }
-}));
-
+import { afterEach, beforeEach, describe, expect, it, beforeAll } from 'bun:test';
 import { PropertyController } from '../controllers/PropertyController';
 import { stellarService } from '../services/StellarService';
 import { propertyRepository } from '../repositories/PropertyRepository';
 import { userRepository } from '../repositories/UserRepository';
+import { db } from '../db';
+import { properties, shareOwnerships, transactions } from '../db/schema';
+import { eq, and } from 'drizzle-orm';
 
-const PROPERTY_ID = '11111111-1111-1111-1111-111111111111';
-const BUYER_ADDRESS = 'GBUYERADDRESSXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
-const OWNER_ADDRESS = 'GOWNERADDRESSXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
-const CONTRACT_ID = 'CXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
-const ADMIN_PUBLIC_KEY = 'GADMINADDRESSXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
-const ADMIN_SECRET = 'SADMINSECRETXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
-
-let originalMintPropertyShares: any;
-let originalGetMintingConfig: any;
-
-beforeEach(() => {
-  originalMintPropertyShares = stellarService.mintPropertyShares;
-  originalGetMintingConfig = stellarService.getMintingConfig;
-});
-
-afterEach(() => {
-  (stellarService as any).mintPropertyShares = originalMintPropertyShares;
-  (stellarService as any).getMintingConfig = originalGetMintingConfig;
-  // spyOn automatically restores mocks if using bun:test's mock.restore() or similar, 
-  // but we can just let spyOn do its thing if we use it correctly.
-});
-
-// Skip tests if DATABASE_URL is not set
 const skipIfNoDatabase = !process.env.DATABASE_URL;
 
 describe.skipIf(skipIfNoDatabase)('PropertyController.buyShares', () => {
+  const propertyOwnerAddress = 'GOWNERADDRESSXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+  const buyerAddress = 'GBUYERADDRESSXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+  let propertyId: string;
+  let buyerId: string;
+
+  let originalMintPropertyShares: any;
+  let originalGetMintingConfig: any;
+
+  beforeAll(async () => {
+    if (skipIfNoDatabase) return;
+    
+    // Create users
+    const owner = await userRepository.getOrCreateByWallet(propertyOwnerAddress);
+    const buyer = await userRepository.getOrCreateByWallet(buyerAddress);
+    buyerId = buyer.id;
+
+    // Create property
+    const prop = await propertyRepository.create({
+      name: 'Test Buy Shares Property',
+      description: 'Test description long enough',
+      propertyType: 'residential',
+      location: { address: '123', city: 'A', country: 'B' },
+      totalValue: '100000',
+      totalShares: 10,
+      availableShares: 10,
+      pricePerShare: '100.00',
+      images: ['img'],
+      verified: true,
+      ownerId: owner.id,
+    });
+    
+    // Tokenize it so we can buy shares
+    await db.update(properties).set({
+      tokenAddress: 'CXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+      sorobanPropertyId: 1
+    }).where(eq(properties.id, prop.id));
+    
+    propertyId = prop.id;
+  });
+
+  beforeEach(() => {
+    originalMintPropertyShares = stellarService.mintPropertyShares;
+    originalGetMintingConfig = stellarService.getMintingConfig;
+  });
+
+  afterEach(() => {
+    (stellarService as any).mintPropertyShares = originalMintPropertyShares;
+    (stellarService as any).getMintingConfig = originalGetMintingConfig;
+  });
+
   it('submits a real Soroban transaction and returns the Horizon hash', async () => {
     let mintParams: any = {};
 
     (stellarService as any).getMintingConfig = () => ({
-      contractId: CONTRACT_ID,
-      adminPublicKey: ADMIN_PUBLIC_KEY,
-      adminSecret: ADMIN_SECRET,
+      contractId: 'CXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+      adminPublicKey: 'GADMINADDRESSXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+      adminSecret: 'SADMINSECRETXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
     });
 
     (stellarService as any).mintPropertyShares = async (params: any) => {
-      console.log('MOCK stellarService.mintPropertyShares CALLED');
       mintParams = params;
       return {
         txHash: 'a'.repeat(64),
@@ -61,118 +78,53 @@ describe.skipIf(skipIfNoDatabase)('PropertyController.buyShares', () => {
       };
     };
 
-    let capturedInsert: any = {};
-
-    mockTxImpl = async (fn: any) => {
-      const mockTx = {
-        select: () => {
-          return { from: () => ({ where: () => ({ limit: async () => [] }) }) };
-        },
-        update: () => {
-          return {
-            set: () => ({
-              where: () => ({ returning: async () => [{ availableShares: 8 }] }),
-            }),
-          };
-        },
-        insert: () => {
-          return {
-            values: (vals: any) => {
-              capturedInsert = vals;
-              const res = [{ shares: 2 }];
-              return Object.assign(Promise.resolve(res), {
-                returning: async () => res,
-              });
-            },
-          };
-        },
-      };
-      return fn(mockTx);
-    };
-
-    spyOn(propertyRepository, 'findById').mockResolvedValue({
-      id: PROPERTY_ID,
-      ownerId: OWNER_ADDRESS,
-      availableShares: 10,
-      pricePerShare: '100.00',
-      tokenAddress: CONTRACT_ID,
-      sorobanPropertyId: 1,
-    } as any);
-
-    spyOn(userRepository, 'getOrCreateByWallet').mockResolvedValue({
-      id: 'buyer-id',
-      walletAddress: BUYER_ADDRESS,
-    } as any);
-
-    spyOn(userRepository, 'findById').mockResolvedValue({
-      id: 'owner-id',
-      walletAddress: OWNER_ADDRESS,
-    } as any);
-
-    let result: any;
-    try {
-      result = await PropertyController.buyShares(PROPERTY_ID, {
-        buyer: BUYER_ADDRESS,
-        shares: 2,
-      }, BUYER_ADDRESS);
-    } catch (error: any) {
-      console.error('BUY SHARES THREW ERROR:', error?.stack || error);
-      throw error;
-    }
+    const result = await PropertyController.buyShares(propertyId, {
+      buyer: buyerAddress,
+      shares: 2,
+    }, buyerAddress);
 
     expect(result.transactionHash).toBe('a'.repeat(64));
     expect(result.newBalance).toBe(2);
+    
     expect(mintParams).toEqual({
-      contractId: CONTRACT_ID,
-      adminPublicKey: ADMIN_PUBLIC_KEY,
-      adminSecret: ADMIN_SECRET,
+      contractId: 'CXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+      adminPublicKey: 'GADMINADDRESSXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+      adminSecret: 'SADMINSECRETXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
       sorobanPropertyId: 1,
-      recipient: BUYER_ADDRESS,
+      recipient: buyerAddress,
       amount: 2,
     });
-    expect(capturedInsert.hash).toBe('a'.repeat(64));
-    expect(capturedInsert.status).toBe('confirmed');
+
+    // verify DB state
+    const prop = await propertyRepository.findById(propertyId);
+    expect(prop!.availableShares).toBe(8);
+    
+    const [ownership] = await db.select().from(shareOwnerships).where(and(eq(shareOwnerships.propertyId, propertyId), eq(shareOwnerships.ownerId, buyerId)));
+    expect(ownership.shares).toBe(2);
+
+    const [tx] = await db.select().from(transactions).where(eq(transactions.hash, 'a'.repeat(64)));
+    expect(tx.status).toBe('confirmed');
+    expect(tx.amount).toBe('200.00'); // 2 shares * 100.00
   });
 
   it('does not persist a pending transaction when Soroban submission fails', async () => {
     (stellarService as any).getMintingConfig = () => ({
-      contractId: CONTRACT_ID,
-      adminPublicKey: ADMIN_PUBLIC_KEY,
-      adminSecret: ADMIN_SECRET,
+      contractId: 'CXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+      adminPublicKey: 'GADMINADDRESSXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+      adminSecret: 'SADMINSECRETXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
     });
 
     (stellarService as any).mintPropertyShares = async () => {
       throw new Error('Soroban submission failed');
     };
 
-    let dbTransactionCalled = false;
-    mockTxImpl = async () => {
-      dbTransactionCalled = true;
-      return { newBalance: 0 };
-    };
-
-    spyOn(propertyRepository, 'findById').mockResolvedValue({
-      id: PROPERTY_ID,
-      ownerId: OWNER_ADDRESS,
-      availableShares: 10,
-      pricePerShare: '100.00',
-      tokenAddress: CONTRACT_ID,
-      sorobanPropertyId: 1,
-    } as any);
-
-    spyOn(userRepository, 'getOrCreateByWallet').mockResolvedValue({
-      id: 'buyer-id',
-      walletAddress: BUYER_ADDRESS,
-    } as any);
-
-    spyOn(userRepository, 'findById').mockResolvedValue({
-      id: 'owner-id',
-      walletAddress: OWNER_ADDRESS,
-    } as any);
-
     await expect(
-      PropertyController.buyShares(PROPERTY_ID, { buyer: BUYER_ADDRESS, shares: 2 }, BUYER_ADDRESS),
+      PropertyController.buyShares(propertyId, { buyer: buyerAddress, shares: 2 }, buyerAddress),
     ).rejects.toThrow('Soroban submission failed');
-    expect(dbTransactionCalled).toBe(false);
+
+    // Verify DB state unchanged from previous test
+    const prop = await propertyRepository.findById(propertyId);
+    expect(prop!.availableShares).toBe(8);
   });
 });
+
