@@ -11,7 +11,7 @@ export const valuations = pgTable(
     sourceName: varchar('source_name', { length: 255 }).notNull(),
     price: decimal('price', { precision: 20, scale: 2 }).notNull(),
     currency: varchar('currency', { length: 10 }).notNull(),
-    confidence: decimal('confidence', { precision: 5, scale: 4 }).notNull(),
+    confidence: decimal('confidence', { precision: 7, scale: 4 }).notNull(),
     methodology: varchar('methodology', { length: 64 }).notNull(),
     status: varchar('status', { length: 32 }).notNull().default('active'),
     rejectionReason: text('rejection_reason'),

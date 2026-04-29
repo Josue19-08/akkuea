@@ -40,7 +40,8 @@ export class ValuationRepository {
         provenance: record.provenance,
         metadata: record.metadata,
         timestamp: record.timestamp instanceof Date ? record.timestamp : new Date(record.timestamp),
-        receivedAt: record.receivedAt instanceof Date ? record.receivedAt : new Date(record.receivedAt),
+        receivedAt:
+          record.receivedAt instanceof Date ? record.receivedAt : new Date(record.receivedAt),
       })
       .onConflictDoUpdate({
         target: valuations.id,

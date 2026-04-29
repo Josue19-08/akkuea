@@ -72,7 +72,9 @@ function queueToStatuses(queue: OperationsQueue): PropertyReviewStatus[] | undef
   }
 }
 
-async function valuationSummary(propertyId: string): Promise<{ state: string; record?: ValuationRecord }> {
+async function valuationSummary(
+  propertyId: string,
+): Promise<{ state: string; record?: ValuationRecord }> {
   try {
     const record = await OracleService.getLatestValuation(propertyId);
     if (record.status === 'manual_review') {
@@ -118,37 +120,39 @@ export class OperationalPropertyController {
       result.data.map((p) => p.id),
     );
 
-    const data: OperationalPropertyListItem[] = await Promise.all(result.data.map(async (p) => {
-      const wallet = p.ownerWalletAddress;
-      const v = await valuationSummary(p.id);
-      const kycApproved = p.ownerKycStatus === 'approved';
+    const data: OperationalPropertyListItem[] = await Promise.all(
+      result.data.map(async (p) => {
+        const wallet = p.ownerWalletAddress;
+        const v = await valuationSummary(p.id);
+        const kycApproved = p.ownerKycStatus === 'approved';
 
-      return {
-        id: p.id,
-        name: p.name,
-        propertyType: p.propertyType,
-        city: p.location.city,
-        country: p.location.country,
-        reviewStatus: p.reviewStatus,
-        verified: p.verified,
-        ownerWallet: wallet,
-        ownerKycStatus: p.ownerKycStatus,
-        ownerKycTier: p.ownerKycTier,
-        tokenized: Boolean(p.tokenAddress),
-        sorobanPropertyId: p.sorobanPropertyId ?? null,
-        valuationState: v.state,
-        documentCount: docCounts[p.id] ?? 0,
-        readiness: {
-          kycApproved,
-          valuationActive: v.state === 'active',
-          hasTokenAddress: Boolean(p.tokenAddress),
-        },
-        lastReviewedAt: p.lastReviewedAt?.toISOString() ?? null,
-        lastReviewerWallet: p.lastReviewerWallet ?? null,
-        lastReviewNote: p.lastReviewNote ?? null,
-        listedAt: p.listedAt.toISOString(),
-      };
-    }));
+        return {
+          id: p.id,
+          name: p.name,
+          propertyType: p.propertyType,
+          city: p.location.city,
+          country: p.location.country,
+          reviewStatus: p.reviewStatus,
+          verified: p.verified,
+          ownerWallet: wallet,
+          ownerKycStatus: p.ownerKycStatus,
+          ownerKycTier: p.ownerKycTier,
+          tokenized: Boolean(p.tokenAddress),
+          sorobanPropertyId: p.sorobanPropertyId ?? null,
+          valuationState: v.state,
+          documentCount: docCounts[p.id] ?? 0,
+          readiness: {
+            kycApproved,
+            valuationActive: v.state === 'active',
+            hasTokenAddress: Boolean(p.tokenAddress),
+          },
+          lastReviewedAt: p.lastReviewedAt?.toISOString() ?? null,
+          lastReviewerWallet: p.lastReviewerWallet ?? null,
+          lastReviewNote: p.lastReviewNote ?? null,
+          listedAt: p.listedAt.toISOString(),
+        };
+      }),
+    );
 
     return { data, pagination: result.pagination };
   }

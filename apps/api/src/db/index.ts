@@ -51,9 +51,9 @@ function getClient() {
 // on the target object and is returned before touching the real DB connection.
 const _dbTarget: Record<string | symbol, unknown> = {};
 export const db = new Proxy(_dbTarget as unknown as ReturnType<typeof drizzle<typeof schema>>, {
-  get(target, prop) {
-    if (Object.prototype.hasOwnProperty.call(target, prop)) {
-      return target[prop as string];
+  get(_target, prop) {
+    if (Object.prototype.hasOwnProperty.call(_dbTarget, prop)) {
+      return _dbTarget[prop];
     }
     const instance = getDb();
     if (!instance) return undefined;
@@ -61,8 +61,8 @@ export const db = new Proxy(_dbTarget as unknown as ReturnType<typeof drizzle<ty
     // Bind functions to preserve 'this' context
     return typeof value === 'function' ? value.bind(instance) : value;
   },
-  set(target, prop, value) {
-    target[prop as string] = value;
+  set(_target, prop, value) {
+    _dbTarget[prop] = value;
     return true;
   },
 });

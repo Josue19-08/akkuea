@@ -9,7 +9,7 @@ export const authPlugin = new Elysia()
     jwt({
       name: 'jwt',
       secret: JWT_SECRET,
-    })
+    }),
   )
   .derive({ as: 'global' }, ({ jwt, headers }) => {
     return {
@@ -30,6 +30,6 @@ export const authPlugin = new Elysia()
           id: payload.id as string,
           walletAddress: payload.walletAddress as string,
         };
-      }
+      },
     };
   });

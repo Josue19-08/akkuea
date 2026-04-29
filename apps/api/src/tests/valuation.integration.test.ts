@@ -78,11 +78,7 @@ describe('ValuationRepository integration', () => {
 
     // Simulate "restart": clear module-level state by re-importing via a fresh query
     // (the db proxy always goes to Postgres, so this is equivalent to a new process read)
-    const [row] = await db
-      .select()
-      .from(valuations)
-      .where(eq(valuations.id, record.id))
-      .limit(1);
+    const [row] = await db.select().from(valuations).where(eq(valuations.id, record.id)).limit(1);
 
     expect(row).toBeDefined();
     expect(Number(row!.price)).toBe(500_000);
@@ -95,7 +91,11 @@ describe('ValuationRepository integration', () => {
     }
 
     const propertyId = `prop-latest-${Date.now()}`;
-    const older = makeRecord({ propertyId, price: 300_000, timestamp: new Date(Date.now() - 5000) });
+    const older = makeRecord({
+      propertyId,
+      price: 300_000,
+      timestamp: new Date(Date.now() - 5000),
+    });
     const newer = makeRecord({ propertyId, price: 350_000, timestamp: new Date() });
     savedIds.push(older.id, newer.id);
 

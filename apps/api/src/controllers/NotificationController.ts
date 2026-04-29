@@ -25,7 +25,9 @@ export class NotificationController {
   /**
    * Get notifications for authenticated user
    */
-  static async getUserNotifications(ctx: Context<{ query: { limit?: string; offset?: string } }>): Promise<Response> {
+  static async getUserNotifications(
+    ctx: Context<{ query: { limit?: string; offset?: string } }>,
+  ): Promise<Response> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { id: userId } = await (ctx as any).getAuthenticatedUser();
 

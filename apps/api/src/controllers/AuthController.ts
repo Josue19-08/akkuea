@@ -45,7 +45,7 @@ export class AuthController {
    */
   static async verifySession(ctx: Context): Promise<Response> {
     const { stellarAddress, signature } = ctx.body as { stellarAddress: string; signature: string };
-    
+
     // Using any for the jwt method provided by the @elysiajs/jwt plugin
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const jwt = (ctx as any).jwt;
@@ -71,12 +71,12 @@ export class AuthController {
 
     try {
       const keypair = Keypair.fromPublicKey(stellarAddress);
-      // signature is usually base64 or hex encoded in API requests. Assuming hex or base64. 
+      // signature is usually base64 or hex encoded in API requests. Assuming hex or base64.
       // The client signs the nonce (string). We need to verify it.
       // Usually signature is passed as base64 string.
       const isValid = keypair.verify(
         Buffer.from(challenge.nonce),
-        Buffer.from(signature, 'base64')
+        Buffer.from(signature, 'base64'),
       );
 
       if (!isValid) {
@@ -96,7 +96,7 @@ export class AuthController {
     const token = await jwt.sign({
       id: user.id,
       walletAddress: user.walletAddress,
-      exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24), // 24 hours
+      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24, // 24 hours
     });
 
     return this.jsonResponse({
@@ -105,7 +105,7 @@ export class AuthController {
         id: user.id,
         walletAddress: user.walletAddress,
         displayName: user.displayName,
-      }
+      },
     });
   }
 }
