@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                              |
-| --------------- | -------------------------------------------------- |
-| Issue ID        | C4-016                                             |
-| Area            | SHARED                                             |
-| Difficulty      | Medium                                             |
-| Labels          | shared, stellar, contracts, medium                 |
-| Dependencies    | None                                               |
-| Estimated Lines | 50-100                                             |
+| Attribute       | Value                              |
+| --------------- | ---------------------------------- |
+| Issue ID        | C4-016                             |
+| Area            | SHARED                             |
+| Difficulty      | Medium                             |
+| Labels          | shared, stellar, contracts, medium |
+| Dependencies    | None                               |
+| Estimated Lines | 50-100                             |
 
 ## Overview
 
@@ -66,20 +66,20 @@ Create two files under `apps/shared/src/`:
 In `apps/shared/src/constants/index.ts`, replace the hardcoded empty strings with values derived from the JSON files. Use a simple conditional based on an environment variable:
 
 ```typescript
-import testnetContracts from '../contracts.testnet.json';
-import mainnetContracts from '../contracts.mainnet.json';
+import testnetContracts from "../contracts.testnet.json";
+import mainnetContracts from "../contracts.mainnet.json";
 
-const network = process.env.STELLAR_NETWORK ?? 'testnet';
-const contracts = network === 'mainnet' ? mainnetContracts : testnetContracts;
+const network = process.env.STELLAR_NETWORK ?? "testnet";
+const contracts = network === "mainnet" ? mainnetContracts : testnetContracts;
 
 export const CONTRACT_IDS = {
   REAL_ESTATE_TOKEN: {
-    TESTNET: testnetContracts.contracts.REAL_ESTATE_TOKEN.contractId ?? '',
-    MAINNET: mainnetContracts.contracts.REAL_ESTATE_TOKEN.contractId ?? '',
+    TESTNET: testnetContracts.contracts.REAL_ESTATE_TOKEN.contractId ?? "",
+    MAINNET: mainnetContracts.contracts.REAL_ESTATE_TOKEN.contractId ?? "",
   },
   DEFI_LENDING: {
-    TESTNET: testnetContracts.contracts.DEFI_LENDING.contractId ?? '',
-    MAINNET: mainnetContracts.contracts.DEFI_LENDING.contractId ?? '',
+    TESTNET: testnetContracts.contracts.DEFI_LENDING.contractId ?? "",
+    MAINNET: mainnetContracts.contracts.DEFI_LENDING.contractId ?? "",
   },
 } as const;
 ```
@@ -117,10 +117,10 @@ Update `docs/contracts/deployment.md` with a deployment log entry:
 ```markdown
 ## Testnet Deployment - 2026-05-XX
 
-| Contract         | Contract ID | Transaction Hash | Deployer |
-| ---------------- | ----------- | ---------------- | -------- |
+| Contract          | Contract ID | Transaction Hash | Deployer |
+| ----------------- | ----------- | ---------------- | -------- |
 | REAL_ESTATE_TOKEN | CXXX...     | txhash...        | GXXX...  |
-| DEFI_LENDING     | CXXX...     | txhash...        | GXXX...  |
+| DEFI_LENDING      | CXXX...     | txhash...        | GXXX...  |
 ```
 
 ## TypeScript Configuration

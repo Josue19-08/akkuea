@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                              |
-| --------------- | -------------------------------------------------- |
-| Issue ID        | C4-015                                             |
-| Area            | SHARED                                             |
-| Difficulty      | High                                               |
-| Labels          | shared, stellar, backend, high                     |
-| Dependencies    | None                                               |
-| Estimated Lines | 200-350                                            |
+| Attribute       | Value                          |
+| --------------- | ------------------------------ |
+| Issue ID        | C4-015                         |
+| Area            | SHARED                         |
+| Difficulty      | High                           |
+| Labels          | shared, stellar, backend, high |
+| Dependencies    | None                           |
+| Estimated Lines | 200-350                        |
 
 ## Overview
 
@@ -50,11 +50,15 @@ Example structure for the real estate token contract:
 
 ```typescript
 // apps/shared/src/contracts/realEstateToken.ts
-import type { SorobanClient } from 'quasar'; // adjust per actual API
+import type { SorobanClient } from "quasar"; // adjust per actual API
 
 export interface RealEstateTokenClient {
   mint: (params: { to: string; shares: bigint }) => Promise<void>;
-  transfer: (params: { from: string; to: string; shares: bigint }) => Promise<void>;
+  transfer: (params: {
+    from: string;
+    to: string;
+    shares: bigint;
+  }) => Promise<void>;
   balanceOf: (params: { address: string }) => Promise<bigint>;
   totalShares: () => Promise<bigint>;
 }
@@ -67,7 +71,7 @@ export function createRealEstateTokenClient(params: {
 }): RealEstateTokenClient {
   // Initialize using Quasar's client factory
   // Follow Quasar's actual API from the documentation
-  throw new Error('Implement using Quasar API');
+  throw new Error("Implement using Quasar API");
 }
 ```
 
@@ -96,9 +100,9 @@ After the typed clients are created, refactor `StellarService.ts` to use them in
 Add the new clients to `apps/shared/src/index.ts`:
 
 ```typescript
-export { createRealEstateTokenClient } from './contracts/realEstateToken';
-export { createDefiLendingClient } from './contracts/defiLending';
-export type { RealEstateTokenClient, DefiLendingClient } from './contracts';
+export { createRealEstateTokenClient } from "./contracts/realEstateToken";
+export { createDefiLendingClient } from "./contracts/defiLending";
+export type { RealEstateTokenClient, DefiLendingClient } from "./contracts";
 ```
 
 ## Testing

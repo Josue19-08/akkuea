@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                      |
-| --------------- | ------------------------------------------ |
-| Issue ID        | C4-006                                     |
-| Area            | API                                        |
-| Difficulty      | Trivial                                    |
-| Labels          | backend, bug, trivial                      |
-| Dependencies    | None                                       |
-| Estimated Lines | 2-10                                       |
+| Attribute       | Value                 |
+| --------------- | --------------------- |
+| Issue ID        | C4-006                |
+| Area            | API                   |
+| Difficulty      | Trivial               |
+| Labels          | backend, bug, trivial |
+| Dependencies    | None                  |
+| Estimated Lines | 2-10                  |
 
 ## Overview
 
@@ -20,7 +20,7 @@
 Open `apps/api/src/index.ts`. At the top of the file, add the import alongside the other route imports:
 
 ```typescript
-import { notificationsRoutes } from './routes/notifications';
+import { notificationsRoutes } from "./routes/notifications";
 ```
 
 Then add the route to the application chain. Following the existing pattern:
@@ -54,8 +54,10 @@ Before the fix, this returns 404. After the fix, it returns 200 or 401 depending
 Add a test to confirm the route is reachable. In `apps/api/src/tests/` or alongside the existing route tests, add:
 
 ```typescript
-it('GET /notifications returns 401 without auth', async () => {
-  const response = await app.handle(new Request('http://localhost/notifications'));
+it("GET /notifications returns 401 without auth", async () => {
+  const response = await app.handle(
+    new Request("http://localhost/notifications"),
+  );
   expect(response.status).toBe(401);
 });
 ```

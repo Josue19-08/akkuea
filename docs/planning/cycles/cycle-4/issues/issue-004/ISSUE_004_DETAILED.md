@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                          |
-| --------------- | ---------------------------------------------- |
-| Issue ID        | C4-004                                         |
-| Area            | SHARED                                         |
-| Difficulty      | Trivial                                        |
-| Labels          | shared, backend, frontend, trivial             |
-| Dependencies    | None                                           |
-| Estimated Lines | 10-20                                          |
+| Attribute       | Value                              |
+| --------------- | ---------------------------------- |
+| Issue ID        | C4-004                             |
+| Area            | SHARED                             |
+| Difficulty      | Trivial                            |
+| Labels          | shared, backend, frontend, trivial |
+| Dependencies    | None                               |
+| Estimated Lines | 10-20                              |
 
 ## Overview
 
@@ -57,10 +57,10 @@ The files that will appear are in `apps/api/src/`. Update each one:
 
 ```typescript
 // Before
-import { Keypair } from 'stellar-sdk';
+import { Keypair } from "stellar-sdk";
 
 // After
-import { Keypair } from '@stellar/stellar-sdk';
+import { Keypair } from "@stellar/stellar-sdk";
 ```
 
 The public API surface of `@stellar/stellar-sdk` is identical to `stellar-sdk` at the same version. No other code changes are needed.

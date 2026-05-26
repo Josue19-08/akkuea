@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                              |
-| --------------- | -------------------------------------------------- |
-| Issue ID        | C5-015                                             |
-| Area            | CONTRACTS                                          |
-| Difficulty      | Medium                                             |
-| Labels          | contracts, medium                                  |
-| Dependencies    | C5-003, C5-004, C5-005, C5-006                     |
-| Estimated Lines | 40-70 (JSON + docs update)                         |
+| Attribute       | Value                          |
+| --------------- | ------------------------------ |
+| Issue ID        | C5-015                         |
+| Area            | CONTRACTS                      |
+| Difficulty      | Medium                         |
+| Labels          | contracts, medium              |
+| Dependencies    | C5-003, C5-004, C5-005, C5-006 |
+| Estimated Lines | 40-70 (JSON + docs update)     |
 
 ## Prerequisites
 

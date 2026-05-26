@@ -38,6 +38,7 @@ All contributors are expected to interact with respect and professionalism. Hara
 This is not a bureaucratic formality. The fork-based workflow gives maintainers visibility into every change, ensures CI runs against all contributions, and keeps the `main` and `develop` branches always in a deployable state.
 
 **The rules:**
+
 - You must fork the repository to your personal GitHub account.
 - All work is done on a branch inside your fork.
 - You open a pull request from your fork's branch into `akkuea/akkuea:develop`.
@@ -132,10 +133,10 @@ git push origin feature/my-feature --force-with-lease
 
 The main repository has two long-lived branches:
 
-| Branch | Purpose |
-|---|---|
-| `develop` | Integration branch. All pull requests target this branch. |
-| `main` | Production-ready releases only. Never target `main` directly. |
+| Branch    | Purpose                                                       |
+| --------- | ------------------------------------------------------------- |
+| `develop` | Integration branch. All pull requests target this branch.     |
+| `main`    | Production-ready releases only. Never target `main` directly. |
 
 When working in your fork, create a short-lived feature branch from `develop` for every piece of work. Name your branch using the following convention:
 
@@ -186,6 +187,7 @@ If anything in the issue is ambiguous, ask for clarification in the issue thread
 Each commit must represent a single, complete, self-contained change. This is the most important commit rule.
 
 An atomic commit:
+
 - Introduces one logical change only.
 - Leaves the codebase in a working, buildable state after it is applied.
 - Can be reverted independently without breaking unrelated functionality.
@@ -194,6 +196,7 @@ An atomic commit:
 **What atomic does not mean:** Atomic does not mean tiny. A commit that refactors a service and updates its corresponding tests is atomic - it is one logical change. A commit that refactors a service, adds a new feature, and fixes an unrelated bug is not atomic - it is three changes bundled together.
 
 Bad commit history (non-atomic):
+
 ```
 WIP
 fix stuff
@@ -203,6 +206,7 @@ final
 ```
 
 Good commit history (atomic):
+
 ```
 feat(api): add collateral validation to lending pool service
 test(api): add unit tests for collateral validation edge cases
@@ -224,27 +228,28 @@ All commit messages must follow the [Conventional Commits](https://www.conventio
 
 **Types:**
 
-| Type | When to use |
-|---|---|
-| `feat` | A new feature or capability |
-| `fix` | A bug fix |
-| `docs` | Documentation changes only (no code) |
-| `refactor` | Code restructuring with no behavior change |
-| `test` | Adding or modifying tests only |
-| `chore` | Tooling, CI, dependency updates, build system |
-| `perf` | A change that improves performance |
-| `style` | Formatting, whitespace (no logic change) |
-| `revert` | Reverting a previous commit |
+| Type       | When to use                                   |
+| ---------- | --------------------------------------------- |
+| `feat`     | A new feature or capability                   |
+| `fix`      | A bug fix                                     |
+| `docs`     | Documentation changes only (no code)          |
+| `refactor` | Code restructuring with no behavior change    |
+| `test`     | Adding or modifying tests only                |
+| `chore`    | Tooling, CI, dependency updates, build system |
+| `perf`     | A change that improves performance            |
+| `style`    | Formatting, whitespace (no logic change)      |
+| `revert`   | Reverting a previous commit                   |
 
 **Scope** (optional but recommended): the workspace or module affected - `api`, `webapp`, `contracts`, `shared`.
 
 **Short description rules:**
+
 - Use the imperative mood: "add endpoint" not "added endpoint" or "adds endpoint"
 - Do not capitalize the first letter
 - Do not end with a period
 - Keep it under 72 characters
 
-**Body** (optional): explain the *why*, not the *what*. The code shows what changed; the body explains why the change was necessary. Include relevant context, constraints, or trade-offs.
+**Body** (optional): explain the _why_, not the _what_. The code shows what changed; the body explains why the change was necessary. Include relevant context, constraints, or trade-offs.
 
 **Footer** (optional): reference the issue this commit addresses using `Closes #<issue-number>` or `Refs #<issue-number>`.
 
@@ -317,7 +322,7 @@ Technical debt is the cost paid later for shortcuts taken now. We do not accept 
 - Write code that can be understood by another engineer six months from now.
 - Function and variable names should describe intent, not implementation.
 - Keep functions short and focused. A function that does two things is a function waiting to be split.
-- Comments should explain *why* something is done, not *what* - the code already shows the what. If you need a comment to explain what a line does, the line should be rewritten to be self-explanatory.
+- Comments should explain _why_ something is done, not _what_ - the code already shows the what. If you need a comment to explain what a line does, the line should be rewritten to be self-explanatory.
 
 ---
 
@@ -364,13 +369,13 @@ cd apps/contracts && cargo test
 
 Akkuea runs five GitHub Actions workflows on every pull request. **All five must pass before a pull request can be merged.** No exceptions.
 
-| Workflow | What it validates |
-|---|---|
-| `monorepo-ci.yml` | Workspace integrity, dependency consistency, cross-workspace type compatibility, security compliance scan |
-| `api-ci.yml` | API lint, type-check, unit and integration tests, build |
-| `webapp-ci.yml` | Webapp lint, type-check, unit tests, build |
-| `shared-ci.yml` | Shared library lint, type-check, build |
-| `contracts-ci.yml` | Rust format (`rustfmt`), linting (`cargo clippy`), unit tests, WASM build |
+| Workflow           | What it validates                                                                                         |
+| ------------------ | --------------------------------------------------------------------------------------------------------- |
+| `monorepo-ci.yml`  | Workspace integrity, dependency consistency, cross-workspace type compatibility, security compliance scan |
+| `api-ci.yml`       | API lint, type-check, unit and integration tests, build                                                   |
+| `webapp-ci.yml`    | Webapp lint, type-check, unit tests, build                                                                |
+| `shared-ci.yml`    | Shared library lint, type-check, build                                                                    |
+| `contracts-ci.yml` | Rust format (`rustfmt`), linting (`cargo clippy`), unit tests, WASM build                                 |
 
 ### Before opening your pull request
 
@@ -458,18 +463,21 @@ Use this checklist in your pull request description. Every item must be checked 
 ### Checklist
 
 #### Workflow & Process
+
 - [ ] This PR targets `develop`, not `main`
 - [ ] My fork is up to date with `upstream/develop`
 - [ ] This PR is linked to an open issue (`Closes #` or `Refs #`)
 - [ ] I have not implemented anything beyond what the issue requested
 
 #### Commits
+
 - [ ] All commits are atomic (one logical change per commit)
 - [ ] All commit messages follow the Conventional Commits format
 - [ ] No WIP, "fix", or "temp" commits in the history
 - [ ] No commented-out code or debug statements in any commit
 
 #### Code Quality
+
 - [ ] No TypeScript errors (`bun run typecheck` passes)
 - [ ] No ESLint errors or warnings (`bun run lint` passes)
 - [ ] No new `any` types without justification
@@ -477,12 +485,14 @@ Use this checklist in your pull request description. Every item must be checked 
 - [ ] No technical debt introduced
 
 #### Tests
+
 - [ ] New functionality is covered by tests
 - [ ] Bug fixes include a regression test
 - [ ] All existing tests pass (`bun run test` passes)
 - [ ] Smart contract changes are covered by Rust tests (`cargo test` passes)
 
 #### CI/CD
+
 - [ ] `monorepo-ci.yml` passes
 - [ ] `api-ci.yml` passes
 - [ ] `webapp-ci.yml` passes
@@ -490,11 +500,13 @@ Use this checklist in your pull request description. Every item must be checked 
 - [ ] `contracts-ci.yml` passes (if contracts were modified)
 
 #### Security
+
 - [ ] No secrets, keys, or credentials in any commit or file
 - [ ] Input validation added for any new API surface
 - [ ] No new dependencies introduced without maintainer awareness
 
 #### Documentation
+
 - [ ] Environment variables added or changed are reflected in `docs/deployment/environment-variables.md`
 - [ ] New API endpoints are reflected in the relevant `docs/api/` file
 - [ ] `README.md` updated if the change affects setup or usage

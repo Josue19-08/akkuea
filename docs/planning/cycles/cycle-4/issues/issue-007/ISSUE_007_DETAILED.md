@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                           |
-| --------------- | ----------------------------------------------- |
-| Issue ID        | C4-007                                          |
-| Area            | REPO                                            |
-| Difficulty      | Medium                                          |
-| Labels          | documentation, trivial                          |
-| Dependencies    | None                                            |
-| Estimated Lines | 80-140                                          |
+| Attribute       | Value                  |
+| --------------- | ---------------------- |
+| Issue ID        | C4-007                 |
+| Area            | REPO                   |
+| Difficulty      | Medium                 |
+| Labels          | documentation, trivial |
+| Dependencies    | None                   |
+| Estimated Lines | 80-140                 |
 
 ## Overview
 
@@ -116,25 +116,25 @@ jobs:
 Create a corresponding `.github/release-drafter.yml` configuration file that maps commit prefixes to changelog categories:
 
 ```yaml
-name-template: 'v$RESOLVED_VERSION'
-tag-template: 'v$RESOLVED_VERSION'
+name-template: "v$RESOLVED_VERSION"
+tag-template: "v$RESOLVED_VERSION"
 categories:
-  - title: 'Security'
+  - title: "Security"
     labels:
-      - 'security'
-  - title: 'New Features'
+      - "security"
+  - title: "New Features"
     labels:
-      - 'enhancement'
-  - title: 'Bug Fixes'
+      - "enhancement"
+  - title: "Bug Fixes"
     labels:
-      - 'bug'
-  - title: 'Dependencies'
+      - "bug"
+  - title: "Dependencies"
     labels:
-      - 'dependencies'
-  - title: 'Documentation'
+      - "dependencies"
+  - title: "Documentation"
     labels:
-      - 'documentation'
-change-template: '- $TITLE (#$NUMBER) @$AUTHOR'
+      - "documentation"
+change-template: "- $TITLE (#$NUMBER) @$AUTHOR"
 ```
 
 ## Initial CHANGELOG.md

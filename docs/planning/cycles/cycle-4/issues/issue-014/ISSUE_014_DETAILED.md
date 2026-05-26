@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                              |
-| --------------- | -------------------------------------------------- |
-| Issue ID        | C4-014                                             |
-| Area            | WEBAPP                                             |
-| Difficulty      | Medium                                             |
-| Labels          | frontend, stellar, medium                          |
-| Dependencies    | C4-012                                             |
-| Estimated Lines | 150-250                                            |
+| Attribute       | Value                     |
+| --------------- | ------------------------- |
+| Issue ID        | C4-014                    |
+| Area            | WEBAPP                    |
+| Difficulty      | Medium                    |
+| Labels          | frontend, stellar, medium |
+| Dependencies    | C4-012                    |
+| Estimated Lines | 150-250                   |
 
 ## Overview
 
@@ -71,7 +71,7 @@ Document the chosen option in the pull request.
 Create `apps/webapp/src/services/wallet/providers/pollar.ts`:
 
 ```typescript
-import type { WalletProvider, WalletAccount } from '../types';
+import type { WalletProvider, WalletAccount } from "../types";
 
 // Pollar's hooks must run inside a React context.
 // This provider is a bridge — actual state comes from PollarWrapper.
@@ -87,17 +87,21 @@ export function setPollarInterface(iface: typeof pollarInterface) {
 }
 
 export const pollarProvider: WalletProvider = {
-  id: 'pollar',
-  name: 'Google, GitHub, or Email',
-  description: 'Sign in with a social account. No wallet extension required.',
-  isAvailable: () => typeof window !== 'undefined',
+  id: "pollar",
+  name: "Google, GitHub, or Email",
+  description: "Sign in with a social account. No wallet extension required.",
+  isAvailable: () => typeof window !== "undefined",
 
   connect: async () => {
-    if (!pollarInterface) throw new Error('Pollar not initialized');
+    if (!pollarInterface) throw new Error("Pollar not initialized");
     await pollarInterface.connect();
     const address = pollarInterface.getAddress();
-    if (!address) throw new Error('Pollar login did not return a Stellar address');
-    return { address, displayName: address.slice(0, 6) + '...' + address.slice(-4) };
+    if (!address)
+      throw new Error("Pollar login did not return a Stellar address");
+    return {
+      address,
+      displayName: address.slice(0, 6) + "..." + address.slice(-4),
+    };
   },
 
   disconnect: async () => {
@@ -105,7 +109,7 @@ export const pollarProvider: WalletProvider = {
   },
 
   signTransaction: async (xdr, _networkPassphrase) => {
-    if (!pollarInterface) throw new Error('Pollar not initialized');
+    if (!pollarInterface) throw new Error("Pollar not initialized");
     // Pollar signs and submits atomically. See Design Note above.
     // If Option A is chosen, this method should throw and callers use submitTransaction instead.
     // If Option B is chosen, call signAndSubmitTx and return the original xdr.
@@ -165,9 +169,9 @@ The `usePollar` hook shape above must be verified against the current Pollar doc
 In `apps/webapp/src/components/Providers.tsx`, add `PollarWrapper` and register the provider:
 
 ```typescript
-import { PollarWrapper } from '@/components/auth/PollarWrapper';
-import { registerProvider } from '@/services/wallet/registry';
-import { pollarProvider } from '@/services/wallet/providers/pollar';
+import { PollarWrapper } from "@/components/auth/PollarWrapper";
+import { registerProvider } from "@/services/wallet/registry";
+import { pollarProvider } from "@/services/wallet/providers/pollar";
 
 registerProvider(pollarProvider);
 

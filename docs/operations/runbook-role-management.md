@@ -10,14 +10,14 @@
 
 All roles are defined in `apps/contracts/contracts/defi-rwa/src/access/roles.rs:8-21`.
 
-| Role | On-chain constant | Capabilities |
-|---|---|---|
-| `Admin` | `Role::Admin` | All operations. Set at deployment, transferred via two-step procedure |
-| `Pauser` | `Role::Pauser` | Call `emergency_pause`, `pause`, `unpause` |
-| `EmergencyGuard` | `Role::EmergencyGuard` | Call `emergency_pause` only |
-| `Oracle` | `Role::Oracle` | Reserved - not enforced in current contract functions |
-| `Verifier` | `Role::Verifier` | Reserved - not enforced in current contract functions |
-| `Liquidator` | `Role::Liquidator` | Reserved - not enforced in current contract functions |
+| Role             | On-chain constant      | Capabilities                                                          |
+| ---------------- | ---------------------- | --------------------------------------------------------------------- |
+| `Admin`          | `Role::Admin`          | All operations. Set at deployment, transferred via two-step procedure |
+| `Pauser`         | `Role::Pauser`         | Call `emergency_pause`, `pause`, `unpause`                            |
+| `EmergencyGuard` | `Role::EmergencyGuard` | Call `emergency_pause` only                                           |
+| `Oracle`         | `Role::Oracle`         | Reserved - not enforced in current contract functions                 |
+| `Verifier`       | `Role::Verifier`       | Reserved - not enforced in current contract functions                 |
+| `Liquidator`     | `Role::Liquidator`     | Reserved - not enforced in current contract functions                 |
 
 > **Note:** Only `Admin` and `EmergencyGuard` have callable contract functions exposed in the current `lib.rs`. `Pauser`, `Oracle`, `Verifier`, and `Liquidator` are defined in the roles enum and stored correctly by `RoleStorage`, but no public contract functions specifically gate on them today (as of the current `lib.rs`). Assign them for future use when those functions are implemented.
 
@@ -117,6 +117,7 @@ stellar contract invoke \
 ```
 
 After this call:
+
 - Old admin role is revoked.
 - New admin role is granted.
 - Pending admin record is cleared.
@@ -139,12 +140,12 @@ stellar contract invoke \
 
 ## Recommended role assignments at launch
 
-| Role | Assign to | Notes |
-|---|---|---|
-| `Admin` | Hardware wallet or multisig account | Keep offline. Used only for pool creation, oracle setup, role management |
-| `EmergencyGuard` | Primary on-call engineer | Can pause without exposing Admin key |
-| `EmergencyGuard` | Secondary on-call engineer | Backup pauser |
-| `Pauser` | Not assigned at launch | Only assign if a dedicated pause-only operator is required |
+| Role             | Assign to                           | Notes                                                                    |
+| ---------------- | ----------------------------------- | ------------------------------------------------------------------------ |
+| `Admin`          | Hardware wallet or multisig account | Keep offline. Used only for pool creation, oracle setup, role management |
+| `EmergencyGuard` | Primary on-call engineer            | Can pause without exposing Admin key                                     |
+| `EmergencyGuard` | Secondary on-call engineer          | Backup pauser                                                            |
+| `Pauser`         | Not assigned at launch              | Only assign if a dedicated pause-only operator is required               |
 
 ---
 

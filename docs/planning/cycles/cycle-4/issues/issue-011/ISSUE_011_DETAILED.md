@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                      |
-| --------------- | ------------------------------------------ |
-| Issue ID        | C4-011                                     |
-| Area            | WEBAPP                                     |
-| Difficulty      | Medium                                     |
-| Labels          | frontend, medium                           |
-| Dependencies    | None                                       |
-| Estimated Lines | 120-200                                    |
+| Attribute       | Value            |
+| --------------- | ---------------- |
+| Issue ID        | C4-011           |
+| Area            | WEBAPP           |
+| Difficulty      | Medium           |
+| Labels          | frontend, medium |
+| Dependencies    | None             |
+| Estimated Lines | 120-200          |
 
 ## Overview
 

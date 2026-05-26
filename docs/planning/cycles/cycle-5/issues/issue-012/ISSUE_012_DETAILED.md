@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                              |
-| --------------- | -------------------------------------------------- |
-| Issue ID        | C5-012                                             |
-| Area            | GAME                                               |
-| Difficulty      | Medium                                             |
-| Labels          | frontend, medium                                   |
-| Dependencies    | C5-007, C5-013                                     |
-| Estimated Lines | 220-300                                            |
+| Attribute       | Value            |
+| --------------- | ---------------- |
+| Issue ID        | C5-012           |
+| Area            | GAME             |
+| Difficulty      | Medium           |
+| Labels          | frontend, medium |
+| Dependencies    | C5-007, C5-013   |
+| Estimated Lines | 220-300          |
 
 ## Component Structure
 
@@ -28,20 +28,24 @@ Shows time remaining until the next rental income epoch. This gives players a re
 
 ```tsx
 // src/components/game/dashboard/EpochProgress.tsx
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 const EPOCH_LENGTH = 100; // ledgers
 
-export function EpochProgress({ lastClaimedLedger }: { lastClaimedLedger: number }) {
+export function EpochProgress({
+  lastClaimedLedger,
+}: {
+  lastClaimedLedger: number;
+}) {
   const [currentLedger, setCurrentLedger] = useState(lastClaimedLedger);
 
   useEffect(() => {
     // Poll current ledger every 10 seconds
     const interval = setInterval(async () => {
       try {
-        const res = await fetch('/api/game/ledger');
+        const res = await fetch("/api/game/ledger");
         const { ledger } = await res.json();
         setCurrentLedger(ledger);
       } catch {}
@@ -68,7 +72,7 @@ export function EpochProgress({ lastClaimedLedger }: { lastClaimedLedger: number
       </div>
       {epochsAccrued > 0 && (
         <p className="mt-2 text-xs text-green-400">
-          {epochsAccrued} epoch{epochsAccrued > 1 ? 's' : ''} ready to claim
+          {epochsAccrued} epoch{epochsAccrued > 1 ? "s" : ""} ready to claim
         </p>
       )}
     </div>
@@ -80,12 +84,12 @@ export function EpochProgress({ lastClaimedLedger }: { lastClaimedLedger: number
 
 ```tsx
 // src/components/game/dashboard/PortfolioSummary.tsx
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useGameWallet } from '@/hooks/useGameWallet';
-import { useLandBalance } from '@/hooks/useLandBalance';
-import { formatLand } from '@/lib/format';
+import { useState } from "react";
+import { useGameWallet } from "@/hooks/useGameWallet";
+import { useLandBalance } from "@/hooks/useLandBalance";
+import { formatLand } from "@/lib/format";
 
 export function PortfolioSummary({
   totalAccruedIncome,
@@ -98,7 +102,10 @@ export function PortfolioSummary({
 }) {
   const { address, signAndSubmitTx } = useGameWallet();
   const { balance, refresh } = useLandBalance(address);
-  const [claimProgress, setClaimProgress] = useState<{ done: number; total: number } | null>(null);
+  const [claimProgress, setClaimProgress] = useState<{
+    done: number;
+    total: number;
+  } | null>(null);
 
   const handleClaimAll = async () => {
     setClaimProgress({ done: 0, total: claimableIds.length });
@@ -130,7 +137,7 @@ export function PortfolioSummary({
       <div>
         <p className="text-xs text-surface-600">LAND Balance</p>
         <p className="mt-1 text-2xl font-bold text-white">
-          {balance != null ? formatLand(balance) : '...'}
+          {balance != null ? formatLand(balance) : "..."}
         </p>
       </div>
       <div>
@@ -143,12 +150,14 @@ export function PortfolioSummary({
         <button
           onClick={handleClaimAll}
           disabled={claimableIds.length === 0 || claimProgress !== null}
-          title={claimableIds.length === 0 ? 'No income to claim yet' : undefined}
+          title={
+            claimableIds.length === 0 ? "No income to claim yet" : undefined
+          }
           className="w-full rounded-xl bg-green-700 py-2.5 text-sm font-semibold text-white hover:bg-green-600 disabled:opacity-50 transition active:scale-95"
         >
           {claimProgress
             ? `Claiming ${claimProgress.done} of ${claimProgress.total}...`
-            : 'Claim All'}
+            : "Claim All"}
         </button>
       </div>
     </div>
@@ -156,7 +165,7 @@ export function PortfolioSummary({
 }
 
 async function buildClaimXdr(_propertyId: string): Promise<string> {
-  return 'placeholder'; // wired in C5-013
+  return "placeholder"; // wired in C5-013
 }
 ```
 
@@ -164,10 +173,10 @@ async function buildClaimXdr(_propertyId: string): Promise<string> {
 
 ```tsx
 // src/components/game/dashboard/OwnedPropertyCard.tsx
-import Link from 'next/link';
-import { tileColor } from '@/lib/tileColors';
-import { formatLand } from '@/lib/format';
-import type { Property } from '@akkuea/shared';
+import Link from "next/link";
+import { tileColor } from "@/lib/tileColors";
+import { formatLand } from "@/lib/format";
+import type { Property } from "@akkuea/shared";
 
 export function OwnedPropertyCard({
   property,
@@ -183,10 +192,10 @@ export function OwnedPropertyCard({
     <Link
       href={`/map?selected=${property.id}`}
       className={[
-        'block rounded-2xl border bg-surface-800 overflow-hidden transition-all',
-        'hover:border-land-500/40 hover:shadow-md hover:-translate-y-0.5',
-        hasIncome ? 'border-green-700/40' : 'border-surface-border',
-      ].join(' ')}
+        "block rounded-2xl border bg-surface-800 overflow-hidden transition-all",
+        "hover:border-land-500/40 hover:shadow-md hover:-translate-y-0.5",
+        hasIncome ? "border-green-700/40" : "border-surface-border",
+      ].join(" ")}
     >
       <div
         className="flex h-14 items-center justify-center text-xl font-black text-white/70"
@@ -195,7 +204,9 @@ export function OwnedPropertyCard({
         {property.level[0].toUpperCase()}
       </div>
       <div className="p-3">
-        <p className="text-xs font-semibold text-white capitalize">{property.level}</p>
+        <p className="text-xs font-semibold text-white capitalize">
+          {property.level}
+        </p>
         <p className="text-xs text-surface-600">
           ({property.coordinates.x}, {property.coordinates.y})
         </p>
@@ -214,15 +225,18 @@ export function OwnedPropertyCard({
 
 ```tsx
 // src/components/game/dashboard/TransactionFeed.tsx
-import type { GameEvent } from '@akkuea/shared';
-import { formatLand } from '@/lib/format';
+import type { GameEvent } from "@akkuea/shared";
+import { formatLand } from "@/lib/format";
 
-const EVENT_CONFIG: Record<GameEvent['type'], { label: string; color: string }> = {
-  PropertyBought:   { label: 'Bought',    color: 'text-land-400' },
-  PropertyListed:   { label: 'Listed',    color: 'text-gold-400' },
-  PropertyImproved: { label: 'Improved',  color: 'text-blue-400' },
-  RentalClaimed:    { label: 'Claimed',   color: 'text-green-400' },
-  ListingCancelled: { label: 'Cancelled', color: 'text-surface-600' },
+const EVENT_CONFIG: Record<
+  GameEvent["type"],
+  { label: string; color: string }
+> = {
+  PropertyBought: { label: "Bought", color: "text-land-400" },
+  PropertyListed: { label: "Listed", color: "text-gold-400" },
+  PropertyImproved: { label: "Improved", color: "text-blue-400" },
+  RentalClaimed: { label: "Claimed", color: "text-green-400" },
+  ListingCancelled: { label: "Cancelled", color: "text-surface-600" },
 };
 
 export function TransactionFeed({
@@ -250,12 +264,15 @@ export function TransactionFeed({
           return (
             <li key={i} className="flex items-center justify-between py-3">
               <div>
-                <span className={`text-xs font-semibold ${cfg.color}`}>{cfg.label}</span>
+                <span className={`text-xs font-semibold ${cfg.color}`}>
+                  {cfg.label}
+                </span>
                 <p className="mt-0.5 text-xs text-surface-600">
-                  Property {event.propertyId} · Ledger {event.ledger.toLocaleString()}
+                  Property {event.propertyId} · Ledger{" "}
+                  {event.ledger.toLocaleString()}
                 </p>
               </div>
-              {'amount' in event && event.amount != null && (
+              {"amount" in event && event.amount != null && (
                 <span className="text-sm font-semibold text-green-400">
                   {formatLand(event.amount)} LAND
                 </span>
@@ -282,7 +299,9 @@ export function TransactionFeed({
 ```tsx
 // In dashboard page when ownedProperties.length === 0:
 <div className="flex flex-col items-center justify-center py-20 text-center">
-  <p className="text-lg font-semibold text-white">You don't own any properties yet.</p>
+  <p className="text-lg font-semibold text-white">
+    You don't own any properties yet.
+  </p>
   <p className="mt-2 text-sm text-surface-600">
     Head to the city map to find your first property.
   </p>

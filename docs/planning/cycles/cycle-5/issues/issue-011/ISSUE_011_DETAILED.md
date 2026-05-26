@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                              |
-| --------------- | -------------------------------------------------- |
-| Issue ID        | C5-011                                             |
-| Area            | GAME                                               |
-| Difficulty      | High                                               |
-| Labels          | frontend, high                                     |
-| Dependencies    | C5-007, C5-013                                     |
-| Estimated Lines | 260-350                                            |
+| Attribute       | Value          |
+| --------------- | -------------- |
+| Issue ID        | C5-011         |
+| Area            | GAME           |
+| Difficulty      | High           |
+| Labels          | frontend, high |
+| Dependencies    | C5-007, C5-013 |
+| Estimated Lines | 260-350        |
 
 ## Component Structure
 
@@ -25,8 +25,13 @@ src/hooks/useMarketplace.ts
 ## Filter and Sort State
 
 ```typescript
-type LevelFilter = 'all' | 'vacant' | 'residential' | 'commercial' | 'skyscraper';
-type SortOrder = 'price-asc' | 'price-desc' | 'newest';
+type LevelFilter =
+  | "all"
+  | "vacant"
+  | "residential"
+  | "commercial"
+  | "skyscraper";
+type SortOrder = "price-asc" | "price-desc" | "newest";
 
 interface MarketplaceFilters {
   level: LevelFilter;
@@ -43,11 +48,11 @@ Filter chips, not dropdowns. Chips feel faster and more game-like:
 ```tsx
 // src/components/game/marketplace/FilterBar.tsx
 const LEVEL_CHIPS: { value: LevelFilter; label: string }[] = [
-  { value: 'all', label: 'All' },
-  { value: 'vacant', label: 'Vacant' },
-  { value: 'residential', label: 'Residential' },
-  { value: 'commercial', label: 'Commercial' },
-  { value: 'skyscraper', label: 'Skyscraper' },
+  { value: "all", label: "All" },
+  { value: "vacant", label: "Vacant" },
+  { value: "residential", label: "Residential" },
+  { value: "commercial", label: "Commercial" },
+  { value: "skyscraper", label: "Skyscraper" },
 ];
 
 export function FilterBar({
@@ -67,11 +72,11 @@ export function FilterBar({
             key={chip.value}
             onClick={() => onChange({ ...filters, level: chip.value })}
             className={[
-              'rounded-full px-3 py-1 text-xs font-medium transition-colors',
+              "rounded-full px-3 py-1 text-xs font-medium transition-colors",
               filters.level === chip.value
-                ? 'bg-land-500 text-white'
-                : 'bg-surface-700 text-surface-600 hover:text-white',
-            ].join(' ')}
+                ? "bg-land-500 text-white"
+                : "bg-surface-700 text-surface-600 hover:text-white",
+            ].join(" ")}
           >
             {chip.label}
           </button>
@@ -81,7 +86,9 @@ export function FilterBar({
         <span className="text-xs text-surface-600">{total} listings</span>
         <select
           value={filters.sort}
-          onChange={(e) => onChange({ ...filters, sort: e.target.value as SortOrder })}
+          onChange={(e) =>
+            onChange({ ...filters, sort: e.target.value as SortOrder })
+          }
           className="rounded-lg border border-surface-border bg-surface-800 px-2 py-1 text-xs text-white focus:outline-none"
         >
           <option value="newest">Newest first</option>
@@ -98,9 +105,9 @@ export function FilterBar({
 
 ```tsx
 // src/components/game/marketplace/ListingCard.tsx
-import { tileColor } from '@/lib/tileColors';
-import { formatLand, shortenAddress } from '@/lib/format';
-import type { Listing, Property } from '@akkuea/shared';
+import { tileColor } from "@/lib/tileColors";
+import { formatLand, shortenAddress } from "@/lib/format";
+import type { Listing, Property } from "@akkuea/shared";
 
 const INCOME_PER_EPOCH: Record<string, number> = {
   vacant: 10,
@@ -133,7 +140,8 @@ export function ListingCard({
       <div className="p-4">
         <div className="mb-3">
           <p className="text-sm font-semibold text-white capitalize">
-            {property.level} ({property.coordinates.x}, {property.coordinates.y})
+            {property.level} ({property.coordinates.x}, {property.coordinates.y}
+            )
           </p>
           <p className="mt-0.5 text-xs text-surface-600">
             {INCOME_PER_EPOCH[property.level]} LAND/epoch income
@@ -146,7 +154,9 @@ export function ListingCard({
         <div className="flex items-end justify-between">
           <p className="text-xl font-bold text-white">
             {formatLand(listing.priceInLand)}
-            <span className="ml-1 text-xs font-normal text-surface-600">LAND</span>
+            <span className="ml-1 text-xs font-normal text-surface-600">
+              LAND
+            </span>
           </p>
           <button
             onClick={onBuy}
@@ -165,15 +175,15 @@ export function ListingCard({
 
 ```tsx
 // src/components/game/marketplace/BuyModal.tsx
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import type { Listing, Property } from '@akkuea/shared';
-import { usePropertyActions } from '@/hooks/usePropertyActions';
-import { useLandBalance } from '@/hooks/useLandBalance';
-import { useGameWallet } from '@/hooks/useGameWallet';
-import { formatLand, shortenAddress } from '@/lib/format';
-import { tileColor } from '@/lib/tileColors';
+import { useEffect, useState } from "react";
+import type { Listing, Property } from "@akkuea/shared";
+import { usePropertyActions } from "@/hooks/usePropertyActions";
+import { useLandBalance } from "@/hooks/useLandBalance";
+import { useGameWallet } from "@/hooks/useGameWallet";
+import { formatLand, shortenAddress } from "@/lib/format";
+import { tileColor } from "@/lib/tileColors";
 
 export function BuyModal({
   listing,
@@ -194,14 +204,16 @@ export function BuyModal({
 
   // Close on Escape
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
   }, [onClose]);
 
   const handleBuy = () =>
     execute(
-      () => Promise.resolve('placeholder-xdr'), // replaced by typed client in C5-013
+      () => Promise.resolve("placeholder-xdr"), // replaced by typed client in C5-013
       onSuccess,
     );
 
@@ -226,7 +238,8 @@ export function BuyModal({
 
         <div className="p-5">
           <h2 className="text-base font-bold text-white">
-            Buy {property.level} property ({property.coordinates.x}, {property.coordinates.y})
+            Buy {property.level} property ({property.coordinates.x},{" "}
+            {property.coordinates.y})
           </h2>
           <p className="mt-1 text-xs text-surface-600">
             From {shortenAddress(listing.seller)}
@@ -235,12 +248,14 @@ export function BuyModal({
           <div className="mt-4 space-y-2 rounded-xl bg-surface-900 p-3 text-sm">
             <div className="flex justify-between">
               <span className="text-surface-600">Price</span>
-              <span className="font-semibold text-white">{formatLand(listing.priceInLand)} LAND</span>
+              <span className="font-semibold text-white">
+                {formatLand(listing.priceInLand)} LAND
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-surface-600">Your balance</span>
-              <span className={canAfford ? 'text-green-400' : 'text-red-400'}>
-                {balance != null ? `${formatLand(balance)} LAND` : '...'}
+              <span className={canAfford ? "text-green-400" : "text-red-400"}>
+                {balance != null ? `${formatLand(balance)} LAND` : "..."}
               </span>
             </div>
           </div>
@@ -255,8 +270,10 @@ export function BuyModal({
             <p className="mt-2 text-xs text-red-400">{errorMessage}</p>
           )}
 
-          {state === 'success' && (
-            <p className="mt-2 text-xs text-green-400">Property purchased successfully.</p>
+          {state === "success" && (
+            <p className="mt-2 text-xs text-green-400">
+              Property purchased successfully.
+            </p>
           )}
 
           <div className="mt-4 flex gap-2">
@@ -268,11 +285,13 @@ export function BuyModal({
             </button>
             <button
               onClick={handleBuy}
-              disabled={!canAfford || state === 'pending' || state === 'success'}
-              title={!canAfford ? 'Insufficient LAND balance' : undefined}
+              disabled={
+                !canAfford || state === "pending" || state === "success"
+              }
+              title={!canAfford ? "Insufficient LAND balance" : undefined}
               className="flex-1 rounded-xl bg-land-500 py-2.5 text-sm font-semibold text-white hover:bg-land-400 disabled:opacity-50 transition active:scale-95"
             >
-              {state === 'pending' ? 'Buying...' : 'Confirm Purchase'}
+              {state === "pending" ? "Buying..." : "Confirm Purchase"}
             </button>
           </div>
         </div>
@@ -290,8 +309,8 @@ export function BuyModal({
   <p className="text-lg font-semibold text-white">No listings found</p>
   <p className="mt-2 text-sm text-surface-600">
     {hasActiveFilters
-      ? 'Try adjusting your filters.'
-      : 'No properties are listed for sale right now.'}
+      ? "Try adjusting your filters."
+      : "No properties are listed for sale right now."}
   </p>
   {hasActiveFilters && (
     <button

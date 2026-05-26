@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                              |
-| --------------- | -------------------------------------------------- |
-| Issue ID        | C5-002                                             |
-| Area            | CONTRACTS                                          |
-| Difficulty      | Trivial                                            |
-| Labels          | contracts, trivial                                 |
-| Dependencies    | None                                               |
-| Estimated Lines | 60-100                                             |
+| Attribute       | Value              |
+| --------------- | ------------------ |
+| Issue ID        | C5-002             |
+| Area            | CONTRACTS          |
+| Difficulty      | Trivial            |
+| Labels          | contracts, trivial |
+| Dependencies    | None               |
+| Estimated Lines | 60-100             |
 
 ## Directory Structure
 

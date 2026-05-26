@@ -42,14 +42,14 @@ The cost of a 5-minute investigation is 5 minutes.
 
 Source: `apps/contracts/contracts/defi-rwa/src/access/admin.rs:92-97`
 
-| Role | Can call `emergency_pause` |
-|---|---|
-| `Admin` | Yes |
-| `Pauser` | Yes |
-| `EmergencyGuard` | Yes |
-| `Oracle` | No |
-| `Verifier` | No |
-| `Liquidator` | No |
+| Role             | Can call `emergency_pause` |
+| ---------------- | -------------------------- |
+| `Admin`          | Yes                        |
+| `Pauser`         | Yes                        |
+| `EmergencyGuard` | Yes                        |
+| `Oracle`         | No                         |
+| `Verifier`       | No                         |
+| `Liquidator`     | No                         |
 
 Only `Admin` can call `schedule_recovery`, `cancel_recovery`, and `execute_recovery`.
 
@@ -165,6 +165,7 @@ stellar contract invoke \
 ```
 
 The contract stores:
+
 - `scheduled_by`: your admin address
 - `scheduled_at`: current ledger timestamp
 - `earliest_execution`: `scheduled_at + 86400` (seconds)
@@ -179,6 +180,7 @@ stellar ledger --network $NETWORK
 ```
 
 **Common errors:**
+
 - `"Contract not paused"` - the contract is not actually paused; verify Phase 1 succeeded.
 - `"Recovery already scheduled"` - a prior schedule_recovery already ran; proceed to Step 3c.
 - `"Caller not admin"` - you are not using the Admin key; Pauser/EmergencyGuard cannot recover.
@@ -218,6 +220,7 @@ stellar contract invoke \
 ```
 
 **What this does** (source: `access/emergency.rs:53-67`):
+
 1. Validates `scheduled_by` is present (not cancelled).
 2. Validates `current_time >= earliest_execution`. If not: `panic!("Timelock not expired")`.
 3. Removes `RoleKey::Paused` from contract storage - contract is live again.
@@ -225,6 +228,7 @@ stellar contract invoke \
 5. Emits `EmergencyEvents::recovery_executed`.
 
 **Common errors:**
+
 - `"No recovery scheduled"` - Step 3a was not executed, or Step 3b cancelled it.
 - `"Timelock not expired"` - 24 hours have not passed since `schedule_recovery`; check `earliest_execution`.
 - `"Caller not admin"` - wrong signing key.
@@ -279,13 +283,13 @@ T+24:xx   execute_recovery called.
 
 ## Reference: contract functions and source locations
 
-| Function | Source | Required role |
-|---|---|---|
-| `emergency_pause(caller)` | `lib.rs:592` | Admin, Pauser, or EmergencyGuard |
-| `schedule_recovery(caller)` | `lib.rs:599` / `emergency.rs:15` | Admin only |
-| `cancel_recovery(caller)` | `lib.rs:604` / `emergency.rs:41` | Admin only |
-| `execute_recovery(caller)` | `lib.rs:609` / `emergency.rs:53` | Admin only |
-| `TIMELOCK_DURATION` | `roles.rs:4` | 86,400 seconds (24 hours) - confirmed final |
+| Function                    | Source                           | Required role                               |
+| --------------------------- | -------------------------------- | ------------------------------------------- |
+| `emergency_pause(caller)`   | `lib.rs:592`                     | Admin, Pauser, or EmergencyGuard            |
+| `schedule_recovery(caller)` | `lib.rs:599` / `emergency.rs:15` | Admin only                                  |
+| `cancel_recovery(caller)`   | `lib.rs:604` / `emergency.rs:41` | Admin only                                  |
+| `execute_recovery(caller)`  | `lib.rs:609` / `emergency.rs:53` | Admin only                                  |
+| `TIMELOCK_DURATION`         | `roles.rs:4`                     | 86,400 seconds (24 hours) - confirmed final |
 
 > **Note:** Issue #729 (Oracle & Price Guardrails) has been merged. Its scope was limited to oracle consumer logic (`oracle.rs`) and the new `set_oracle_config` / `get_oracle_config` functions. The emergency timelock (`TIMELOCK_DURATION = 86_400`) was **not modified** by that PR and remains 24 hours as a fixed constant.
 

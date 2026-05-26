@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                              |
-| --------------- | -------------------------------------------------- |
-| Issue ID        | C5-017                                             |
-| Area            | SHARED                                             |
-| Difficulty      | Trivial                                            |
-| Labels          | documentation, trivial                             |
-| Dependencies    | None                                               |
-| Estimated Lines | 200-300 (markdown)                                 |
+| Attribute       | Value                  |
+| --------------- | ---------------------- |
+| Issue ID        | C5-017                 |
+| Area            | SHARED                 |
+| Difficulty      | Trivial                |
+| Labels          | documentation, trivial |
+| Dependencies    | None                   |
+| Estimated Lines | 200-300 (markdown)     |
 
 ## GAME_RULES.md Outline
 
@@ -45,11 +45,11 @@ Income doesn't disappear if you don't collect it immediately; it accumulates unt
 **Improving Buildings**
 You can upgrade your property to earn more income. Each upgrade is permanent.
 
-| Upgrade                     | Cost      |
-| --------------------------- | --------- |
-| Vacant to Residential       | 200 LAND  |
-| Residential to Commercial   | 600 LAND  |
-| Commercial to Skyscraper    | 1,800 LAND |
+| Upgrade                   | Cost       |
+| ------------------------- | ---------- |
+| Vacant to Residential     | 200 LAND   |
+| Residential to Commercial | 600 LAND   |
+| Commercial to Skyscraper  | 1,800 LAND |
 
 Click a property you own on the City Map, then click "Improve."
 
@@ -57,6 +57,7 @@ Click a property you own on the City Map, then click "Improve."
 Open the City Map, click your property, and click "List for Sale." Enter the price you want. Other players can buy it from the Marketplace. You can cancel a listing at any time before someone buys it.
 
 **Strategy**
+
 - Buy properties early and improve them over time.
 - Skyscrapers earn 6x more than vacant lots; the upgrade cost pays for itself quickly.
 - The Marketplace lists how long each property has been for sale. Long-listed properties may be overpriced.

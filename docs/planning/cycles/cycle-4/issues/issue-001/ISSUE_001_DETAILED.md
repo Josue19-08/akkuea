@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                           |
-| --------------- | ----------------------------------------------- |
-| Issue ID        | C4-001                                          |
-| Area            | API                                             |
-| Difficulty      | High                                            |
-| Labels          | backend, security, high                         |
-| Dependencies    | None                                            |
-| Estimated Lines | 120-180                                         |
+| Attribute       | Value                   |
+| --------------- | ----------------------- |
+| Issue ID        | C4-001                  |
+| Area            | API                     |
+| Difficulty      | High                    |
+| Labels          | backend, security, high |
+| Dependencies    | None                    |
+| Estimated Lines | 120-180                 |
 
 ## Overview
 

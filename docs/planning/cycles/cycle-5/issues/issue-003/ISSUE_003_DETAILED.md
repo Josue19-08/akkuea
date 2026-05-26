@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                              |
-| --------------- | -------------------------------------------------- |
-| Issue ID        | C5-003                                             |
-| Area            | CONTRACTS                                          |
-| Difficulty      | High                                               |
-| Labels          | contracts, high                                    |
-| Dependencies    | C5-001, C5-002                                     |
-| Estimated Lines | 300-450                                            |
+| Attribute       | Value           |
+| --------------- | --------------- |
+| Issue ID        | C5-003          |
+| Area            | CONTRACTS       |
+| Difficulty      | High            |
+| Labels          | contracts, high |
+| Dependencies    | C5-001, C5-002  |
+| Estimated Lines | 300-450         |
 
 ## Contract Architecture
 
@@ -60,11 +60,11 @@ impl GamePropertyNft {
 
 Emit events with `env.events().publish` for every state change:
 
-| Topic          | Data                                          |
-| -------------- | --------------------------------------------- |
-| `"transfer"`   | `{ from: Address, to: Address, id: u32 }`     |
-| `"approve"`    | `{ owner: Address, spender: Address, id: u32 }` |
-| `"improved"`   | `{ owner: Address, id: u32, level: u32 }`     |
+| Topic        | Data                                            |
+| ------------ | ----------------------------------------------- |
+| `"transfer"` | `{ from: Address, to: Address, id: u32 }`       |
+| `"approve"`  | `{ owner: Address, spender: Address, id: u32 }` |
+| `"improved"` | `{ owner: Address, id: u32, level: u32 }`       |
 
 ### Error Enum
 

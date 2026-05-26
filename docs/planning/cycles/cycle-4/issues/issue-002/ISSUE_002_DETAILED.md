@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                      |
-| --------------- | ------------------------------------------ |
-| Issue ID        | C4-002                                     |
-| Area            | WEBAPP                                     |
-| Difficulty      | Trivial                                    |
-| Labels          | frontend, security, trivial                |
-| Dependencies    | None                                       |
-| Estimated Lines | 2-5                                        |
+| Attribute       | Value                       |
+| --------------- | --------------------------- |
+| Issue ID        | C4-002                      |
+| Area            | WEBAPP                      |
+| Difficulty      | Trivial                     |
+| Labels          | frontend, security, trivial |
+| Dependencies    | None                        |
+| Estimated Lines | 2-5                         |
 
 ## Overview
 

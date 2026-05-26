@@ -176,12 +176,12 @@ stellar contract invoke \
 
 Parameter notes:
 
-| Parameter | Scale | Example | Meaning |
-|---|---|---|---|
-| `collateral_factor` | 1e18 = 100% | `750000000000000000` | 75% - borrower can borrow up to 75% of collateral value |
-| `liquidation_threshold` | 1e18 = 100% | `800000000000000000` | 80% - position liquidatable when debt/collateral exceeds 80% |
-| `liquidation_penalty` | 1e18 = 100% | `100000000000000000` | 10% - liquidator bonus |
-| `reserve_factor` | basis points | `100` | 1% of interest goes to protocol reserve |
+| Parameter               | Scale        | Example              | Meaning                                                      |
+| ----------------------- | ------------ | -------------------- | ------------------------------------------------------------ |
+| `collateral_factor`     | 1e18 = 100%  | `750000000000000000` | 75% - borrower can borrow up to 75% of collateral value      |
+| `liquidation_threshold` | 1e18 = 100%  | `800000000000000000` | 80% - position liquidatable when debt/collateral exceeds 80% |
+| `liquidation_penalty`   | 1e18 = 100%  | `100000000000000000` | 10% - liquidator bonus                                       |
+| `reserve_factor`        | basis points | `100`                | 1% of interest goes to protocol reserve                      |
 
 ---
 
@@ -324,14 +324,14 @@ stellar contract invoke \
 
 ## Troubleshooting
 
-| Error | Cause | Fix |
-|---|---|---|
-| `Oracle address not configured` | Step 3 was skipped | Run `set_oracle` before any `borrow()` |
-| `Price data is stale` | Oracle hasn't published within `max_age` seconds (default 3600s, configurable via `set_oracle_config`) | See `docs/operations/runbook-oracle-failure.md` |
-| `Invalid price: price must be positive` | Oracle returned a zero or negative price | Investigate oracle feed; consider switching to backup oracle |
-| `Price below minimum threshold` | Normalized price is below the configured `min_price` floor | Review `set_oracle_config` min_price value or investigate price feed anomaly |
-| `pool already exists` | `create_pool` called twice with same `pool_id` | Use a unique `pool_id` per pool |
-| `Authorization failed` | Wrong signing key or `--source-account` mismatch | Verify `STELLAR_ADMIN_SECRET` matches `ADMIN_ADDRESS` |
-| `Insufficient fee` | Account balance too low | Fund account; testnet: `stellar account fund $ADMIN_ADDRESS --network testnet` |
-| `Contract not found` | Wrong `CONTRACT_ID` or wrong `--network` | Verify both match the deployment target |
-| `wasm file not found` | Build output missing | Re-run `cargo build` and check for compile errors |
+| Error                                   | Cause                                                                                                  | Fix                                                                            |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| `Oracle address not configured`         | Step 3 was skipped                                                                                     | Run `set_oracle` before any `borrow()`                                         |
+| `Price data is stale`                   | Oracle hasn't published within `max_age` seconds (default 3600s, configurable via `set_oracle_config`) | See `docs/operations/runbook-oracle-failure.md`                                |
+| `Invalid price: price must be positive` | Oracle returned a zero or negative price                                                               | Investigate oracle feed; consider switching to backup oracle                   |
+| `Price below minimum threshold`         | Normalized price is below the configured `min_price` floor                                             | Review `set_oracle_config` min_price value or investigate price feed anomaly   |
+| `pool already exists`                   | `create_pool` called twice with same `pool_id`                                                         | Use a unique `pool_id` per pool                                                |
+| `Authorization failed`                  | Wrong signing key or `--source-account` mismatch                                                       | Verify `STELLAR_ADMIN_SECRET` matches `ADMIN_ADDRESS`                          |
+| `Insufficient fee`                      | Account balance too low                                                                                | Fund account; testnet: `stellar account fund $ADMIN_ADDRESS --network testnet` |
+| `Contract not found`                    | Wrong `CONTRACT_ID` or wrong `--network`                                                               | Verify both match the deployment target                                        |
+| `wasm file not found`                   | Build output missing                                                                                   | Re-run `cargo build` and check for compile errors                              |

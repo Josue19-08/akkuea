@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                                |
-| --------------- | ---------------------------------------------------- |
-| Issue ID        | C4-010                                               |
-| Area            | WEBAPP                                               |
-| Difficulty      | High                                                 |
-| Labels          | frontend, high                                       |
-| Dependencies    | None                                                 |
-| Estimated Lines | 300-500                                              |
+| Attribute       | Value          |
+| --------------- | -------------- |
+| Issue ID        | C4-010         |
+| Area            | WEBAPP         |
+| Difficulty      | High           |
+| Labels          | frontend, high |
+| Dependencies    | None           |
+| Estimated Lines | 300-500        |
 
 ## Overview
 
@@ -54,8 +54,8 @@ apps/webapp/src/mocks/
 ### browser.ts
 
 ```typescript
-import { setupWorker } from 'msw/browser';
-import { handlers } from './handlers';
+import { setupWorker } from "msw/browser";
+import { handlers } from "./handlers";
 
 export const worker = setupWorker(...handlers);
 ```
@@ -65,15 +65,18 @@ export const worker = setupWorker(...handlers);
 Use the `HttpResponse` and `http` imports from MSW v2:
 
 ```typescript
-import { http, HttpResponse } from 'msw';
-import { mockProperties } from '../fixtures/properties';
+import { http, HttpResponse } from "msw";
+import { mockProperties } from "../fixtures/properties";
 
 export const propertyHandlers = [
-  http.get('*/properties', () => {
-    return HttpResponse.json({ data: mockProperties, total: mockProperties.length });
+  http.get("*/properties", () => {
+    return HttpResponse.json({
+      data: mockProperties,
+      total: mockProperties.length,
+    });
   }),
 
-  http.get('*/properties/:id', ({ params }) => {
+  http.get("*/properties/:id", ({ params }) => {
     const property = mockProperties.find((p) => p.id === params.id);
     if (!property) return new HttpResponse(null, { status: 404 });
     return HttpResponse.json(property);
@@ -90,10 +93,10 @@ Example property fixture shape (based on the `PropertyInfo` type in `@akkuea/sha
 ```typescript
 export const mockProperties: PropertyInfo[] = [
   {
-    id: 'prop-001',
-    name: 'Residencias Escazú Tower A',
-    propertyType: 'residential',
-    location: { city: 'San José', country: 'Costa Rica' },
+    id: "prop-001",
+    name: "Residencias Escazú Tower A",
+    propertyType: "residential",
+    location: { city: "San José", country: "Costa Rica" },
     totalValue: 850000,
     totalShares: 10000,
     availableShares: 6500,
@@ -111,12 +114,12 @@ In `apps/webapp/src/components/Providers.tsx`, add the MSW initialization:
 ```typescript
 async function initMocks() {
   if (
-    typeof window !== 'undefined' &&
-    process.env.NEXT_PUBLIC_USE_MOCK === 'true'
+    typeof window !== "undefined" &&
+    process.env.NEXT_PUBLIC_USE_MOCK === "true"
   ) {
-    const { worker } = await import('@/mocks/browser');
+    const { worker } = await import("@/mocks/browser");
     await worker.start({
-      onUnhandledRequest: 'warn',
+      onUnhandledRequest: "warn",
     });
   }
 }
@@ -166,7 +169,7 @@ on:
   pull_request:
     branches: [develop]
     paths:
-      - 'apps/webapp/**'
+      - "apps/webapp/**"
 
 jobs:
   deploy-preview:

@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                      |
-| --------------- | ------------------------------------------ |
-| Issue ID        | C4-003                                     |
-| Area            | API                                        |
-| Difficulty      | Trivial                                    |
-| Labels          | backend, security, trivial                 |
-| Dependencies    | None                                       |
-| Estimated Lines | 5-30                                       |
+| Attribute       | Value                      |
+| --------------- | -------------------------- |
+| Issue ID        | C4-003                     |
+| Area            | API                        |
+| Difficulty      | Trivial                    |
+| Labels          | backend, security, trivial |
+| Dependencies    | None                       |
+| Estimated Lines | 5-30                       |
 
 ## Overview
 

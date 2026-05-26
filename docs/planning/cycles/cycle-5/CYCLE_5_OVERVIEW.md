@@ -2,12 +2,12 @@
 
 ## Overview
 
-| Attribute     | Value                                                                              |
-| ------------- | ---------------------------------------------------------------------------------- |
-| Cycle Number  | 5                                                                                  |
-| Total Issues  | 17                                                                                 |
-| Focus Areas   | Soroban game contracts, Cougr ECS engine, standalone game app, Pollar auth        |
-| Prerequisites | Cycle 4 C4-012 (modular wallet architecture), C4-015 (Quasar integration)         |
+| Attribute     | Value                                                                      |
+| ------------- | -------------------------------------------------------------------------- |
+| Cycle Number  | 5                                                                          |
+| Total Issues  | 17                                                                         |
+| Focus Areas   | Soroban game contracts, Cougr ECS engine, standalone game app, Pollar auth |
+| Prerequisites | Cycle 4 C4-012 (modular wallet architecture), C4-015 (Quasar integration)  |
 
 ## Objective
 
@@ -47,76 +47,76 @@ apps/
 
 ## Issue Distribution by Area
 
-| Area      | Count | Issues                                                  |
-| --------- | ----- | ------------------------------------------------------- |
-| CONTRACTS | 6     | C5-002, C5-003, C5-004, C5-005, C5-006, C5-015         |
+| Area      | Count | Issues                                                         |
+| --------- | ----- | -------------------------------------------------------------- |
+| CONTRACTS | 6     | C5-002, C5-003, C5-004, C5-005, C5-006, C5-015                 |
 | GAME      | 8     | C5-007, C5-008, C5-009, C5-010, C5-011, C5-012, C5-014, C5-016 |
-| SHARED    | 3     | C5-001, C5-013, C5-017                                  |
+| SHARED    | 3     | C5-001, C5-013, C5-017                                         |
 
 ## Issue Distribution by Difficulty
 
-| Difficulty | Count | Issues                                                              |
-| ---------- | ----- | ------------------------------------------------------------------- |
-| Trivial    | 3     | C5-002, C5-013, C5-017                                              |
-| Medium     | 5     | C5-001, C5-004, C5-007, C5-012, C5-015                              |
+| Difficulty | Count | Issues                                                                 |
+| ---------- | ----- | ---------------------------------------------------------------------- |
+| Trivial    | 3     | C5-002, C5-013, C5-017                                                 |
+| Medium     | 5     | C5-001, C5-004, C5-007, C5-012, C5-015                                 |
 | High       | 9     | C5-003, C5-005, C5-006, C5-008, C5-009, C5-010, C5-011, C5-014, C5-016 |
 
 ## Issues Summary
 
-| ID     | Title                                                         | Area      | Difficulty | Dependencies               |
-| ------ | ------------------------------------------------------------- | --------- | ---------- | -------------------------- |
-| C5-001 | Define game economy, property schema, and shared types        | SHARED    | Medium     | None                       |
-| C5-002 | Bootstrap game contracts Cargo workspace                      | CONTRACTS | Trivial    | None                       |
-| C5-003 | Implement PropertyNFT Soroban contract with Cougr             | CONTRACTS | High       | C5-001, C5-002             |
-| C5-004 | Implement LandToken fungible token contract                   | CONTRACTS | Medium     | C5-002                     |
-| C5-005 | Implement GameMarketplace Soroban contract                    | CONTRACTS | High       | C5-003, C5-004             |
-| C5-006 | Implement GameEngine contract with Cougr ECS                  | CONTRACTS | High       | C5-003, C5-004             |
-| C5-007 | Bootstrap akkuea-land Next.js app and design system           | GAME      | Medium     | None                       |
-| C5-008 | Integrate Pollar authentication and wallet provider           | GAME      | High       | C5-007                     |
-| C5-009 | Build city map with interactive property tiles                | GAME      | High       | C5-007                     |
-| C5-010 | Build property detail panel and action flows                  | GAME      | High       | C5-007                     |
-| C5-011 | Build game marketplace UI                                     | GAME      | High       | C5-007, C5-013             |
-| C5-012 | Build player dashboard and income tracker                     | GAME      | Medium     | C5-007, C5-013             |
-| C5-013 | Generate typed Soroban clients for game contracts             | SHARED    | Trivial    | C5-003, C5-004, C5-005, C5-006 |
-| C5-014 | Add game event indexing and real-time board updates           | GAME      | High       | C5-007                     |
-| C5-015 | Deploy game contracts to Stellar testnet                      | CONTRACTS | Medium     | C5-003, C5-004, C5-005, C5-006 |
-| C5-016 | Build player onboarding and starter property claim            | GAME      | High       | C5-007, C5-008             |
-| C5-017 | Write game rules guide and developer setup documentation      | SHARED    | Trivial    | None                       |
+| ID     | Title                                                    | Area      | Difficulty | Dependencies                   |
+| ------ | -------------------------------------------------------- | --------- | ---------- | ------------------------------ |
+| C5-001 | Define game economy, property schema, and shared types   | SHARED    | Medium     | None                           |
+| C5-002 | Bootstrap game contracts Cargo workspace                 | CONTRACTS | Trivial    | None                           |
+| C5-003 | Implement PropertyNFT Soroban contract with Cougr        | CONTRACTS | High       | C5-001, C5-002                 |
+| C5-004 | Implement LandToken fungible token contract              | CONTRACTS | Medium     | C5-002                         |
+| C5-005 | Implement GameMarketplace Soroban contract               | CONTRACTS | High       | C5-003, C5-004                 |
+| C5-006 | Implement GameEngine contract with Cougr ECS             | CONTRACTS | High       | C5-003, C5-004                 |
+| C5-007 | Bootstrap akkuea-land Next.js app and design system      | GAME      | Medium     | None                           |
+| C5-008 | Integrate Pollar authentication and wallet provider      | GAME      | High       | C5-007                         |
+| C5-009 | Build city map with interactive property tiles           | GAME      | High       | C5-007                         |
+| C5-010 | Build property detail panel and action flows             | GAME      | High       | C5-007                         |
+| C5-011 | Build game marketplace UI                                | GAME      | High       | C5-007, C5-013                 |
+| C5-012 | Build player dashboard and income tracker                | GAME      | Medium     | C5-007, C5-013                 |
+| C5-013 | Generate typed Soroban clients for game contracts        | SHARED    | Trivial    | C5-003, C5-004, C5-005, C5-006 |
+| C5-014 | Add game event indexing and real-time board updates      | GAME      | High       | C5-007                         |
+| C5-015 | Deploy game contracts to Stellar testnet                 | CONTRACTS | Medium     | C5-003, C5-004, C5-005, C5-006 |
+| C5-016 | Build player onboarding and starter property claim       | GAME      | High       | C5-007, C5-008                 |
+| C5-017 | Write game rules guide and developer setup documentation | SHARED    | Trivial    | None                           |
 
 ## Acceptance Criteria for Cycle Completion
 
-| Criteria                      | Description                                                                              |
-| ----------------------------- | ---------------------------------------------------------------------------------------- |
-| App deploys independently     | akkuea-land deploys to Vercel without any dependency on apps/api or apps/webapp          |
-| Pollar auth works             | Players can log in with Google or email and receive a Stellar wallet automatically       |
-| Contracts deployed            | All four game contracts are live on Stellar testnet and verified                         |
-| City map renders              | 20x20 grid renders with live ownership data from Soroban typed clients                  |
-| Buy flow works end-to-end     | A player can buy a property, sign via Pollar, and see the tile update                   |
-| Rental income claimable       | A player can claim accrued LAND tokens from the dashboard                               |
-| Marketplace functional        | Properties can be listed, browsed, and purchased                                        |
-| Real-time updates active      | City map tile updates when another player buys without a page refresh                   |
-| Onboarding complete           | A new player can complete onboarding and own their first property in under two minutes  |
+| Criteria                  | Description                                                                            |
+| ------------------------- | -------------------------------------------------------------------------------------- |
+| App deploys independently | akkuea-land deploys to Vercel without any dependency on apps/api or apps/webapp        |
+| Pollar auth works         | Players can log in with Google or email and receive a Stellar wallet automatically     |
+| Contracts deployed        | All four game contracts are live on Stellar testnet and verified                       |
+| City map renders          | 20x20 grid renders with live ownership data from Soroban typed clients                 |
+| Buy flow works end-to-end | A player can buy a property, sign via Pollar, and see the tile update                  |
+| Rental income claimable   | A player can claim accrued LAND tokens from the dashboard                              |
+| Marketplace functional    | Properties can be listed, browsed, and purchased                                       |
+| Real-time updates active  | City map tile updates when another player buys without a page refresh                  |
+| Onboarding complete       | A new player can complete onboarding and own their first property in under two minutes |
 
 ## Dependencies Between Issues
 
-| Issue                              | Depends On                              |
-| ---------------------------------- | --------------------------------------- |
-| C5-003, C5-004                     | C5-002                                  |
-| C5-005, C5-006                     | C5-003, C5-004                          |
-| C5-013, C5-015                     | C5-003, C5-004, C5-005, C5-006          |
-| C5-008, C5-009, C5-010, C5-011, C5-012, C5-014 | C5-007                     |
-| C5-011, C5-012                     | C5-013                                  |
-| C5-016                             | C5-008                                  |
+| Issue                                          | Depends On                     |
+| ---------------------------------------------- | ------------------------------ |
+| C5-003, C5-004                                 | C5-002                         |
+| C5-005, C5-006                                 | C5-003, C5-004                 |
+| C5-013, C5-015                                 | C5-003, C5-004, C5-005, C5-006 |
+| C5-008, C5-009, C5-010, C5-011, C5-012, C5-014 | C5-007                         |
+| C5-011, C5-012                                 | C5-013                         |
+| C5-016                                         | C5-008                         |
 
 ## Parallel Workstreams
 
-| Developer Focus        | Recommended Issues                              |
-| ---------------------- | ----------------------------------------------- |
-| Blockchain / Contracts | C5-002, C5-003, C5-004 (then C5-005, C5-006)   |
-| App scaffold + Auth    | C5-007, C5-008                                  |
-| Game UI                | C5-009, C5-010 (then C5-011, C5-012, C5-016)   |
-| Real-time / Backend    | C5-014                                          |
-| Shared / Types         | C5-001, C5-013, C5-017                          |
+| Developer Focus        | Recommended Issues                           |
+| ---------------------- | -------------------------------------------- |
+| Blockchain / Contracts | C5-002, C5-003, C5-004 (then C5-005, C5-006) |
+| App scaffold + Auth    | C5-007, C5-008                               |
+| Game UI                | C5-009, C5-010 (then C5-011, C5-012, C5-016) |
+| Real-time / Backend    | C5-014                                       |
+| Shared / Types         | C5-001, C5-013, C5-017                       |
 
 ## Notes
 

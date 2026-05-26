@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                              |
-| --------------- | -------------------------------------------------- |
-| Issue ID        | C5-009                                             |
-| Area            | GAME                                               |
-| Difficulty      | High                                               |
-| Labels          | frontend, high                                     |
-| Dependencies    | C5-007                                             |
-| Estimated Lines | 220-300                                            |
+| Attribute       | Value          |
+| --------------- | -------------- |
+| Issue ID        | C5-009         |
+| Area            | GAME           |
+| Difficulty      | High           |
+| Labels          | frontend, high |
+| Dependencies    | C5-007         |
+| Estimated Lines | 220-300        |
 
 ## Component Structure
 
@@ -30,7 +30,7 @@ Deterministic owner color: the same address always produces the same color:
 // src/lib/tileColors.ts
 
 export function addressToHsl(address: string | null): string {
-  if (!address) return 'hsl(230, 15%, 18%)'; // treasury: dark navy
+  if (!address) return "hsl(230, 15%, 18%)"; // treasury: dark navy
 
   let hash = 5381;
   for (let i = 0; i < address.length; i++) {
@@ -45,14 +45,14 @@ export function addressToHsl(address: string | null): string {
 
 // Level brightens the color to signal improvement progression
 export const LEVEL_LIGHTNESS: Record<string, number> = {
-  vacant:       38,
-  residential:  45,
-  commercial:   52,
-  skyscraper:   60,
+  vacant: 38,
+  residential: 45,
+  commercial: 52,
+  skyscraper: 60,
 };
 
 export function tileColor(address: string | null, level: string): string {
-  if (!address) return 'hsl(230, 15%, 18%)';
+  if (!address) return "hsl(230, 15%, 18%)";
   let hash = 5381;
   for (let i = 0; i < address.length; i++) {
     hash = ((hash << 5) + hash) ^ address.charCodeAt(i);
@@ -68,12 +68,12 @@ export function tileColor(address: string | null, level: string): string {
 
 ```tsx
 // src/components/game/map/CityMap.tsx
-'use client';
+"use client";
 
-import { useState, useCallback } from 'react';
-import type { Property } from '@akkuea/shared';
-import { PropertyTile } from './PropertyTile';
-import { useGameMap } from '@/hooks/useGameMap';
+import { useState, useCallback } from "react";
+import type { Property } from "@akkuea/shared";
+import { PropertyTile } from "./PropertyTile";
+import { useGameMap } from "@/hooks/useGameMap";
 
 interface CityMapProps {
   onSelectProperty: (property: Property) => void;
@@ -81,15 +81,19 @@ interface CityMapProps {
   updatedTileId?: string | null;
 }
 
-export function CityMap({ onSelectProperty, selectedId, updatedTileId }: CityMapProps) {
+export function CityMap({
+  onSelectProperty,
+  selectedId,
+  updatedTileId,
+}: CityMapProps) {
   const { properties, isLoading } = useGameMap();
 
   // Event delegation: one handler for all 400 tiles
   const handleGridClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      const target = (e.target as HTMLElement).closest('[data-property-id]');
+      const target = (e.target as HTMLElement).closest("[data-property-id]");
       if (!target) return;
-      const id = target.getAttribute('data-property-id');
+      const id = target.getAttribute("data-property-id");
       if (id && properties[Number(id)]) {
         onSelectProperty(properties[Number(id)]);
       }
@@ -105,7 +109,7 @@ export function CityMap({ onSelectProperty, selectedId, updatedTileId }: CityMap
       aria-label="City property map"
       onClick={handleGridClick}
       className="grid gap-px rounded-lg bg-surface-border overflow-hidden cursor-pointer"
-      style={{ gridTemplateColumns: 'repeat(20, minmax(0, 1fr))' }}
+      style={{ gridTemplateColumns: "repeat(20, minmax(0, 1fr))" }}
     >
       {Array.from({ length: 400 }, (_, i) => (
         <PropertyTile
@@ -123,7 +127,7 @@ function CityMapSkeleton() {
   return (
     <div
       className="grid gap-px rounded-lg bg-surface-border overflow-hidden"
-      style={{ gridTemplateColumns: 'repeat(20, minmax(0, 1fr))' }}
+      style={{ gridTemplateColumns: "repeat(20, minmax(0, 1fr))" }}
     >
       {Array.from({ length: 400 }, (_, i) => (
         <div key={i} className="aspect-square animate-pulse bg-surface-800" />
@@ -139,15 +143,15 @@ Tiles are rendered as plain `<div>` elements (not buttons) because click handlin
 
 ```tsx
 // src/components/game/map/PropertyTile.tsx
-import { tileColor } from '@/lib/tileColors';
-import { TileTooltip } from './TileTooltip';
-import type { Property } from '@akkuea/shared';
+import { tileColor } from "@/lib/tileColors";
+import { TileTooltip } from "./TileTooltip";
+import type { Property } from "@akkuea/shared";
 
 const LEVEL_BADGE: Record<string, string> = {
-  vacant: 'V',
-  residential: 'R',
-  commercial: 'C',
-  skyscraper: 'S',
+  vacant: "V",
+  residential: "R",
+  commercial: "C",
+  skyscraper: "S",
 };
 
 interface PropertyTileProps {
@@ -156,8 +160,12 @@ interface PropertyTileProps {
   isUpdated: boolean;
 }
 
-export function PropertyTile({ property, isSelected, isUpdated }: PropertyTileProps) {
-  const bg = tileColor(property?.owner ?? null, property?.level ?? 'vacant');
+export function PropertyTile({
+  property,
+  isSelected,
+  isUpdated,
+}: PropertyTileProps) {
+  const bg = tileColor(property?.owner ?? null, property?.level ?? "vacant");
   const isListed = property?.isListed ?? false;
 
   return (
@@ -165,16 +173,16 @@ export function PropertyTile({ property, isSelected, isUpdated }: PropertyTilePr
       <div
         data-property-id={property?.id}
         className={[
-          'relative aspect-square select-none transition-all duration-100',
-          'hover:scale-110 hover:z-10 hover:brightness-125',
-          isSelected ? 'ring-2 ring-white ring-inset z-20 scale-110' : '',
-          isUpdated ? 'animate-tile-pulse brightness-150' : '',
-        ].join(' ')}
+          "relative aspect-square select-none transition-all duration-100",
+          "hover:scale-110 hover:z-10 hover:brightness-125",
+          isSelected ? "ring-2 ring-white ring-inset z-20 scale-110" : "",
+          isUpdated ? "animate-tile-pulse brightness-150" : "",
+        ].join(" ")}
         style={{ backgroundColor: bg }}
       >
         {/* Improvement badge */}
         <span className="absolute bottom-0 left-0 text-[7px] font-bold leading-none text-white/60 p-[1px]">
-          {LEVEL_BADGE[property?.level ?? 'vacant']}
+          {LEVEL_BADGE[property?.level ?? "vacant"]}
         </span>
 
         {/* Listed indicator */}
@@ -193,7 +201,7 @@ CSS-only tooltip, no library dependency:
 
 ```tsx
 // src/components/game/map/TileTooltip.tsx
-import type { Property } from '@akkuea/shared';
+import type { Property } from "@akkuea/shared";
 
 export function TileTooltip({
   property,
@@ -206,7 +214,7 @@ export function TileTooltip({
 
   const owner = property.owner
     ? `${property.owner.slice(0, 4)}...${property.owner.slice(-4)}`
-    : 'Treasury';
+    : "Treasury";
 
   const label = [
     `(${property.coordinates.x},${property.coordinates.y})`,
@@ -215,19 +223,19 @@ export function TileTooltip({
     property.isListed ? `Listed` : null,
   ]
     .filter(Boolean)
-    .join(' · ');
+    .join(" · ");
 
   return (
     <div className="group/tile relative">
       {children}
       <div
         className={[
-          'pointer-events-none absolute bottom-[calc(100%+4px)] left-1/2 -translate-x-1/2 z-30',
-          'whitespace-nowrap rounded-lg bg-surface-800 border border-surface-border',
-          'px-2 py-1 text-[10px] text-white shadow-xl',
-          'opacity-0 scale-95 transition-all duration-100',
-          'group-hover/tile:opacity-100 group-hover/tile:scale-100',
-        ].join(' ')}
+          "pointer-events-none absolute bottom-[calc(100%+4px)] left-1/2 -translate-x-1/2 z-30",
+          "whitespace-nowrap rounded-lg bg-surface-800 border border-surface-border",
+          "px-2 py-1 text-[10px] text-white shadow-xl",
+          "opacity-0 scale-95 transition-all duration-100",
+          "group-hover/tile:opacity-100 group-hover/tile:scale-100",
+        ].join(" ")}
       >
         {label}
       </div>
@@ -240,20 +248,22 @@ export function TileTooltip({
 
 ```tsx
 // src/app/map/page.tsx
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { CityMap } from '@/components/game/map/CityMap';
-import { PropertyPanel } from '@/components/game/PropertyPanel';
-import { useGameEventStream } from '@/hooks/useGameEventStream';
-import type { Property } from '@akkuea/shared';
+import { useState } from "react";
+import { CityMap } from "@/components/game/map/CityMap";
+import { PropertyPanel } from "@/components/game/PropertyPanel";
+import { useGameEventStream } from "@/hooks/useGameEventStream";
+import type { Property } from "@akkuea/shared";
 
 export default function MapPage() {
-  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(
+    null,
+  );
   const [updatedTileId, setUpdatedTileId] = useState<string | null>(null);
 
   useGameEventStream((event) => {
-    if (event.type === 'PropertyBought' || event.type === 'PropertyListed') {
+    if (event.type === "PropertyBought" || event.type === "PropertyListed") {
       setUpdatedTileId(event.propertyId);
       setTimeout(() => setUpdatedTileId(null), 1500);
     }
@@ -271,7 +281,9 @@ export default function MapPage() {
       <div className="w-full lg:w-80 lg:shrink-0">
         <PropertyPanel
           property={selectedProperty}
-          onActionComplete={() => { /* refresh data */ }}
+          onActionComplete={() => {
+            /* refresh data */
+          }}
         />
       </div>
     </div>

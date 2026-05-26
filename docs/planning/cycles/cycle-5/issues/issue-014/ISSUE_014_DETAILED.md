@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                              |
-| --------------- | -------------------------------------------------- |
-| Issue ID        | C5-014                                             |
-| Area            | GAME                                               |
-| Difficulty      | High                                               |
-| Labels          | frontend, high                                     |
-| Dependencies    | C5-007                                             |
-| Estimated Lines | 250-350                                            |
+| Attribute       | Value          |
+| --------------- | -------------- |
+| Issue ID        | C5-014         |
+| Area            | GAME           |
+| Difficulty      | High           |
+| Labels          | frontend, high |
+| Dependencies    | C5-007         |
+| Estimated Lines | 250-350        |
 
 ## Architecture
 
@@ -31,12 +31,14 @@ src/lib/sorobanEvents.ts
 
 ```typescript
 // src/app/api/game/events/route.ts
-import { NextRequest } from 'next/server';
-import { StellarSdk } from '@stellar/stellar-sdk';
-import type { GameEvent } from '@akkuea/shared';
-import { parseSorobanEvent } from '@/lib/sorobanEvents';
+import { NextRequest } from "next/server";
+import { StellarSdk } from "@stellar/stellar-sdk";
+import type { GameEvent } from "@akkuea/shared";
+import { parseSorobanEvent } from "@/lib/sorobanEvents";
 
-const RPC_URL = process.env.NEXT_PUBLIC_STELLAR_RPC_URL ?? 'https://soroban-testnet.stellar.org';
+const RPC_URL =
+  process.env.NEXT_PUBLIC_STELLAR_RPC_URL ??
+  "https://soroban-testnet.stellar.org";
 
 const CONTRACT_IDS = [
   process.env.NEXT_PUBLIC_GAME_NFT_CONTRACT_ID,
@@ -51,7 +53,7 @@ export async function GET(request: NextRequest) {
 
   const stream = new ReadableStream({
     async start(controller) {
-      request.signal.addEventListener('abort', () => {
+      request.signal.addEventListener("abort", () => {
         closed = true;
         controller.close();
       });
@@ -62,14 +64,14 @@ export async function GET(request: NextRequest) {
       // Heartbeat every 30 seconds
       const heartbeat = setInterval(() => {
         if (!closed) {
-          controller.enqueue(encoder.encode(': heartbeat\n\n'));
+          controller.enqueue(encoder.encode(": heartbeat\n\n"));
         }
       }, 30_000);
 
       while (!closed) {
         try {
           const response = await server.getEvents({
-            filters: [{ type: 'contract', contractIds: CONTRACT_IDS }],
+            filters: [{ type: "contract", contractIds: CONTRACT_IDS }],
             limit: 20,
           });
 
@@ -95,10 +97,10 @@ export async function GET(request: NextRequest) {
 
   return new Response(stream, {
     headers: {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache, no-transform',
-      'Connection': 'keep-alive',
-      'X-Accel-Buffering': 'no', // disable Nginx buffering on Vercel
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache, no-transform",
+      Connection: "keep-alive",
+      "X-Accel-Buffering": "no", // disable Nginx buffering on Vercel
     },
   });
 }
@@ -112,23 +114,25 @@ function sleep(ms: number) {
 
 ```typescript
 // src/app/api/game/events/history/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { StellarSdk } from '@stellar/stellar-sdk';
-import { parseSorobanEvent } from '@/lib/sorobanEvents';
+import { NextRequest, NextResponse } from "next/server";
+import { StellarSdk } from "@stellar/stellar-sdk";
+import { parseSorobanEvent } from "@/lib/sorobanEvents";
 
-const RPC_URL = process.env.NEXT_PUBLIC_STELLAR_RPC_URL ?? 'https://soroban-testnet.stellar.org';
+const RPC_URL =
+  process.env.NEXT_PUBLIC_STELLAR_RPC_URL ??
+  "https://soroban-testnet.stellar.org";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
-  const actor = searchParams.get('actor');
-  const limit = Math.min(Number(searchParams.get('limit') ?? 20), 100);
+  const actor = searchParams.get("actor");
+  const limit = Math.min(Number(searchParams.get("limit") ?? 20), 100);
 
   try {
     const server = new StellarSdk.SorobanRpc.Server(RPC_URL);
     const response = await server.getEvents({
       filters: [
         {
-          type: 'contract',
+          type: "contract",
           contractIds: [
             process.env.NEXT_PUBLIC_GAME_NFT_CONTRACT_ID!,
             process.env.NEXT_PUBLIC_GAME_MARKETPLACE_CONTRACT_ID!,
@@ -142,9 +146,14 @@ export async function GET(request: NextRequest) {
     const events = response.events
       .map(parseSorobanEvent)
       .filter(Boolean)
-      .filter((e) => !actor || (e && 'actorAddress' in e && e.actorAddress === actor));
+      .filter(
+        (e) => !actor || (e && "actorAddress" in e && e.actorAddress === actor),
+      );
 
-    return NextResponse.json({ events, hasMore: response.events.length === limit });
+    return NextResponse.json({
+      events,
+      hasMore: response.events.length === limit,
+    });
   } catch {
     return NextResponse.json({ events: [], hasMore: false });
   }
@@ -155,13 +164,14 @@ export async function GET(request: NextRequest) {
 
 ```typescript
 // src/app/api/game/ledger/route.ts
-import { NextResponse } from 'next/server';
-import { StellarSdk } from '@stellar/stellar-sdk';
+import { NextResponse } from "next/server";
+import { StellarSdk } from "@stellar/stellar-sdk";
 
 export async function GET() {
   try {
     const server = new StellarSdk.SorobanRpc.Server(
-      process.env.NEXT_PUBLIC_STELLAR_RPC_URL ?? 'https://soroban-testnet.stellar.org',
+      process.env.NEXT_PUBLIC_STELLAR_RPC_URL ??
+        "https://soroban-testnet.stellar.org",
     );
     const info = await server.getLatestLedger();
     return NextResponse.json({ ledger: info.sequence });
@@ -175,7 +185,7 @@ export async function GET() {
 
 ```typescript
 // src/lib/sorobanEvents.ts
-import type { GameEvent } from '@akkuea/shared';
+import type { GameEvent } from "@akkuea/shared";
 
 type RawSorobanEvent = {
   topic: Array<{ type: string; value: string }>;
@@ -190,33 +200,33 @@ export function parseSorobanEvent(raw: RawSorobanEvent): GameEvent | null {
 
   try {
     switch (topicStr) {
-      case 'transfer':
+      case "transfer":
         return {
-          type: 'PropertyBought',
+          type: "PropertyBought",
           propertyId: String(raw.topic[2]?.value),
           buyer: String(raw.topic[1]?.value),
           price: 0n, // enriched by marketplace contract event
           ledger,
         };
-      case 'listed':
+      case "listed":
         return {
-          type: 'PropertyListed',
+          type: "PropertyListed",
           propertyId: String(raw.topic[2]?.value),
           seller: String(raw.topic[1]?.value),
           price: BigInt(String(raw.value?.value ?? 0)),
           ledger,
         };
-      case 'improved':
+      case "improved":
         return {
-          type: 'PropertyImproved',
+          type: "PropertyImproved",
           propertyId: String(raw.topic[2]?.value),
           owner: String(raw.topic[1]?.value),
-          newLevel: String(raw.topic[3]?.value) as GameEvent['newLevel'],
+          newLevel: String(raw.topic[3]?.value) as GameEvent["newLevel"],
           ledger,
         };
-      case 'claimed':
+      case "claimed":
         return {
-          type: 'RentalClaimed',
+          type: "RentalClaimed",
           propertyId: String(raw.topic[2]?.value),
           owner: String(raw.topic[1]?.value),
           amount: BigInt(String(raw.value?.value ?? 0)),
@@ -237,16 +247,16 @@ Adjust topic indexing once the actual Soroban events are inspected from deployed
 
 ```typescript
 // src/hooks/useGameEventStream.ts
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import type { GameEvent } from '@akkuea/shared';
+import { useEffect } from "react";
+import type { GameEvent } from "@akkuea/shared";
 
 export function useGameEventStream(onEvent: (event: GameEvent) => void) {
   useEffect(() => {
-    if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') return;
+    if (process.env.NEXT_PUBLIC_USE_MOCK === "true") return;
 
-    const es = new EventSource('/api/game/events');
+    const es = new EventSource("/api/game/events");
 
     es.onmessage = (msg) => {
       try {
@@ -267,6 +277,7 @@ export function useGameEventStream(onEvent: (event: GameEvent) => void) {
 ## Vercel Note
 
 Vercel serverless functions have a maximum execution time of 10 seconds for the Hobby plan and 60 seconds on Pro. Long-lived SSE connections will be terminated. For production, either:
+
 - Upgrade to Vercel Pro (60s limit, sufficient for most connections with client-side reconnect).
 - Use a persistent server deployment (Railway, Fly.io) for the akkuea-land app.
 - Switch to a polling pattern: `useEffect` calls `/api/game/events/history` every 3-5 seconds.

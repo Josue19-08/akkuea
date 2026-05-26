@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                              |
-| --------------- | -------------------------------------------------- |
-| Issue ID        | C4-013                                             |
-| Area            | WEBAPP                                             |
-| Difficulty      | High                                               |
-| Labels          | frontend, stellar, high                            |
-| Dependencies    | C4-012                                             |
-| Estimated Lines | 150-250                                            |
+| Attribute       | Value                   |
+| --------------- | ----------------------- |
+| Issue ID        | C4-013                  |
+| Area            | WEBAPP                  |
+| Difficulty      | High                    |
+| Labels          | frontend, stellar, high |
+| Dependencies    | C4-012                  |
+| Estimated Lines | 150-250                 |
 
 ## Overview
 
@@ -48,7 +48,7 @@ Obtain a Privy app ID from `https://dashboard.privy.io`. Configure the app to su
 Create `apps/webapp/src/services/wallet/providers/privy.ts`. The implementation wraps Privy's SDK in the `WalletProvider` interface:
 
 ```typescript
-import type { WalletProvider, WalletAccount } from '../types';
+import type { WalletProvider, WalletAccount } from "../types";
 
 // Privy provides hooks that must be called inside a React context.
 // This provider acts as a bridge between the hook layer and the registry.
@@ -66,17 +66,20 @@ export function setPrivyInterface(iface: typeof privyInterface) {
 }
 
 export const privyProvider: WalletProvider = {
-  id: 'privy',
-  name: 'Email or Social Login',
-  description: 'Sign in with email, Google, or Apple. No wallet required.',
-  isAvailable: () => typeof window !== 'undefined',
+  id: "privy",
+  name: "Email or Social Login",
+  description: "Sign in with email, Google, or Apple. No wallet required.",
+  isAvailable: () => typeof window !== "undefined",
 
   connect: async () => {
-    if (!privyInterface) throw new Error('Privy not initialized');
+    if (!privyInterface) throw new Error("Privy not initialized");
     await privyInterface.connect();
     const address = privyInterface.getAddress();
-    if (!address) throw new Error('Privy connection did not return an address');
-    return { address, displayName: address.slice(0, 6) + '...' + address.slice(-4) };
+    if (!address) throw new Error("Privy connection did not return an address");
+    return {
+      address,
+      displayName: address.slice(0, 6) + "..." + address.slice(-4),
+    };
   },
 
   disconnect: async () => {
@@ -84,7 +87,7 @@ export const privyProvider: WalletProvider = {
   },
 
   signTransaction: async (xdr, networkPassphrase) => {
-    if (!privyInterface) throw new Error('Privy not initialized');
+    if (!privyInterface) throw new Error("Privy not initialized");
     return privyInterface.signTransaction(xdr);
   },
 

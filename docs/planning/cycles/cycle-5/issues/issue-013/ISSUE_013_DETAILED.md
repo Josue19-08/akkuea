@@ -2,13 +2,13 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                              |
-| --------------- | -------------------------------------------------- |
-| Issue ID        | C5-013                                             |
-| Area            | SHARED                                             |
-| Difficulty      | Trivial                                            |
-| Labels          | shared, trivial                                    |
-| Dependencies    | C5-003, C5-004, C5-005, C5-006                     |
+| Attribute       | Value                                                 |
+| --------------- | ----------------------------------------------------- |
+| Issue ID        | C5-013                                                |
+| Area            | SHARED                                                |
+| Difficulty      | Trivial                                               |
+| Labels          | shared, trivial                                       |
+| Dependencies    | C5-003, C5-004, C5-005, C5-006                        |
 | Estimated Lines | 30-60 (hand-written); generated files are not counted |
 
 ## Generation Steps
@@ -62,21 +62,22 @@ apps/shared/src/contracts/game/
 Create `apps/shared/src/contracts/game/index.ts`:
 
 ```typescript
-export * from './propertyNft';
-export * from './landToken';
-export * from './marketplace';
-export * from './engine';
+export * from "./propertyNft";
+export * from "./landToken";
+export * from "./marketplace";
+export * from "./engine";
 ```
 
 And re-export from `apps/shared/src/contracts/index.ts`:
 
 ```typescript
-export * from './game';
+export * from "./game";
 ```
 
 ## Updating akkuea-land
 
 Replace the placeholder `buildXXXXdr` functions across the action hooks in `apps/akkuea-land/src/hooks/` with real calls to the generated clients. Concretely:
+
 - `usePropertyActions.ts`: `buildBuyXdr`, `buildImproveXdr`, `buildListXdr`, `buildClaimXdr`
 - `ClaimLandStep.tsx`: faucet call via `LandTokenClient.faucet()`
 - `ClaimPropertyStep.tsx`: starter claim via `GameEngineClient.claim_starter()`

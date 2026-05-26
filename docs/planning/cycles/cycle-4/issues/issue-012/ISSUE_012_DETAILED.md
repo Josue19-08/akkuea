@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                              |
-| --------------- | -------------------------------------------------- |
-| Issue ID        | C4-012                                             |
-| Area            | WEBAPP                                             |
-| Difficulty      | High                                               |
-| Labels          | frontend, stellar, high                            |
-| Dependencies    | None                                               |
-| Estimated Lines | 250-400                                            |
+| Attribute       | Value                   |
+| --------------- | ----------------------- |
+| Issue ID        | C4-012                  |
+| Area            | WEBAPP                  |
+| Difficulty      | High                    |
+| Labels          | frontend, stellar, high |
+| Dependencies    | None                    |
+| Estimated Lines | 250-400                 |
 
 ## Overview
 
@@ -49,7 +49,7 @@ The `id` field is a stable string that identifies the provider (e.g., `'stellar-
 Create `apps/webapp/src/services/wallet/registry.ts`:
 
 ```typescript
-import type { WalletProvider } from './types';
+import type { WalletProvider } from "./types";
 
 const providers: Map<string, WalletProvider> = new Map();
 
@@ -75,21 +75,21 @@ Create `apps/webapp/src/services/wallet/providers/stellarWalletsKit.ts` that wra
 Create `apps/webapp/src/services/wallet/providers/smartAccount.ts`:
 
 ```typescript
-import type { WalletProvider, WalletAccount } from '../types';
+import type { WalletProvider, WalletAccount } from "../types";
 
 let connectedAccount: WalletAccount | null = null;
 
 export const smartAccountProvider: WalletProvider = {
-  id: 'smart-account-kit',
-  name: 'Smart Account',
-  description: 'Programmable Stellar account with multi-sig and session keys',
+  id: "smart-account-kit",
+  name: "Smart Account",
+  description: "Programmable Stellar account with multi-sig and session keys",
   isAvailable: () => true,
 
   connect: async () => {
     // Initialize smart-account-kit here
     // Follow the kit's documentation for the initialization flow
     // Return a WalletAccount with the connected address
-    throw new Error('Implement using smart-account-kit API');
+    throw new Error("Implement using smart-account-kit API");
   },
 
   disconnect: async () => {
@@ -98,7 +98,7 @@ export const smartAccountProvider: WalletProvider = {
 
   signTransaction: async (xdr, networkPassphrase) => {
     // Use smart-account-kit's signing method
-    throw new Error('Implement using smart-account-kit API');
+    throw new Error("Implement using smart-account-kit API");
   },
 
   getAccount: () => connectedAccount,
@@ -120,9 +120,9 @@ The wallet connection modal or flow should list available providers from `getAva
 In `apps/webapp/src/components/Providers.tsx`, register the providers at application startup:
 
 ```typescript
-import { registerProvider } from '@/services/wallet/registry';
-import { stellarWalletsKitProvider } from '@/services/wallet/providers/stellarWalletsKit';
-import { smartAccountProvider } from '@/services/wallet/providers/smartAccount';
+import { registerProvider } from "@/services/wallet/registry";
+import { stellarWalletsKitProvider } from "@/services/wallet/providers/stellarWalletsKit";
+import { smartAccountProvider } from "@/services/wallet/providers/smartAccount";
 
 registerProvider(stellarWalletsKitProvider);
 registerProvider(smartAccountProvider);

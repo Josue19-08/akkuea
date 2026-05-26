@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                      |
-| --------------- | ------------------------------------------ |
-| Issue ID        | C4-005                                     |
-| Area            | WEBAPP                                     |
-| Difficulty      | Medium                                     |
-| Labels          | frontend, test, medium                     |
-| Dependencies    | None                                       |
-| Estimated Lines | 30-80                                      |
+| Attribute       | Value                  |
+| --------------- | ---------------------- |
+| Issue ID        | C4-005                 |
+| Area            | WEBAPP                 |
+| Difficulty      | Medium                 |
+| Labels          | frontend, test, medium |
+| Dependencies    | None                   |
+| Estimated Lines | 30-80                  |
 
 ## Overview
 

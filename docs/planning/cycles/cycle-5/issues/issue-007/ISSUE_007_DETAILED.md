@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                              |
-| --------------- | -------------------------------------------------- |
-| Issue ID        | C5-007                                             |
-| Area            | GAME                                               |
-| Difficulty      | Medium                                             |
-| Labels          | frontend, medium                                   |
-| Dependencies    | None                                               |
-| Estimated Lines | 150-220                                            |
+| Attribute       | Value            |
+| --------------- | ---------------- |
+| Issue ID        | C5-007           |
+| Area            | GAME             |
+| Difficulty      | Medium           |
+| Labels          | frontend, medium |
+| Dependencies    | None             |
+| Estimated Lines | 150-220          |
 
 ## Initialization
 
@@ -56,62 +56,62 @@ Run on a separate port to avoid conflicts with `apps/webapp`:
 The game uses a dark-first palette distinct from the main platform:
 
 ```typescript
-import type { Config } from 'tailwindcss';
+import type { Config } from "tailwindcss";
 
 const config: Config = {
-  content: ['./src/**/*.{ts,tsx}'],
+  content: ["./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
         // Game brand: deep navy base, gold accents
         land: {
-          50:  '#f0f4ff',
-          100: '#dde6ff',
-          200: '#c3d0ff',
-          300: '#9fb0ff',
-          400: '#7b8aff',
-          500: '#5c63f5',
-          600: '#4a47e8',
-          700: '#3c36cf',
-          800: '#322da8',
-          900: '#2d2a85',
-          950: '#1c1a54',
+          50: "#f0f4ff",
+          100: "#dde6ff",
+          200: "#c3d0ff",
+          300: "#9fb0ff",
+          400: "#7b8aff",
+          500: "#5c63f5",
+          600: "#4a47e8",
+          700: "#3c36cf",
+          800: "#322da8",
+          900: "#2d2a85",
+          950: "#1c1a54",
         },
         gold: {
-          400: '#fbbf24',
-          500: '#f59e0b',
-          600: '#d97706',
+          400: "#fbbf24",
+          500: "#f59e0b",
+          600: "#d97706",
         },
         surface: {
-          900: '#0d0f1a',
-          800: '#141728',
-          700: '#1e2237',
-          600: '#272b42',
-          border: '#2e3350',
+          900: "#0d0f1a",
+          800: "#141728",
+          700: "#1e2237",
+          600: "#272b42",
+          border: "#2e3350",
         },
       },
       fontFamily: {
-        sans: ['Inter var', 'Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        sans: ["Inter var", "Inter", "system-ui", "sans-serif"],
+        mono: ["JetBrains Mono", "monospace"],
       },
       animation: {
-        'tile-pulse': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'slide-up': 'slideUp 0.25s ease-out',
-        'slide-right': 'slideRight 0.25s ease-out',
-        'fade-in': 'fadeIn 0.15s ease-out',
+        "tile-pulse": "pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "slide-up": "slideUp 0.25s ease-out",
+        "slide-right": "slideRight 0.25s ease-out",
+        "fade-in": "fadeIn 0.15s ease-out",
       },
       keyframes: {
         slideUp: {
-          '0%': { transform: 'translateY(100%)', opacity: '0' },
-          '100%': { transform: 'translateY(0)', opacity: '1' },
+          "0%": { transform: "translateY(100%)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
         },
         slideRight: {
-          '0%': { transform: 'translateX(100%)', opacity: '0' },
-          '100%': { transform: 'translateX(0)', opacity: '1' },
+          "0%": { transform: "translateX(100%)", opacity: "0" },
+          "100%": { transform: "translateX(0)", opacity: "1" },
         },
         fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
         },
       },
     },
@@ -154,13 +154,13 @@ src/app/
 
 ```tsx
 // src/components/layout/GameShell.tsx
-import Link from 'next/link';
-import { WalletStatus } from '@/components/wallet/WalletStatus';
+import Link from "next/link";
+import { WalletStatus } from "@/components/wallet/WalletStatus";
 
 const NAV_LINKS = [
-  { href: '/map', label: 'City Map' },
-  { href: '/marketplace', label: 'Marketplace' },
-  { href: '/dashboard', label: 'Dashboard' },
+  { href: "/map", label: "City Map" },
+  { href: "/marketplace", label: "Marketplace" },
+  { href: "/dashboard", label: "Dashboard" },
 ];
 
 export function GameShell({ children }: { children: React.ReactNode }) {
@@ -169,7 +169,10 @@ export function GameShell({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-40 border-b border-surface-border bg-surface-800/80 backdrop-blur-sm">
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-6">
-            <Link href="/" className="text-base font-bold tracking-tight text-land-400">
+            <Link
+              href="/"
+              className="text-base font-bold tracking-tight text-land-400"
+            >
               Akkuea Land
             </Link>
             <nav className="hidden items-center gap-5 md:flex">
@@ -187,9 +190,7 @@ export function GameShell({ children }: { children: React.ReactNode }) {
           <WalletStatus />
         </div>
       </header>
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-        {children}
-      </main>
+      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">{children}</main>
     </div>
   );
 }
@@ -202,7 +203,9 @@ Create `src/components/ui/Skeleton.tsx` as the base loading primitive:
 ```tsx
 export function Skeleton({ className }: { className?: string }) {
   return (
-    <div className={`animate-pulse rounded bg-surface-700 ${className ?? ''}`} />
+    <div
+      className={`animate-pulse rounded bg-surface-700 ${className ?? ""}`}
+    />
   );
 }
 ```
@@ -213,7 +216,7 @@ Use this in all `loading.tsx` files rather than a spinner.
 
 ```tsx
 // src/app/page.tsx
-import Link from 'next/link';
+import Link from "next/link";
 
 export default function LandingPage() {
   return (

@@ -33,18 +33,21 @@ The platform is built to meet institutional compliance requirements (KYC/AML on-
 ## Features
 
 ### Real Estate Tokenization
+
 - Fractional share ownership of individual properties, tracked entirely on-chain
 - KYC/AML compliance enforced at the smart contract level
 - Minting and burning controls with role-gated admin operations
 - Property metadata storage with immutable audit history
 
 ### DeFi Lending Protocol
+
 - Collateralized borrowing using tokenized real estate shares
 - Privacy-configurable lending pools for institutional participants
 - Automated interest calculation and liquidation mechanisms
 - Oracle-integrated asset valuation for accurate collateral ratios
 
 ### Compliance & Security
+
 - Wallet-based authentication via Stellar signatures - no passwords, no centralized auth
 - Role-based access control across admin, operator, and user tiers
 - Webhook signature verification for all external integrations
@@ -76,16 +79,17 @@ The platform is built to meet institutional compliance requirements (KYC/AML on-
 
 The repository is a **Bun monorepo** with four workspaces:
 
-| Workspace | Path | Role |
-|---|---|---|
-| `@akkuea/webapp` | `apps/webapp` | Next.js 16 frontend with React 19 |
-| `@akkuea/api` | `apps/api` | Elysia REST API running on Bun |
-| `@akkuea/shared` | `apps/shared` | Types, utilities, and Stellar SDK helpers shared across workspaces |
-| Contracts | `apps/contracts` | Soroban smart contracts written in Rust |
+| Workspace        | Path             | Role                                                               |
+| ---------------- | ---------------- | ------------------------------------------------------------------ |
+| `@akkuea/webapp` | `apps/webapp`    | Next.js 16 frontend with React 19                                  |
+| `@akkuea/api`    | `apps/api`       | Elysia REST API running on Bun                                     |
+| `@akkuea/shared` | `apps/shared`    | Types, utilities, and Stellar SDK helpers shared across workspaces |
+| Contracts        | `apps/contracts` | Soroban smart contracts written in Rust                            |
 
 ### Data Flows
 
 **Property Tokenization**
+
 ```
 User submits property → Frontend validates → API verifies KYC
 → Soroban contract mints shares → Event emitted → API indexes
@@ -93,6 +97,7 @@ User submits property → Frontend validates → API verifies KYC
 ```
 
 **DeFi Borrowing**
+
 ```
 User requests loan → Frontend calculates available collateral
 → API checks on-chain share balance → Contract validates collateral ratio
@@ -103,17 +108,17 @@ User requests loan → Frontend calculates available collateral
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| **Frontend** | Next.js 16, React 19, TypeScript, Tailwind CSS 4, Zustand, Zod |
-| **Backend API** | Elysia, Bun runtime, TypeScript, Drizzle ORM, Zod |
-| **Database** | PostgreSQL (Drizzle migrations), Redis (optional caching layer) |
-| **Smart Contracts** | Rust, Soroban SDK 25, WASM compilation target |
-| **Blockchain** | Stellar (Testnet / Mainnet), Horizon REST API, Soroban RPC |
-| **Wallet Integration** | `@creit.tech/stellar-wallets-kit` |
-| **Testing** | `bun test`, `@testing-library/react` |
-| **CI/CD** | GitHub Actions (5 independent workflow files) |
-| **Tooling** | Bun 1.2+, ESLint 9, Prettier, Concurrently |
+| Layer                  | Technology                                                      |
+| ---------------------- | --------------------------------------------------------------- |
+| **Frontend**           | Next.js 16, React 19, TypeScript, Tailwind CSS 4, Zustand, Zod  |
+| **Backend API**        | Elysia, Bun runtime, TypeScript, Drizzle ORM, Zod               |
+| **Database**           | PostgreSQL (Drizzle migrations), Redis (optional caching layer) |
+| **Smart Contracts**    | Rust, Soroban SDK 25, WASM compilation target                   |
+| **Blockchain**         | Stellar (Testnet / Mainnet), Horizon REST API, Soroban RPC      |
+| **Wallet Integration** | `@creit.tech/stellar-wallets-kit`                               |
+| **Testing**            | `bun test`, `@testing-library/react`                            |
+| **CI/CD**              | GitHub Actions (5 independent workflow files)                   |
+| **Tooling**            | Bun 1.2+, ESLint 9, Prettier, Concurrently                      |
 
 ---
 
@@ -121,13 +126,13 @@ User requests loan → Frontend calculates available collateral
 
 ### Prerequisites
 
-| Tool | Version | Notes |
-|---|---|---|
-| [Bun](https://bun.sh) | 1.2+ | Primary runtime and package manager |
-| [Node.js](https://nodejs.org) | 18+ | Required by some tooling |
-| [Rust](https://rustup.rs) | latest stable | Required only for contract development |
-| [Stellar CLI](https://developers.stellar.org/docs/tools/developer-tools/cli/stellar-cli) | latest | Required for contract deployment |
-| [Git](https://git-scm.com) | any | Version control |
+| Tool                                                                                     | Version       | Notes                                  |
+| ---------------------------------------------------------------------------------------- | ------------- | -------------------------------------- |
+| [Bun](https://bun.sh)                                                                    | 1.2+          | Primary runtime and package manager    |
+| [Node.js](https://nodejs.org)                                                            | 18+           | Required by some tooling               |
+| [Rust](https://rustup.rs)                                                                | latest stable | Required only for contract development |
+| [Stellar CLI](https://developers.stellar.org/docs/tools/developer-tools/cli/stellar-cli) | latest        | Required for contract deployment       |
+| [Git](https://git-scm.com)                                                               | any           | Version control                        |
 
 ### Installation
 
@@ -181,17 +186,17 @@ For deploying contracts to Stellar Testnet, see [`docs/deployment/deploy-contrac
 
 Run from the repository root:
 
-| Script | Description |
-|---|---|
-| `bun run dev` | Start frontend and API concurrently |
-| `bun run build` | Build all workspaces |
-| `bun run test` | Run all workspace test suites |
-| `bun run lint` | Lint all workspaces |
-| `bun run typecheck` | Type-check all workspaces |
-| `bun run format` | Format all files with Prettier |
-| `bun run clean` | Remove all build artifacts and `node_modules` |
-| `bun run build:contracts` | Build Soroban contracts via `scripts/build.sh` |
-| `bun run deploy:contracts` | Deploy contracts via `scripts/deploy.sh` |
+| Script                     | Description                                    |
+| -------------------------- | ---------------------------------------------- |
+| `bun run dev`              | Start frontend and API concurrently            |
+| `bun run build`            | Build all workspaces                           |
+| `bun run test`             | Run all workspace test suites                  |
+| `bun run lint`             | Lint all workspaces                            |
+| `bun run typecheck`        | Type-check all workspaces                      |
+| `bun run format`           | Format all files with Prettier                 |
+| `bun run clean`            | Remove all build artifacts and `node_modules`  |
+| `bun run build:contracts`  | Build Soroban contracts via `scripts/build.sh` |
+| `bun run deploy:contracts` | Deploy contracts via `scripts/deploy.sh`       |
 
 ---
 
@@ -215,13 +220,13 @@ Key categories:
 
 Akkuea runs five independent GitHub Actions workflows on every push and pull request to `main` and `develop`:
 
-| Workflow | File | Checks |
-|---|---|---|
-| Monorepo | `monorepo-ci.yml` | Workspace integrity, dependency audit, bundle sizes, cross-workspace integration, security compliance |
-| API | `api-ci.yml` | Lint, type-check, unit tests, build |
-| Webapp | `webapp-ci.yml` | Lint, type-check, unit tests, build |
-| Shared | `shared-ci.yml` | Lint, type-check, build |
-| Contracts | `contracts-ci.yml` | Rust format, Clippy, unit tests, WASM build |
+| Workflow  | File               | Checks                                                                                                |
+| --------- | ------------------ | ----------------------------------------------------------------------------------------------------- |
+| Monorepo  | `monorepo-ci.yml`  | Workspace integrity, dependency audit, bundle sizes, cross-workspace integration, security compliance |
+| API       | `api-ci.yml`       | Lint, type-check, unit tests, build                                                                   |
+| Webapp    | `webapp-ci.yml`    | Lint, type-check, unit tests, build                                                                   |
+| Shared    | `shared-ci.yml`    | Lint, type-check, build                                                                               |
+| Contracts | `contracts-ci.yml` | Rust format, Clippy, unit tests, WASM build                                                           |
 
 All five workflows must pass before any pull request can be merged.
 
@@ -269,16 +274,16 @@ akkuea/
 
 ## Documentation
 
-| Document | Description |
-|---|---|
-| [`docs/guides/getting-started.md`](docs/guides/getting-started.md) | Full local setup walkthrough |
-| [`docs/architecture/system-architecture.md`](docs/architecture/system-architecture.md) | System design and component breakdown |
+| Document                                                                               | Description                             |
+| -------------------------------------------------------------------------------------- | --------------------------------------- |
+| [`docs/guides/getting-started.md`](docs/guides/getting-started.md)                     | Full local setup walkthrough            |
+| [`docs/architecture/system-architecture.md`](docs/architecture/system-architecture.md) | System design and component breakdown   |
 | [`docs/deployment/environment-variables.md`](docs/deployment/environment-variables.md) | Complete environment variable reference |
-| [`docs/deployment/deploy-contracts.md`](docs/deployment/deploy-contracts.md) | Contract deployment to Stellar networks |
-| [`docs/api/overview.md`](docs/api/overview.md) | API overview and authentication |
-| [`docs/api/minting-workflow.md`](docs/api/minting-workflow.md) | Property tokenization API flow |
-| [`docs/api/kyc-workflow.md`](docs/api/kyc-workflow.md) | KYC verification API flow |
-| [`CONTRIBUTING.md`](CONTRIBUTING.md) | Contribution workflow and standards |
+| [`docs/deployment/deploy-contracts.md`](docs/deployment/deploy-contracts.md)           | Contract deployment to Stellar networks |
+| [`docs/api/overview.md`](docs/api/overview.md)                                         | API overview and authentication         |
+| [`docs/api/minting-workflow.md`](docs/api/minting-workflow.md)                         | Property tokenization API flow          |
+| [`docs/api/kyc-workflow.md`](docs/api/kyc-workflow.md)                                 | KYC verification API flow               |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md)                                                   | Contribution workflow and standards     |
 
 ---
 

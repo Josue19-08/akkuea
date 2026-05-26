@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                              |
-| --------------- | -------------------------------------------------- |
-| Issue ID        | C4-017                                             |
-| Area            | WEBAPP                                             |
-| Difficulty      | High                                               |
-| Labels          | frontend, high                                     |
-| Dependencies    | None                                               |
-| Estimated Lines | 200-350                                            |
+| Attribute       | Value          |
+| --------------- | -------------- |
+| Issue ID        | C4-017         |
+| Area            | WEBAPP         |
+| Difficulty      | High           |
+| Labels          | frontend, high |
+| Dependencies    | None           |
+| Estimated Lines | 200-350        |
 
 ## What is Gaussian Splatting
 
@@ -57,7 +57,7 @@ export function PropertyViewer3D({ splatUrl, className }: PropertyViewer3DProps)
     // Initialize the splat viewer here using the chosen library
     // Handle the loading lifecycle: start loading, update isLoading on completion,
     // set error on failure
-    
+
     return () => {
       // Cleanup: dispose the viewer and release GPU resources
     };
@@ -116,8 +116,8 @@ Gaussian Splat files are large (10-100 MB). The following practices are required
 ```typescript
 function isWebGL2Supported(): boolean {
   try {
-    const canvas = document.createElement('canvas');
-    return !!canvas.getContext('webgl2');
+    const canvas = document.createElement("canvas");
+    return !!canvas.getContext("webgl2");
   } catch {
     return false;
   }

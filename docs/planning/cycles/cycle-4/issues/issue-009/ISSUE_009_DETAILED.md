@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                      |
-| --------------- | ------------------------------------------ |
-| Issue ID        | C4-009                                     |
-| Area            | API                                        |
-| Difficulty      | High                                       |
-| Labels          | backend, high                              |
-| Dependencies    | None                                       |
-| Estimated Lines | 200-350                                    |
+| Attribute       | Value         |
+| --------------- | ------------- |
+| Issue ID        | C4-009        |
+| Area            | API           |
+| Difficulty      | High          |
+| Labels          | backend, high |
+| Dependencies    | None          |
+| Estimated Lines | 200-350       |
 
 ## Overview
 
@@ -22,9 +22,9 @@ Elysia uses a builder pattern where each `.use()`, `.derive()`, and `.decorate()
 ```typescript
 const route = new Elysia()
   .use(authPlugin)
-  .get('/example', ({ getAuthenticatedUser }) => {
+  .get("/example", ({ getAuthenticatedUser }) => {
     // getAuthenticatedUser is typed here because authPlugin derives it
-  })
+  });
 ```
 
 TypeScript infers the full context including `getAuthenticatedUser` without any annotation. The `any` cast overrides this inference and is why the type system is not providing value.

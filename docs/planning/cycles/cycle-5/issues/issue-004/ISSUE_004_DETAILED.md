@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                              |
-| --------------- | -------------------------------------------------- |
-| Issue ID        | C5-004                                             |
-| Area            | CONTRACTS                                          |
-| Difficulty      | Medium                                             |
-| Labels          | contracts, medium                                  |
-| Dependencies    | C5-002                                             |
-| Estimated Lines | 200-300                                            |
+| Attribute       | Value             |
+| --------------- | ----------------- |
+| Issue ID        | C5-004            |
+| Area            | CONTRACTS         |
+| Difficulty      | Medium            |
+| Labels          | contracts, medium |
+| Dependencies    | C5-002            |
+| Estimated Lines | 200-300           |
 
 ## SEP-41 Interface
 
@@ -41,11 +41,11 @@ impl GameLandToken {
 
 ### Token Parameters
 
-| Parameter  | Value               |
-| ---------- | ------------------- |
-| Name       | "Akkuea Land Token" |
-| Symbol     | "LAND"              |
-| Decimals   | 7                   |
+| Parameter | Value               |
+| --------- | ------------------- |
+| Name      | "Akkuea Land Token" |
+| Symbol    | "LAND"              |
+| Decimals  | 7                   |
 
 ### Faucet Implementation
 

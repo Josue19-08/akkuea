@@ -2,21 +2,25 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                              |
-| --------------- | -------------------------------------------------- |
-| Issue ID        | C5-001                                             |
-| Area            | SHARED                                             |
-| Difficulty      | Medium                                             |
-| Labels          | shared, medium                                     |
-| Dependencies    | None                                               |
-| Estimated Lines | 80-150                                             |
+| Attribute       | Value          |
+| --------------- | -------------- |
+| Issue ID        | C5-001         |
+| Area            | SHARED         |
+| Difficulty      | Medium         |
+| Labels          | shared, medium |
+| Dependencies    | None           |
+| Estimated Lines | 80-150         |
 
 ## TypeScript Type Definitions
 
 Create `apps/shared/src/types/game.ts` with the following types:
 
 ```typescript
-export type ImprovementLevel = 'vacant' | 'residential' | 'commercial' | 'skyscraper';
+export type ImprovementLevel =
+  | "vacant"
+  | "residential"
+  | "commercial"
+  | "skyscraper";
 
 export interface PropertyCoordinates {
   x: number;
@@ -46,11 +50,40 @@ export interface Player {
 }
 
 export type GameEvent =
-  | { type: 'PropertyBought'; propertyId: string; buyer: string; price: bigint; ledger: number }
-  | { type: 'PropertyListed'; propertyId: string; seller: string; price: bigint; ledger: number }
-  | { type: 'PropertyImproved'; propertyId: string; owner: string; newLevel: ImprovementLevel; ledger: number }
-  | { type: 'RentalClaimed'; propertyId: string; owner: string; amount: bigint; ledger: number }
-  | { type: 'ListingCancelled'; propertyId: string; seller: string; ledger: number };
+  | {
+      type: "PropertyBought";
+      propertyId: string;
+      buyer: string;
+      price: bigint;
+      ledger: number;
+    }
+  | {
+      type: "PropertyListed";
+      propertyId: string;
+      seller: string;
+      price: bigint;
+      ledger: number;
+    }
+  | {
+      type: "PropertyImproved";
+      propertyId: string;
+      owner: string;
+      newLevel: ImprovementLevel;
+      ledger: number;
+    }
+  | {
+      type: "RentalClaimed";
+      propertyId: string;
+      owner: string;
+      amount: bigint;
+      ledger: number;
+    }
+  | {
+      type: "ListingCancelled";
+      propertyId: string;
+      seller: string;
+      ledger: number;
+    };
 ```
 
 Export all types from `apps/shared/src/types/index.ts` (or from the shared package index).
@@ -59,20 +92,20 @@ Export all types from `apps/shared/src/types/index.ts` (or from the shared packa
 
 Document these constants in `docs/game/ECONOMY.md`. The contracts must implement these exact values.
 
-| Constant                   | Value      | Unit              |
-| -------------------------- | ---------- | ----------------- |
-| Starter LAND allocation    | 1,000      | LAND tokens       |
-| Epoch length               | 100        | ledgers           |
-| Base rental rate           | 10         | LAND per epoch    |
-| Residential multiplier     | 1.5x       | of base rate      |
-| Commercial multiplier      | 3x         | of base rate      |
-| Skyscraper multiplier      | 6x         | of base rate      |
-| Improvement cost: Residential | 200     | LAND tokens       |
-| Improvement cost: Commercial  | 600     | LAND tokens       |
-| Improvement cost: Skyscraper  | 1,800   | LAND tokens       |
-| Starter property claim     | 1 per player | one-time only   |
-| City grid size             | 20x20      | 400 total tiles   |
-| Initial property price     | 500        | LAND tokens       |
+| Constant                      | Value        | Unit            |
+| ----------------------------- | ------------ | --------------- |
+| Starter LAND allocation       | 1,000        | LAND tokens     |
+| Epoch length                  | 100          | ledgers         |
+| Base rental rate              | 10           | LAND per epoch  |
+| Residential multiplier        | 1.5x         | of base rate    |
+| Commercial multiplier         | 3x           | of base rate    |
+| Skyscraper multiplier         | 6x           | of base rate    |
+| Improvement cost: Residential | 200          | LAND tokens     |
+| Improvement cost: Commercial  | 600          | LAND tokens     |
+| Improvement cost: Skyscraper  | 1,800        | LAND tokens     |
+| Starter property claim        | 1 per player | one-time only   |
+| City grid size                | 20x20        | 400 total tiles |
+| Initial property price        | 500          | LAND tokens     |
 
 These values are chosen for testnet playability: a player can buy a property, earn rental income, and improve it within a realistic testnet session.
 

@@ -31,6 +31,7 @@ curl -X POST http://localhost:3001/kyc/upload \
 ```
 
 **Response 200:**
+
 ```json
 {
   "documentId": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
@@ -39,6 +40,7 @@ curl -X POST http://localhost:3001/kyc/upload \
 ```
 
 **Response 400 (wrong file type):**
+
 ```json
 {
   "success": false,
@@ -63,6 +65,7 @@ curl -X POST http://localhost:3001/kyc/upload \
 ```
 
 **Response 200:**
+
 ```json
 {
   "documentId": "a87ff679-42d4-41de-b44b-f07ac1f90be8",
@@ -92,6 +95,7 @@ curl -X POST http://localhost:3001/kyc/submit \
 ```
 
 **Response 200:**
+
 ```json
 {
   "submissionId": "550e8400-e29b-41d4-a716-446655440001"
@@ -109,6 +113,7 @@ curl http://localhost:3001/kyc/documents/550e8400-e29b-41d4-a716-446655440001
 ```
 
 **Response 200:**
+
 ```json
 [
   {
@@ -157,11 +162,13 @@ curl -X POST http://localhost:3001/kyc/verify/a87ff679-42d4-41de-b44b-f07ac1f90b
 ```
 
 **Response 200 (each call):**
+
 ```json
 { "success": true }
 ```
 
 **To reject a document with reason:**
+
 ```bash
 curl -X POST http://localhost:3001/kyc/verify/7c9e6679-7425-40de-944b-e07fc1f90ae7 \
   -H "Content-Type: application/json" \
@@ -177,12 +184,23 @@ curl http://localhost:3001/kyc/status/550e8400-e29b-41d4-a716-446655440001
 ```
 
 **Response 200 (all documents approved):**
+
 ```json
 {
   "status": "verified",
   "documents": [
-    { "id": "7c9e6679...", "type": "passport",         "status": "approved", "reviewedAt": "2026-03-28T10:15:00.000Z" },
-    { "id": "a87ff679...", "type": "proof_of_address", "status": "approved", "reviewedAt": "2026-03-28T10:16:00.000Z" }
+    {
+      "id": "7c9e6679...",
+      "type": "passport",
+      "status": "approved",
+      "reviewedAt": "2026-03-28T10:15:00.000Z"
+    },
+    {
+      "id": "a87ff679...",
+      "type": "proof_of_address",
+      "status": "approved",
+      "reviewedAt": "2026-03-28T10:16:00.000Z"
+    }
   ]
 }
 ```
@@ -227,6 +245,7 @@ curl -X POST http://localhost:3001/properties \
 ```
 
 **Response 201:**
+
 ```json
 {
   "id": "d290f1ee-6c54-4b01-90e6-d701748f0851",
@@ -257,6 +276,7 @@ curl http://localhost:3001/internal/operations/properties?queue=pending \
 ```
 
 **Response 200:**
+
 ```json
 {
   "success": true,
@@ -285,6 +305,7 @@ curl -X POST http://localhost:3001/internal/operations/properties/d290f1ee-6c54-
 ```
 
 **Response 200:**
+
 ```json
 {
   "success": true,
@@ -315,6 +336,7 @@ curl -X POST http://localhost:3001/properties/d290f1ee-6c54-4b01-90e6-d701748f08
 ```
 
 **Response 200:**
+
 ```json
 {
   "txHash": "a3f9c2d1e8b4f7a6c3e9d2b5f8a1c4e7b0d3f6a9c2e5b8d1f4a7c0e3b6d9f2a5",
@@ -327,6 +349,7 @@ curl -X POST http://localhost:3001/properties/d290f1ee-6c54-4b01-90e6-d701748f08
 ```
 
 **Response 400 (property not verified):**
+
 ```json
 {
   "statusCode": 400,
@@ -336,6 +359,7 @@ curl -X POST http://localhost:3001/properties/d290f1ee-6c54-4b01-90e6-d701748f08
 ```
 
 **Response 409 (already tokenized):**
+
 ```json
 {
   "statusCode": 409,
@@ -355,6 +379,7 @@ curl http://localhost:3001/properties/d290f1ee-6c54-4b01-90e6-d701748f0851
 ```
 
 **Response 200:**
+
 ```json
 {
   "id": "d290f1ee-6c54-4b01-90e6-d701748f0851",
@@ -394,6 +419,7 @@ curl -X POST http://localhost:3001/properties/d290f1ee-6c54-4b01-90e6-d701748f08
 ```
 
 **Response 200:**
+
 ```json
 {
   "transactionHash": "tx_d290f1ee6c544b0190e6d701748f0851a3f9c2d1",
@@ -402,23 +428,38 @@ curl -X POST http://localhost:3001/properties/d290f1ee-6c54-4b01-90e6-d701748f08
 ```
 
 **Response 400 (insufficient shares):**
+
 ```json
 {
   "statusCode": 400,
   "code": "VALIDATION_ERROR",
   "message": "Not enough shares available",
-  "details": [{ "field": "shares", "message": "Requested shares exceed available inventory" }]
+  "details": [
+    {
+      "field": "shares",
+      "message": "Requested shares exceed available inventory"
+    }
+  ]
 }
 ```
 
 **Response 401 (missing address header):**
+
 ```json
-{ "error": "UNAUTHORIZED", "message": "User address is required for authentication" }
+{
+  "error": "UNAUTHORIZED",
+  "message": "User address is required for authentication"
+}
 ```
 
 **Response 403 (address mismatch):**
+
 ```json
-{ "statusCode": 403, "code": "FORBIDDEN", "message": "Authenticated wallet does not match buyer address" }
+{
+  "statusCode": 403,
+  "code": "FORBIDDEN",
+  "message": "Authenticated wallet does not match buyer address"
+}
 ```
 
 **Smoke test pass criteria:** `newBalance` equals the number of shares requested.
@@ -432,6 +473,7 @@ curl http://localhost:3001/properties/d290f1ee-6c54-4b01-90e6-d701748f0851/share
 ```
 
 **Response 200:**
+
 ```json
 {
   "propertyId": "d290f1ee-6c54-4b01-90e6-d701748f0851",
@@ -461,16 +503,16 @@ All five checks passing = launch workflows are operational.
 
 ## Error reference
 
-| HTTP status | Code | Meaning |
-|---|---|---|
-| `400` | `VALIDATION_ERROR` | Invalid input - check request body against schema |
-| `400` | `BAD_REQUEST` | Constraint violation (e.g., file type, zero shares) |
-| `401` | `UNAUTHORIZED` | `x-user-address` header missing |
-| `403` | `FORBIDDEN` | Caller address does not match required identity |
-| `404` | `NOT_FOUND` | Resource (property, user, document) not found |
-| `409` | `CONFLICT` | Operation already performed (property already tokenized) |
-| `429` | *(rate limit)* | Too many requests - back off and retry |
-| `500` | `INTERNAL_ERROR` | On-chain transaction failed or DB write failed post-mint |
+| HTTP status | Code               | Meaning                                                  |
+| ----------- | ------------------ | -------------------------------------------------------- |
+| `400`       | `VALIDATION_ERROR` | Invalid input - check request body against schema        |
+| `400`       | `BAD_REQUEST`      | Constraint violation (e.g., file type, zero shares)      |
+| `401`       | `UNAUTHORIZED`     | `x-user-address` header missing                          |
+| `403`       | `FORBIDDEN`        | Caller address does not match required identity          |
+| `404`       | `NOT_FOUND`        | Resource (property, user, document) not found            |
+| `409`       | `CONFLICT`         | Operation already performed (property already tokenized) |
+| `429`       | _(rate limit)_     | Too many requests - back off and retry                   |
+| `500`       | `INTERNAL_ERROR`   | On-chain transaction failed or DB write failed post-mint |
 
 ---
 

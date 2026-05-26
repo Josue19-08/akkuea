@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                      |
-| --------------- | ------------------------------------------ |
-| Issue ID        | C4-008                                     |
-| Area            | REPO                                       |
-| Difficulty      | Trivial                                    |
-| Labels          | contracts, trivial                         |
-| Dependencies    | None                                       |
-| Estimated Lines | 5-10                                       |
+| Attribute       | Value              |
+| --------------- | ------------------ |
+| Issue ID        | C4-008             |
+| Area            | REPO               |
+| Difficulty      | Trivial            |
+| Labels          | contracts, trivial |
+| Dependencies    | None               |
+| Estimated Lines | 5-10               |
 
 ## Overview
 

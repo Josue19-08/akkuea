@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                              |
-| --------------- | -------------------------------------------------- |
-| Issue ID        | C5-006                                             |
-| Area            | CONTRACTS                                          |
-| Difficulty      | High                                               |
-| Labels          | contracts, high                                    |
-| Dependencies    | C5-003, C5-004                                     |
-| Estimated Lines | 300-450                                            |
+| Attribute       | Value           |
+| --------------- | --------------- |
+| Issue ID        | C5-006          |
+| Area            | CONTRACTS       |
+| Difficulty      | High            |
+| Labels          | contracts, high |
+| Dependencies    | C5-003, C5-004  |
+| Estimated Lines | 300-450         |
 
 ## Constants Module
 

@@ -3,6 +3,7 @@
 Execute these steps in order immediately after `stellar contract deploy` succeeds. Do not open the platform to users until every step is checked off.
 
 **Prerequisites:**
+
 - Contract deployed, `CONTRACT_ID` in hand
 - `.env` file updated with `REAL_ESTATE_TOKEN_CONTRACT_ID`
 - API server running (`bun run start`)
@@ -34,6 +35,7 @@ stellar contract invoke \
 **Expected result:** `0` (no shares exist yet)
 
 **If this fails:**
+
 - `"Contract not found"` - wrong `CONTRACT_ID` or wrong `--network`. Verify both.
 - `"Authorization failed"` - `ADMIN_ADDRESS` does not match the key in your Stellar CLI config.
 - Any panic - the contract binary has an initialization bug. Re-deploy.
@@ -110,6 +112,7 @@ stellar contract invoke \
 Repeat for each on-call operator. Recommended minimum: 2 operators (primary + backup).
 
 **Who should receive EmergencyGuard:**
+
 - Primary on-call engineer
 - Secondary on-call engineer (backup)
 - NOT: automated bots (the 24h timelock means pause is a human decision)
@@ -170,12 +173,12 @@ stellar contract invoke \
 
 Parameter reference (all rate values use 1e18 = 100%):
 
-| Parameter | Value used | Meaning |
-|---|---|---|
-| `collateral_factor` | `750000000000000000` | 75%: borrowers can access 75% of collateral value |
-| `liquidation_threshold` | `800000000000000000` | 80%: position becomes liquidatable at 80% LTV |
-| `liquidation_penalty` | `100000000000000000` | 10%: liquidator bonus on seized collateral |
-| `reserve_factor` | `100` | 1% (basis points): protocol fee on interest earned |
+| Parameter               | Value used           | Meaning                                            |
+| ----------------------- | -------------------- | -------------------------------------------------- |
+| `collateral_factor`     | `750000000000000000` | 75%: borrowers can access 75% of collateral value  |
+| `liquidation_threshold` | `800000000000000000` | 80%: position becomes liquidatable at 80% LTV      |
+| `liquidation_penalty`   | `100000000000000000` | 10%: liquidator bonus on seized collateral         |
+| `reserve_factor`        | `100`                | 1% (basis points): protocol fee on interest earned |
 
 **Verify the pool was created:**
 

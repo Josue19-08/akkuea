@@ -2,14 +2,14 @@
 
 ## Issue Metadata
 
-| Attribute       | Value                                              |
-| --------------- | -------------------------------------------------- |
-| Issue ID        | C5-008                                             |
-| Area            | GAME                                               |
-| Difficulty      | High                                               |
-| Labels          | frontend, high                                     |
-| Dependencies    | C5-007                                             |
-| Estimated Lines | 200-280                                            |
+| Attribute       | Value          |
+| --------------- | -------------- |
+| Issue ID        | C5-008         |
+| Area            | GAME           |
+| Difficulty      | High           |
+| Labels          | frontend, high |
+| Dependencies    | C5-007         |
+| Estimated Lines | 200-280        |
 
 ## Installation
 
@@ -24,10 +24,14 @@ Wrap the root layout with `PollarProvider`. Keep the API key in the environment 
 
 ```tsx
 // src/app/layout.tsx
-import { PollarProvider } from '@pollar/react';
-import { GameShell } from '@/components/layout/GameShell';
+import { PollarProvider } from "@pollar/react";
+import { GameShell } from "@/components/layout/GameShell";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body>
@@ -46,15 +50,18 @@ All game components go through this hook. No other file imports from `@pollar/re
 
 ```typescript
 // src/hooks/useGameWallet.ts
-'use client';
+"use client";
 
-import { usePollar } from '@pollar/react';
+import { usePollar } from "@pollar/react";
 
 export interface GameWallet {
   address: string | null;
   isConnected: boolean;
   isLoading: boolean;
-  login: (provider: 'google' | 'github' | 'email' | 'freighter', email?: string) => Promise<void>;
+  login: (
+    provider: "google" | "github" | "email" | "freighter",
+    email?: string,
+  ) => Promise<void>;
   logout: () => Promise<void>;
   signAndSubmitTx: (unsignedXdr: string) => Promise<string>;
 }
@@ -67,10 +74,10 @@ export function useGameWallet(): GameWallet {
     isConnected: !!wallet?.address,
     isLoading: loading,
     login: async (provider, email) => {
-      if (provider === 'email') {
-        await login({ provider: 'email', email: email!, type: 'otp' });
-      } else if (provider === 'freighter') {
-        await login({ provider: 'freighter' });
+      if (provider === "email") {
+        await login({ provider: "email", email: email!, type: "otp" });
+      } else if (provider === "freighter") {
+        await login({ provider: "freighter" });
       } else {
         await login({ provider });
       }
@@ -85,25 +92,27 @@ export function useGameWallet(): GameWallet {
 
 ```tsx
 // src/app/(auth)/login/page.tsx
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useGameWallet } from '@/hooks/useGameWallet';
+import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useGameWallet } from "@/hooks/useGameWallet";
 
 export default function LoginPage() {
   const { login, isLoading } = useGameWallet();
-  const [email, setEmail] = useState('');
-  const [step, setStep] = useState<'options' | 'email-otp'>('options');
+  const [email, setEmail] = useState("");
+  const [step, setStep] = useState<"options" | "email-otp">("options");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const returnTo = searchParams.get('from') ?? '/onboarding';
+  const returnTo = searchParams.get("from") ?? "/onboarding";
 
-  const handleLogin = async (provider: 'google' | 'github' | 'email' | 'freighter') => {
+  const handleLogin = async (
+    provider: "google" | "github" | "email" | "freighter",
+  ) => {
     setError(null);
     try {
-      await login(provider, provider === 'email' ? email : undefined);
+      await login(provider, provider === "email" ? email : undefined);
       router.push(returnTo);
     } catch (err) {
       setError(getReadableError(err));
@@ -116,22 +125,23 @@ export default function LoginPage() {
         <div className="mb-8 text-center">
           <h1 className="text-2xl font-bold text-white">Join Akkuea Land</h1>
           <p className="mt-2 text-sm text-surface-600">
-            Sign in to start playing. Your Stellar wallet is created automatically.
+            Sign in to start playing. Your Stellar wallet is created
+            automatically.
           </p>
         </div>
 
-        {step === 'options' && (
+        {step === "options" && (
           <div className="space-y-3">
             <SocialButton
               icon="google"
               label="Continue with Google"
-              onClick={() => handleLogin('google')}
+              onClick={() => handleLogin("google")}
               disabled={isLoading}
             />
             <SocialButton
               icon="github"
               label="Continue with GitHub"
-              onClick={() => handleLogin('github')}
+              onClick={() => handleLogin("github")}
               disabled={isLoading}
             />
             <div className="relative my-4">
@@ -143,13 +153,13 @@ export default function LoginPage() {
               </div>
             </div>
             <button
-              onClick={() => setStep('email-otp')}
+              onClick={() => setStep("email-otp")}
               className="w-full rounded-xl border border-surface-border py-3 text-sm text-white transition hover:bg-surface-700"
             >
               Continue with Email
             </button>
             <button
-              onClick={() => handleLogin('freighter')}
+              onClick={() => handleLogin("freighter")}
               disabled={isLoading}
               className="w-full rounded-xl border border-surface-border py-3 text-xs text-surface-600 transition hover:bg-surface-700"
             >
@@ -158,10 +168,10 @@ export default function LoginPage() {
           </div>
         )}
 
-        {step === 'email-otp' && (
+        {step === "email-otp" && (
           <div className="space-y-3">
             <button
-              onClick={() => setStep('options')}
+              onClick={() => setStep("options")}
               className="mb-2 text-xs text-surface-600 hover:text-white"
             >
               Back
@@ -174,11 +184,11 @@ export default function LoginPage() {
               className="w-full rounded-xl border border-surface-border bg-surface-800 px-4 py-3 text-sm text-white placeholder-surface-600 focus:border-land-500 focus:outline-none"
             />
             <button
-              onClick={() => handleLogin('email')}
+              onClick={() => handleLogin("email")}
               disabled={!email || isLoading}
               className="w-full rounded-xl bg-land-500 py-3 text-sm font-semibold text-white transition hover:bg-land-400 disabled:opacity-50"
             >
-              {isLoading ? 'Sending code...' : 'Send verification code'}
+              {isLoading ? "Sending code..." : "Send verification code"}
             </button>
           </div>
         )}
@@ -193,11 +203,13 @@ export default function LoginPage() {
 
 function getReadableError(err: unknown): string {
   if (err instanceof Error) {
-    if (err.message.includes('WALLET_NOT_FOUND')) return 'Wallet not found. Try again.';
-    if (err.message.includes('STELLAR_UNAVAILABLE')) return 'Stellar network is unavailable. Please try again shortly.';
+    if (err.message.includes("WALLET_NOT_FOUND"))
+      return "Wallet not found. Try again.";
+    if (err.message.includes("STELLAR_UNAVAILABLE"))
+      return "Stellar network is unavailable. Please try again shortly.";
     return err.message;
   }
-  return 'Something went wrong. Please try again.';
+  return "Something went wrong. Please try again.";
 }
 ```
 
@@ -205,21 +217,21 @@ function getReadableError(err: unknown): string {
 
 ```typescript
 // src/middleware.ts
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-const PROTECTED = ['/map', '/marketplace', '/dashboard', '/onboarding'];
+const PROTECTED = ["/map", "/marketplace", "/dashboard", "/onboarding"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isProtected = PROTECTED.some((p) => pathname.startsWith(p));
 
   // Pollar stores the session token in a cookie named 'pollar-session'
-  const session = request.cookies.get('pollar-session');
+  const session = request.cookies.get("pollar-session");
 
   if (isProtected && !session) {
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('from', pathname);
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("from", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
@@ -227,7 +239,12 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/map/:path*', '/marketplace/:path*', '/dashboard/:path*', '/onboarding/:path*'],
+  matcher: [
+    "/map/:path*",
+    "/marketplace/:path*",
+    "/dashboard/:path*",
+    "/onboarding/:path*",
+  ],
 };
 ```
 
@@ -237,11 +254,11 @@ Verify the exact cookie name Pollar uses by checking their documentation or the 
 
 ```tsx
 // src/components/wallet/WalletStatus.tsx
-'use client';
+"use client";
 
-import { useGameWallet } from '@/hooks/useGameWallet';
-import { useLandBalance } from '@/hooks/useLandBalance';
-import { formatLand } from '@/lib/format';
+import { useGameWallet } from "@/hooks/useGameWallet";
+import { useLandBalance } from "@/hooks/useLandBalance";
+import { formatLand } from "@/lib/format";
 
 export function WalletStatus() {
   const { address, isConnected, logout } = useGameWallet();
@@ -268,7 +285,7 @@ export function WalletStatus() {
       <button
         onClick={logout}
         className="rounded-lg border border-surface-border px-3 py-1.5 text-xs text-surface-600 hover:text-white"
-        title={address ?? ''}
+        title={address ?? ""}
       >
         {address?.slice(0, 4)}...{address?.slice(-4)}
       </button>

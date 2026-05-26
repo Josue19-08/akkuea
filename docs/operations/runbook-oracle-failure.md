@@ -10,13 +10,13 @@
 
 An oracle incident manifests as one of four panics in the Soroban contract (Issue #729 merged - `oracle.rs` updated):
 
-| Panic message | Location | Meaning |
-|---|---|---|
-| `"Oracle address not configured"` | `oracle.rs` - `get_oracle_address` | `set_oracle` was never called, or the oracle address was wiped |
-| `"Price not available for asset"` | `oracle.rs` - `get_price` | Oracle returned `None` for the requested asset |
-| `"Invalid price: price must be positive"` | `oracle.rs` - `get_price` | Oracle returned a zero or negative raw price |
-| `"Price data is stale"` | `oracle.rs` - `get_price` | Price timestamp exceeds the configured `max_age` threshold |
-| `"Price below minimum threshold"` | `oracle.rs` - `get_price` | Normalized price is below the configured `min_price` floor |
+| Panic message                             | Location                           | Meaning                                                        |
+| ----------------------------------------- | ---------------------------------- | -------------------------------------------------------------- |
+| `"Oracle address not configured"`         | `oracle.rs` - `get_oracle_address` | `set_oracle` was never called, or the oracle address was wiped |
+| `"Price not available for asset"`         | `oracle.rs` - `get_price`          | Oracle returned `None` for the requested asset                 |
+| `"Invalid price: price must be positive"` | `oracle.rs` - `get_price`          | Oracle returned a zero or negative raw price                   |
+| `"Price data is stale"`                   | `oracle.rs` - `get_price`          | Price timestamp exceeds the configured `max_age` threshold     |
+| `"Price below minimum threshold"`         | `oracle.rs` - `get_price`          | Normalized price is below the configured `min_price` floor     |
 
 All five panics terminate every `borrow()` call. `deposit()`, `withdraw()`, and `repay()` are **not** affected - existing depositors and borrowers can still exit positions. Only new borrowing is blocked.
 
@@ -44,6 +44,7 @@ stellar contract invoke \
 ```
 
 Read the error:
+
 - `"Oracle address not configured"` → go to **Scenario A**
 - `"Price not available for asset"` → go to **Scenario B1** (oracle outage)
 - `"Invalid price: price must be positive"` → go to **Scenario C** (bad price feed)
@@ -288,18 +289,18 @@ stellar contract invoke \
 
 ## Reference
 
-| Item | Source | Notes |
-|---|---|---|
-| `set_oracle(oracle_address, caller)` | `lib.rs` | Sets SEP-40 oracle address. Admin only |
-| `set_oracle_config(caller, max_age, min_price)` | `lib.rs` | Configures staleness threshold and price floor. Admin only. `max_age=0` preserves current value |
-| `get_oracle_config()` | `lib.rs` | Returns `(max_age, min_price)` tuple - use to confirm active guardrail values |
-| `DEFAULT_MAX_AGE` | `oracle.rs` | `3600` seconds - applied when `set_oracle_config` has never been called |
-| `"Oracle address not configured"` | `oracle.rs` - `get_oracle_address` | `set_oracle` not called post-deploy |
-| `"Price not available for asset"` | `oracle.rs` - `get_price` | Oracle returned `None` |
-| `"Invalid price: price must be positive"` | `oracle.rs` - `get_price` | Raw price ≤ 0 |
-| `"Price data is stale"` | `oracle.rs` - `get_price` | Age exceeds `max_age` |
-| `"Price below minimum threshold"` | `oracle.rs` - `get_price` | Normalized price < `min_price` |
-| Affected operations | All | `borrow()` only - `deposit`, `withdraw`, `repay` unaffected |
+| Item                                            | Source                             | Notes                                                                                           |
+| ----------------------------------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `set_oracle(oracle_address, caller)`            | `lib.rs`                           | Sets SEP-40 oracle address. Admin only                                                          |
+| `set_oracle_config(caller, max_age, min_price)` | `lib.rs`                           | Configures staleness threshold and price floor. Admin only. `max_age=0` preserves current value |
+| `get_oracle_config()`                           | `lib.rs`                           | Returns `(max_age, min_price)` tuple - use to confirm active guardrail values                   |
+| `DEFAULT_MAX_AGE`                               | `oracle.rs`                        | `3600` seconds - applied when `set_oracle_config` has never been called                         |
+| `"Oracle address not configured"`               | `oracle.rs` - `get_oracle_address` | `set_oracle` not called post-deploy                                                             |
+| `"Price not available for asset"`               | `oracle.rs` - `get_price`          | Oracle returned `None`                                                                          |
+| `"Invalid price: price must be positive"`       | `oracle.rs` - `get_price`          | Raw price ≤ 0                                                                                   |
+| `"Price data is stale"`                         | `oracle.rs` - `get_price`          | Age exceeds `max_age`                                                                           |
+| `"Price below minimum threshold"`               | `oracle.rs` - `get_price`          | Normalized price < `min_price`                                                                  |
+| Affected operations                             | All                                | `borrow()` only - `deposit`, `withdraw`, `repay` unaffected                                     |
 
 ---
 
