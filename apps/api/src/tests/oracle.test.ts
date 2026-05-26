@@ -1,37 +1,47 @@
-import { describe, test, expect, mock, beforeEach } from 'bun:test';
+import { describe, test, expect, spyOn, mock, beforeEach, afterEach } from 'bun:test';
 import { OracleService } from '../services/OracleService';
 import { ValuationRepository } from '../repositories/ValuationRepository';
 import type { RealEstateValuationPayload, ValuationRecord } from '@real-estate-defi/shared';
 import { ValidationService } from '@real-estate-defi/shared';
 
-// Mock the ValuationRepository to avoid needing a real DB in unit tests
+// In-memory store used by the spies below.
+// Using spyOn instead of mock.module so the mock is properly scoped to this file
+// and does not leak into integration test files that run in the same Bun worker.
 const store = new Map<string, ValuationRecord[]>();
 
-mock.module('../repositories/ValuationRepository', () => ({
-  ValuationRepository: {
-    save: async (record: ValuationRecord) => {
-      const list = store.get(record.propertyId) ?? [];
-      const idx = list.findIndex((r) => r.id === record.id);
-      if (idx >= 0) {
-        list[idx] = record;
-      } else {
-        list.push(record);
-      }
-      store.set(record.propertyId, list);
-      return record;
-    },
-    findLatest: async (propertyId: string) => {
-      const list = store.get(propertyId) ?? [];
-      return list.length ? list[list.length - 1] : undefined;
-    },
-    findHistory: async (propertyId: string, limit?: number) => {
+beforeEach(() => {
+  store.clear();
+
+  spyOn(ValuationRepository, 'save').mockImplementation(async (record: ValuationRecord) => {
+    const list = store.get(record.propertyId) ?? [];
+    const idx = list.findIndex((r) => r.id === record.id);
+    if (idx >= 0) {
+      list[idx] = record;
+    } else {
+      list.push(record);
+    }
+    store.set(record.propertyId, list);
+    return record;
+  });
+
+  spyOn(ValuationRepository, 'findLatest').mockImplementation(async (propertyId: string) => {
+    const list = store.get(propertyId) ?? [];
+    return list.length ? list[list.length - 1] : undefined;
+  });
+
+  spyOn(ValuationRepository, 'findHistory').mockImplementation(
+    async (propertyId: string, limit?: number) => {
       const list = [...(store.get(propertyId) ?? [])].reverse();
       return limit ? list.slice(0, limit) : list;
     },
-    findAll: async () => {
-      return Array.from(store.values()).map((list) => list[list.length - 1]!);
-    },
-    updateStatus: async (
+  );
+
+  spyOn(ValuationRepository, 'findAll').mockImplementation(async () => {
+    return Array.from(store.values()).map((list) => list[list.length - 1]!);
+  });
+
+  spyOn(ValuationRepository, 'updateStatus').mockImplementation(
+    async (
       id: string,
       propertyId: string,
       status: ValuationRecord['status'],
@@ -45,11 +55,13 @@ mock.module('../repositories/ValuationRepository', () => ({
       if (rejectionReason) record.rejectionReason = rejectionReason;
       return record;
     },
-  },
-}));
+  );
+});
 
-beforeEach(() => {
-  store.clear();
+afterEach(() => {
+  // Restore all active spyOn mocks so subsequent test files running in the same
+  // Bun worker see the real ValuationRepository implementation, not the in-memory stub.
+  mock.restore();
 });
 
 const makePayload = (
