@@ -106,7 +106,9 @@ export const lendingRoutes = new Elysia({ prefix: '/lending' })
 
   // POST /pools - Create pool (auth required)
   .use(validate({ body: createPoolSchema }))
-  .post('/pools', async (ctx) => LendingController.createPool(ctx), { beforeHandle: [rateLimit()] })
+  .post('/pools', async (ctx) => LendingController.createPool(ctx), {
+    beforeHandle: [rateLimit()],
+  })
 
   // POST /pools/:id/deposit - Deposit into pool (auth required)
   .use(validate({ body: depositSchema }))

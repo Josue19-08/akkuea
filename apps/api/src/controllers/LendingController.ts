@@ -98,7 +98,9 @@ export class LendingController {
   /**
    * Deposit into a lending pool (auth required)
    */
-  static async deposit(ctx: AuthContext & { params: { id: string }; body: unknown }): Promise<Response> {
+  static async deposit(
+    ctx: AuthContext & { params: { id: string }; body: unknown },
+  ): Promise<Response> {
     const { id: poolId } = ctx.params;
     const user = await this.resolveAuthenticatedUser(ctx);
 
@@ -125,7 +127,9 @@ export class LendingController {
   /**
    * Withdraw from a lending pool (auth required)
    */
-  static async withdraw(ctx: AuthContext & { params: { id: string }; body: unknown }): Promise<Response> {
+  static async withdraw(
+    ctx: AuthContext & { params: { id: string }; body: unknown },
+  ): Promise<Response> {
     const { id: poolId } = ctx.params;
     const user = await this.resolveAuthenticatedUser(ctx);
 
@@ -159,7 +163,9 @@ export class LendingController {
   /**
    * Borrow from a lending pool (auth required)
    */
-  static async borrow(ctx: AuthContext & { params: { id: string }; body: unknown }): Promise<Response> {
+  static async borrow(
+    ctx: AuthContext & { params: { id: string }; body: unknown },
+  ): Promise<Response> {
     const { id: poolId } = ctx.params;
     const user = await this.resolveAuthenticatedUser(ctx);
 
@@ -194,7 +200,9 @@ export class LendingController {
   /**
    * Repay a loan (auth required)
    */
-  static async repay(ctx: AuthContext & { params: { id: string }; body: unknown }): Promise<Response> {
+  static async repay(
+    ctx: AuthContext & { params: { id: string }; body: unknown },
+  ): Promise<Response> {
     const { id: poolId } = ctx.params;
     const user = await this.resolveAuthenticatedUser(ctx);
 
@@ -234,9 +242,10 @@ export class LendingController {
   /**
    * Execute liquidation of an underwater borrow position (liquidator role required)
    */
-  static async liquidate(
-    ctx: { params: { id: string; borrowerId: string }; headers: Record<string, string | undefined> },
-  ): Promise<Response> {
+  static async liquidate(ctx: {
+    params: { id: string; borrowerId: string };
+    headers: Record<string, string | undefined>;
+  }): Promise<Response> {
     if (!isLiquidatorAuthorized(ctx.headers)) {
       throw new ApiError(403, 'FORBIDDEN', 'Liquidator access required');
     }

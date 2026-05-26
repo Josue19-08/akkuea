@@ -77,7 +77,9 @@ export class NotificationController {
   /**
    * Get a single notification by ID
    */
-  static async getNotificationById(ctx: AuthContext & { params: { id: string } }): Promise<Response> {
+  static async getNotificationById(
+    ctx: AuthContext & { params: { id: string } },
+  ): Promise<Response> {
     const { id: userId } = await ctx.getAuthenticatedUser();
     const { id } = ctx.params;
 
@@ -204,7 +206,9 @@ export class NotificationController {
   /**
    * Delete a notification
    */
-  static async deleteNotification(ctx: AuthContext & { params: { id: string } }): Promise<Response> {
+  static async deleteNotification(
+    ctx: AuthContext & { params: { id: string } },
+  ): Promise<Response> {
     const { id: userId } = await ctx.getAuthenticatedUser();
     const { id } = ctx.params;
 
