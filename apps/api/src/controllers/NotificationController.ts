@@ -1,4 +1,4 @@
-import { AuthContext } from '../middleware/auth';
+import type { AuthContext } from '../middleware/auth';
 import { NotificationService } from '../services/NotificationService';
 import { ApiError } from '../errors/ApiError';
 

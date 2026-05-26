@@ -1,4 +1,4 @@
-import { AuthContext } from '../middleware/auth';
+import type { AuthContext } from '../middleware/auth';
 import { ApiError } from '../errors/ApiError';
 import { lendingRepository } from '../repositories/LendingRepository';
 

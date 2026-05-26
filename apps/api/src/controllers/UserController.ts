@@ -1,5 +1,5 @@
 import type { User, Transaction, PropertyInfo } from '@real-estate-defi/shared';
-import { AuthContext } from '../middleware/auth';
+import type { AuthContext } from '../middleware/auth';
 import { userRepository } from '../repositories/UserRepository';
 import { ApiError } from '../errors/ApiError';
 import { CreateUserDto, UpdateUserDto } from '../dto/user.dto';
