@@ -20,7 +20,10 @@ const poolIdParamSchema = uuidParamSchema;
 
 const stellarAddressSchema = z
   .string()
-  .refine((value: string) => positionService.validateAddress(value), 'Invalid Stellar address format');
+  .refine(
+    (value: string) => positionService.validateAddress(value),
+    'Invalid Stellar address format',
+  );
 
 const poolUserParamsSchema = z.object({
   id: z.string().uuid('Invalid UUID format'),
@@ -132,6 +135,7 @@ export const lendingRoutes = new Elysia({ prefix: '/lending' })
   // POST /pools/:id/positions/:borrowerId/liquidate - Execute liquidation (liquidator role required)
   .use(liquidatorAuth)
   .use(validate({ params: liquidationParamsSchema }))
-  .post('/pools/:id/positions/:borrowerId/liquidate', async (ctx) =>
-    LendingController.liquidate(ctx),
+  .post(
+    '/pools/:id/positions/:borrowerId/liquidate',
+    async (ctx) => LendingController.liquidate(ctx),
   );
