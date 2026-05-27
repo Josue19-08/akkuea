@@ -14,17 +14,17 @@ export abstract class BaseRepository<
   constructor(protected readonly table: TTable) {}
 
   async findAll(): Promise<TSelect[]> {
-    const results = await db.select().from(this.table);
+    const results = await db.select().from(this.table as any);
     return results as TSelect[];
   }
 
   async findById(id: string): Promise<TSelect | undefined> {
-    const results = await db.select().from(this.table).where(eq(this.table.id, id));
+    const results = await db.select().from(this.table as any).where(eq(this.table.id, id));
     return results[0] as TSelect | undefined;
   }
 
   async findWhere(condition: SQL): Promise<TSelect[]> {
-    const results = await db.select().from(this.table).where(condition);
+    const results = await db.select().from(this.table as any).where(condition);
     return results as TSelect[];
   }
 
@@ -62,7 +62,7 @@ export abstract class BaseRepository<
   }
 
   async count(): Promise<number> {
-    const results = await db.select().from(this.table);
+    const results = await db.select().from(this.table as any);
     return results.length;
   }
 }
