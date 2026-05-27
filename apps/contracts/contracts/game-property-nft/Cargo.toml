@@ -12,7 +12,6 @@ doctest = false
 
 [dependencies]
 soroban-sdk = { workspace = true }
-cougr-core = { version = "1.0.0", default-features = false }
 
 [dev-dependencies]
 soroban-sdk = { workspace = true, features = ["testutils"] }

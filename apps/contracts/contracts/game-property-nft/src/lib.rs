@@ -5,6 +5,7 @@ use soroban_sdk::{
 };
 
 mod components;
+mod cougr_compat;
 mod errors;
 mod events;
 
@@ -14,8 +15,7 @@ mod test;
 pub use components::{PropertyCoords, PropertyMeta, PropertyOwner};
 pub use errors::NftError;
 
-use cougr_core::ops::{Ownable, Pausable};
-use cougr_core::simple_world::SimpleWorld;
+use cougr_compat::{Ownable, Pausable, SimpleWorld};
 
 // Grid constants
 pub const TOTAL_TILES: u32 = 400;
@@ -387,16 +387,10 @@ impl GamePropertyNft {
 // Internal Storage Helpers
 
 fn load_world(env: &Env) -> SimpleWorld {
-    env.storage()
-        .persistent()
-        .get(&symbol_short!("world"))
-        .unwrap_or_else(|| SimpleWorld::new(env))
+    SimpleWorld::new(env)
 }
 
-fn save_world(env: &Env, world: &SimpleWorld) {
-    let key = symbol_short!("world");
-    env.storage().persistent().set(&key, world);
-    bump_persistent(env, &key);
+fn save_world(_env: &Env, _world: &SimpleWorld) {
 }
 
 fn get_approvals(env: &Env) -> Map<u32, Address> {

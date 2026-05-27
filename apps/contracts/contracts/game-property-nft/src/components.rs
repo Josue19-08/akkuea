@@ -1,5 +1,4 @@
-use cougr_core::component::{ComponentStorage, ComponentTrait};
-use cougr_core::impl_component;
+use crate::cougr_compat::{ComponentStorage, ComponentTrait};
 use soroban_sdk::xdr::{FromXdr, ToXdr};
 use soroban_sdk::{contracttype, symbol_short, Address, Bytes, Env, Symbol};
 
@@ -10,7 +9,24 @@ pub struct PropertyCoords {
     pub y: u32,
 }
 
-impl_component!(PropertyCoords, "coords", Table, { x: u32, y: u32 });
+impl ComponentTrait for PropertyCoords {
+    fn component_type() -> Symbol {
+        symbol_short!("coords")
+    }
+
+    fn serialize(&self, env: &Env) -> Bytes {
+        (self.x, self.y).to_xdr(env)
+    }
+
+    fn deserialize(env: &Env, data: &Bytes) -> Option<Self> {
+        let (x, y) = <(u32, u32)>::from_xdr(env, data).ok()?;
+        Some(Self { x, y })
+    }
+
+    fn default_storage() -> ComponentStorage {
+        ComponentStorage::Table
+    }
+}
 
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -45,8 +61,26 @@ pub struct PropertyMeta {
     pub approved_spender: u32, // entity id of approved address, 0 if none
 }
 
-impl_component!(PropertyMeta, "meta", Sparse, {
-    level: u32,
-    last_claimed_ledger: u64,
-    approved_spender: u32,
-});
+impl ComponentTrait for PropertyMeta {
+    fn component_type() -> Symbol {
+        symbol_short!("meta")
+    }
+
+    fn serialize(&self, env: &Env) -> Bytes {
+        (self.level, self.last_claimed_ledger, self.approved_spender).to_xdr(env)
+    }
+
+    fn deserialize(env: &Env, data: &Bytes) -> Option<Self> {
+        let (level, last_claimed_ledger, approved_spender) =
+            <(u32, u64, u32)>::from_xdr(env, data).ok()?;
+        Some(Self {
+            level,
+            last_claimed_ledger,
+            approved_spender,
+        })
+    }
+
+    fn default_storage() -> ComponentStorage {
+        ComponentStorage::Sparse
+    }
+}
