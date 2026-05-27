@@ -30,6 +30,8 @@ export type {
 
 // Observability contracts
 export * from "./observability";
+// Game events
+export * from "./game-events";
 export type ValuationMethodology =
   | "automated"
   | "manual"
