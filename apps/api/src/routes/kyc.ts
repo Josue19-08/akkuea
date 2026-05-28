@@ -43,8 +43,7 @@ function handleKycError(error: unknown, set: SetStatus) {
 }
 
 export const kycRoutes = new Elysia({ prefix: '/kyc' })
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  .get('/status/:userId', async ({ params: { userId }, set }: any) => {
+  .get('/status/:userId', async ({ params: { userId }, set }) => {
     try {
       return await KYCController.getKYCStatus(userId);
     } catch (error) {
@@ -53,8 +52,7 @@ export const kycRoutes = new Elysia({ prefix: '/kyc' })
   })
   .post(
     '/upload',
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async ({ request, set }: any) => {
+    async ({ request, set }) => {
       try {
         const contentType = request.headers.get('content-type') ?? '';
         if (!contentType.includes('multipart/form-data')) {
@@ -112,8 +110,7 @@ export const kycRoutes = new Elysia({ prefix: '/kyc' })
   )
   .post(
     '/submit',
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async ({ body, set }: any) => {
+    async ({ body, set }) => {
       try {
         return await KYCController.submitKYC(
           body as {
@@ -130,8 +127,7 @@ export const kycRoutes = new Elysia({ prefix: '/kyc' })
     },
     { beforeHandle: [rateLimit()] },
   )
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  .post('/verify/:documentId', async ({ params: { documentId }, body, set }: any) => {
+  .post('/verify/:documentId', async ({ params: { documentId }, body, set }) => {
     try {
       return await KYCController.verifyDocument(
         documentId,
@@ -141,16 +137,14 @@ export const kycRoutes = new Elysia({ prefix: '/kyc' })
       return handleKycError(error, set);
     }
   })
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  .get('/documents/:userId', async ({ params: { userId }, set }: any) => {
+  .get('/documents/:userId', async ({ params: { userId }, set }) => {
     try {
       return await KYCController.getUserDocuments(userId);
     } catch (error) {
       return handleKycError(error, set);
     }
   })
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  .get('/file/:documentId', async ({ params: { documentId }, set }: any) => {
+  .get('/file/:documentId', async ({ params: { documentId }, set }) => {
     try {
       const { buffer, contentType, fileName } = await KYCController.getDocumentFile(documentId);
       set.headers['Content-Type'] = contentType;

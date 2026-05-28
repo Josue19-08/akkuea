@@ -10,7 +10,7 @@
     "apps/akkuea-land"
   ],
   "scripts": {
-    "dev": "concurrently \"bun run dev:webapp\" \"bun run dev:api\"",
+    "dev": "concurrently \"bun run dev:webapp\" \"bun run dev:api\" \"bun run dev:land\"",
     "dev:webapp": "cd apps/webapp && bun run dev",
     "dev:api": "cd apps/api && bun run dev",
     "dev:land": "cd apps/akkuea-land && bun run dev",
@@ -23,6 +23,7 @@
     "test": "bun test --workspaces",
     "lint": "concurrently \"cd apps/api && bun run lint\" \"cd apps/webapp && bun run lint\" \"cd apps/shared && bun run lint\" \"cd apps/akkuea-land && bun run lint\"",
     "typecheck": "concurrently \"cd apps/api && bun run type-check\" \"cd apps/webapp && bun run type-check\" \"cd apps/shared && bun run type-check\" \"cd apps/akkuea-land && bun run type-check\"",
+    "type-check": "bun run typecheck",
     "clean": "bun run clean --workspaces && rm -rf node_modules",
     "install:all": "bun install && bun install --workspaces",
     "deploy:contracts": "./scripts/deploy.sh",
