@@ -309,7 +309,7 @@ jobs:
         
         # Check for unsafe eval usage
         echo "3. Checking for unsafe eval usage..."
-        if grep -r "eval\|Function(" apps/ --include="*.ts" --exclude-dir=node_modules --exclude-dir=dist | grep -v "//.*eval\|//.*Function("; then
+        if grep -r "eval\|Function(" apps/ --include="*.ts" --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=.next | grep -v "//.*eval\|//.*Function("; then
           echo "Warning: Unsafe eval usage found"
           exit 1
         fi
