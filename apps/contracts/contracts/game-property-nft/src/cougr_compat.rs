@@ -41,7 +41,9 @@ impl SimpleWorld {
         };
         let bytes = value.serialize(env);
         env.storage().persistent().set(&key, &bytes);
-        env.storage().persistent().extend_ttl(&key, 518_400, 518_400);
+        env.storage()
+            .persistent()
+            .extend_ttl(&key, 518_400, 518_400);
     }
 
     pub fn get_typed<T: ComponentTrait>(&self, env: &Env, entity: u32) -> Option<T> {
@@ -109,8 +111,16 @@ impl Pausable {
     }
 
     pub fn require_not_paused(&self, env: &Env) -> Result<(), ()> {
-        let paused: bool = env.storage().instance().get(&self.key(env)).unwrap_or(false);
-        if paused { Err(()) } else { Ok(()) }
+        let paused: bool = env
+            .storage()
+            .instance()
+            .get(&self.key(env))
+            .unwrap_or(false);
+        if paused {
+            Err(())
+        } else {
+            Ok(())
+        }
     }
 
     pub fn pause(&self, env: &Env, _admin: &Address) -> Result<(), ()> {

@@ -38,28 +38,26 @@ pub struct GamePropertyNft;
 #[contractimpl]
 impl GamePropertyNft {
     /// Mint all 400 tiles to `treasury` logically.
-    /// Sets `treasury` as owner, stores `game_engine` address, and initializes empty ECS world.
     pub fn initialize(env: Env, treasury: Address, game_engine: Address) {
         let ownable = Ownable::new(symbol_short!("prop_nft"));
         if ownable.initialize(&env, &treasury).is_err() {
             panic_with_error!(&env, NftError::AlreadyInitialized);
         }
 
-        // Store the game engine and initial ledger in instance storage
         env.storage()
             .instance()
             .set(&symbol_short!("engine"), &game_engine);
+
         env.storage().instance().set(
             &symbol_short!("init_ledg"),
             &(env.ledger().sequence() as u64),
         );
 
-        // Start with an empty world to stay under Stellar's 65KB contract size limits
         let world = SimpleWorld::new(&env);
         save_world(&env, &world);
     }
 
-    /// Transfer property `property_id` from `from` to `to`.
+    /// Transfer property
     pub fn transfer(env: Env, from: Address, to: Address, property_id: u32) {
         from.require_auth();
 
@@ -78,6 +76,7 @@ impl GamePropertyNft {
             .unwrap_or_else(|| panic_with_error!(&env, NftError::Unauthorized));
 
         let mut world = load_world(&env);
+
         let owner_comp: PropertyOwner = world
             .get_typed(&env, property_id)
             .unwrap_or(PropertyOwner { address: treasury });
@@ -86,7 +85,6 @@ impl GamePropertyNft {
             panic_with_error!(&env, NftError::NotOwner);
         }
 
-        // Perform transfer
         world.set_typed(
             &env,
             property_id,
@@ -95,7 +93,6 @@ impl GamePropertyNft {
             },
         );
 
-        // Clear approval
         let mut approves = get_approvals(&env);
         approves.remove(property_id);
         save_approvals(&env, &approves);
@@ -105,7 +102,7 @@ impl GamePropertyNft {
         events::emit_transfer(&env, Some(from), to, property_id);
     }
 
-    /// Approve `spender` to transfer property `property_id` on behalf of `owner`.
+    /// Approve spender
     pub fn approve(env: Env, owner: Address, spender: Address, property_id: u32) {
         owner.require_auth();
 
@@ -124,6 +121,7 @@ impl GamePropertyNft {
             .unwrap_or_else(|| panic_with_error!(&env, NftError::Unauthorized));
 
         let world = load_world(&env);
+
         let owner_comp: PropertyOwner = world
             .get_typed(&env, property_id)
             .unwrap_or(PropertyOwner { address: treasury });
@@ -139,7 +137,7 @@ impl GamePropertyNft {
         events::emit_approve(&env, owner, spender, property_id);
     }
 
-    /// Transfer property `property_id` from `from` to `to` using a prior approval.
+    /// Transfer from approved spender
     pub fn transfer_from(env: Env, spender: Address, from: Address, to: Address, property_id: u32) {
         spender.require_auth();
 
@@ -158,6 +156,7 @@ impl GamePropertyNft {
             .unwrap_or_else(|| panic_with_error!(&env, NftError::Unauthorized));
 
         let mut world = load_world(&env);
+
         let owner_comp: PropertyOwner = world
             .get_typed(&env, property_id)
             .unwrap_or(PropertyOwner { address: treasury });
@@ -167,13 +166,11 @@ impl GamePropertyNft {
         }
 
         let approves = get_approvals(&env);
-        let approved = approves.get(property_id);
-        match approved {
+        match approves.get(property_id) {
             Some(addr) if addr == spender => {}
             _ => panic_with_error!(&env, NftError::NotApproved),
         }
 
-        // Perform transfer
         world.set_typed(
             &env,
             property_id,
@@ -182,7 +179,6 @@ impl GamePropertyNft {
             },
         );
 
-        // Clear approval
         let mut approves = approves;
         approves.remove(property_id);
         save_approvals(&env, &approves);
@@ -192,7 +188,7 @@ impl GamePropertyNft {
         events::emit_transfer(&env, Some(from), to, property_id);
     }
 
-    /// Return full property state for tile `property_id`.
+    /// Get property
     pub fn get_property(env: Env, property_id: u32) -> PropertyState {
         if property_id >= TOTAL_TILES {
             panic_with_error!(&env, NftError::InvalidProperty);
@@ -202,6 +198,7 @@ impl GamePropertyNft {
         let treasury = ownable
             .owner(&env)
             .unwrap_or_else(|| panic_with_error!(&env, NftError::Unauthorized));
+
         let init_ledger = env
             .storage()
             .instance()
@@ -209,15 +206,18 @@ impl GamePropertyNft {
             .unwrap_or(0u64);
 
         let world = load_world(&env);
+
         let coords: PropertyCoords = world
             .get_typed(&env, property_id)
             .unwrap_or(PropertyCoords {
                 x: property_id % 20,
                 y: property_id / 20,
             });
+
         let owner_comp: PropertyOwner = world
             .get_typed(&env, property_id)
             .unwrap_or(PropertyOwner { address: treasury });
+
         let meta: PropertyMeta = world.get_typed(&env, property_id).unwrap_or(PropertyMeta {
             level: 0,
             last_claimed_ledger: init_ledger,
@@ -225,7 +225,6 @@ impl GamePropertyNft {
         });
 
         let approves = get_approvals(&env);
-        let approved = approves.get(property_id);
 
         PropertyState {
             id: property_id,
@@ -234,11 +233,10 @@ impl GamePropertyNft {
             owner: owner_comp.address,
             level: meta.level,
             last_claimed_ledger: meta.last_claimed_ledger,
-            approved,
+            approved: approves.get(property_id),
         }
     }
 
-    /// Return current owner of tile `property_id`.
     pub fn get_owner(env: Env, property_id: u32) -> Address {
         if property_id >= TOTAL_TILES {
             panic_with_error!(&env, NftError::InvalidProperty);
@@ -250,13 +248,14 @@ impl GamePropertyNft {
             .unwrap_or_else(|| panic_with_error!(&env, NftError::Unauthorized));
 
         let world = load_world(&env);
+
         let owner_comp: PropertyOwner = world
             .get_typed(&env, property_id)
             .unwrap_or(PropertyOwner { address: treasury });
+
         owner_comp.address
     }
 
-    /// Return all property IDs owned by `owner`.
     pub fn list_by_owner(env: Env, owner: Address) -> Vec<u32> {
         let ownable = Ownable::new(symbol_short!("prop_nft"));
         let treasury = ownable
@@ -265,19 +264,21 @@ impl GamePropertyNft {
 
         let world = load_world(&env);
         let mut list = Vec::new(&env);
+
         for id in 0..TOTAL_TILES {
             let prop_owner = world
                 .get_typed::<PropertyOwner>(&env, id)
                 .map(|o| o.address)
                 .unwrap_or_else(|| treasury.clone());
+
             if prop_owner == owner {
                 list.push_back(id);
             }
         }
+
         list
     }
 
-    /// Set building level (only GameEngine).
     pub fn set_improvement_level(env: Env, caller: Address, property_id: u32, level: u32) {
         caller.require_auth();
 
@@ -286,6 +287,7 @@ impl GamePropertyNft {
             .instance()
             .get(&symbol_short!("engine"))
             .unwrap_or_else(|| panic_with_error!(&env, NftError::Unauthorized));
+
         if caller != stored_engine {
             panic_with_error!(&env, NftError::Unauthorized);
         }
@@ -294,10 +296,6 @@ impl GamePropertyNft {
             panic_with_error!(&env, NftError::InvalidProperty);
         }
 
-        let ownable = Ownable::new(symbol_short!("prop_nft"));
-        let treasury = ownable
-            .owner(&env)
-            .unwrap_or_else(|| panic_with_error!(&env, NftError::Unauthorized));
         let init_ledger = env
             .storage()
             .instance()
@@ -305,23 +303,19 @@ impl GamePropertyNft {
             .unwrap_or(0u64);
 
         let mut world = load_world(&env);
+
         let mut meta: PropertyMeta = world.get_typed(&env, property_id).unwrap_or(PropertyMeta {
             level: 0,
             last_claimed_ledger: init_ledger,
             approved_spender: 0,
         });
+
         meta.level = level;
+
         world.set_typed(&env, property_id, &meta);
         save_world(&env, &world);
-
-        // Emit improved event
-        let owner_comp: PropertyOwner = world
-            .get_typed(&env, property_id)
-            .unwrap_or(PropertyOwner { address: treasury });
-        events::emit_improved(&env, owner_comp.address, property_id, level);
     }
 
-    /// Set last claimed ledger (only GameEngine).
     pub fn set_last_claimed_ledger(env: Env, caller: Address, property_id: u32, ledger: u64) {
         caller.require_auth();
 
@@ -330,34 +324,28 @@ impl GamePropertyNft {
             .instance()
             .get(&symbol_short!("engine"))
             .unwrap_or_else(|| panic_with_error!(&env, NftError::Unauthorized));
+
         if caller != stored_engine {
             panic_with_error!(&env, NftError::Unauthorized);
         }
 
-        if property_id >= TOTAL_TILES {
-            panic_with_error!(&env, NftError::InvalidProperty);
-        }
-
-        let init_ledger = env
-            .storage()
-            .instance()
-            .get(&symbol_short!("init_ledg"))
-            .unwrap_or(0u64);
-
         let mut world = load_world(&env);
+
         let mut meta: PropertyMeta = world.get_typed(&env, property_id).unwrap_or(PropertyMeta {
             level: 0,
-            last_claimed_ledger: init_ledger,
+            last_claimed_ledger: 0,
             approved_spender: 0,
         });
+
         meta.last_claimed_ledger = ledger;
+
         world.set_typed(&env, property_id, &meta);
         save_world(&env, &world);
     }
 
-    /// Pause the contract. Only callable by admin.
     pub fn pause(env: Env, admin: Address) {
         admin.require_auth();
+
         let ownable = Ownable::new(symbol_short!("prop_nft"));
         if ownable.require_owner(&env, &admin).is_err() {
             panic_with_error!(&env, NftError::Unauthorized);
@@ -369,9 +357,9 @@ impl GamePropertyNft {
         }
     }
 
-    /// Unpause the contract. Only callable by admin.
     pub fn unpause(env: Env, admin: Address) {
         admin.require_auth();
+
         let ownable = Ownable::new(symbol_short!("prop_nft"));
         if ownable.require_owner(&env, &admin).is_err() {
             panic_with_error!(&env, NftError::Unauthorized);
@@ -384,14 +372,13 @@ impl GamePropertyNft {
     }
 }
 
-// Internal Storage Helpers
+// ================= Helpers =================
 
 fn load_world(env: &Env) -> SimpleWorld {
     SimpleWorld::new(env)
 }
 
-fn save_world(_env: &Env, _world: &SimpleWorld) {
-}
+fn save_world(_env: &Env, _world: &SimpleWorld) {}
 
 fn get_approvals(env: &Env) -> Map<u32, Address> {
     env.storage()
@@ -407,5 +394,5 @@ fn save_approvals(env: &Env, approvals: &Map<u32, Address>) {
 }
 
 fn bump_persistent(env: &Env, key: &Symbol) {
-    env.storage().persistent().extend_ttl(key, 518_400, 518_400); // 30 days
+    env.storage().persistent().extend_ttl(key, 518_400, 518_400);
 }
