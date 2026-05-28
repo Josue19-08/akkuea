@@ -69,7 +69,11 @@ describe.skipIf(skipIfNoDatabase)('KYC Routes', () => {
 
     it.skipIf(skipIfNoDatabase)('returns status and documents for existing user', async () => {
       const app = createApp();
-      const response = await app.handle(new Request(`http://localhost/kyc/status/${testUserId}`));
+      const response = await app.handle(
+        new Request(`http://localhost/kyc/status/${testUserId}`, {
+          headers: { Authorization: `Bearer ${testToken}` },
+        }),
+      );
       expect(response.status).toBe(200);
       const body = (await response.json()) as {
         status: string;
