@@ -203,11 +203,15 @@ describe.skipIf(skipIfNoDatabase)('KYC Routes', () => {
       expect(response.status).toBe(403);
     });
 
-    it.skipIf(skipIfNoDatabase)('returns 404 for non-existent user', async () => {
+    it.skipIf(skipIfNoDatabase)('returns 404 for non-existent user when the token matches the requested userId', async () => {
       const app = createApp();
+      const matchingToken = jwt.sign(
+        { id: NON_EXISTENT_USER_ID, walletAddress: 'GOTHER' },
+        JWT_SECRET,
+      );
       const response = await app.handle(
         new Request(`http://localhost/kyc/documents/${NON_EXISTENT_USER_ID}`, {
-          headers: { Authorization: `Bearer ${testToken}` },
+          headers: { Authorization: `Bearer ${matchingToken}` },
         }),
       );
       expect(response.status).toBe(404);
