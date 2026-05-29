@@ -274,7 +274,7 @@ impl GamePropertyNft {
             .persistent()
             .get(&(symbol_short!("oidx"), old_owner))
             .unwrap_or_else(|| Vec::new(env));
-        
+
         let mut new_old_ids: Vec<u32> = Vec::new(env);
         for i in 0..old_ids.len() {
             let x = old_ids.get(i).unwrap();
@@ -282,7 +282,7 @@ impl GamePropertyNft {
                 new_old_ids.push_back(x);
             }
         }
-        
+
         env.storage()
             .persistent()
             .set(&(symbol_short!("oidx"), old_owner), &new_old_ids);
