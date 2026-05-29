@@ -256,27 +256,33 @@ impl GamePropertyNft {
         owner_comp.address
     }
 
+    fn update_owner_index(env: &Env, old_owner: &Address, new_owner: &Address, id: u32) {
+        let mut old_ids: Vec<u32> = env
+            .storage()
+            .persistent()
+            .get(&(symbol_short!("oidx"), old_owner))
+            .unwrap_or_else(|| Vec::new(env));
+        old_ids.retain(|x| x != id);
+        env.storage()
+            .persistent()
+            .set(&(symbol_short!("oidx"), old_owner), &old_ids);
+
+        let mut new_ids: Vec<u32> = env
+            .storage()
+            .persistent()
+            .get(&(symbol_short!("oidx"), new_owner))
+            .unwrap_or_else(|| Vec::new(env));
+        new_ids.push_back(id);
+        env.storage()
+            .persistent()
+            .set(&(symbol_short!("oidx"), new_owner), &new_ids);
+    }
+
     pub fn list_by_owner(env: Env, owner: Address) -> Vec<u32> {
-        let ownable = Ownable::new(symbol_short!("prop_nft"));
-        let treasury = ownable
-            .owner(&env)
-            .unwrap_or_else(|| panic_with_error!(&env, NftError::Unauthorized));
-
-        let world = load_world(&env);
-        let mut list = Vec::new(&env);
-
-        for id in 0..TOTAL_TILES {
-            let prop_owner = world
-                .get_typed::<PropertyOwner>(&env, id)
-                .map(|o| o.address)
-                .unwrap_or_else(|| treasury.clone());
-
-            if prop_owner == owner {
-                list.push_back(id);
-            }
-        }
-
-        list
+        env.storage()
+            .persistent()
+            .get(&(symbol_short!("oidx"), &owner))
+            .unwrap_or_else(|| Vec::new(&env))
     }
 
     pub fn set_improvement_level(env: Env, caller: Address, property_id: u32, level: u32) {
