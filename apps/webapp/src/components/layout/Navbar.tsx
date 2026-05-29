@@ -19,6 +19,7 @@ import { useTheme } from "@/context/ThemeContext";
 import { useWallet } from "@/components/auth/hooks";
 import { cn, truncateAddress } from "@/lib/utils";
 import { BrandLogo } from "@/components/layout/BrandLogo";
+import { WalletProviderModal } from "@/components/auth/WalletProviderModal";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -30,10 +31,10 @@ const navigation = [
 export function Navbar() {
   const pathname = usePathname();
   useTheme();
-  const { address, isConnected, isConnecting, connect, disconnect } =
-    useWallet();
+  const { address, isConnected, isConnecting, disconnect } = useWallet();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [walletMenuOpen, setWalletMenuOpen] = useState(false);
+  const [providerModalOpen, setProviderModalOpen] = useState(false);
 
   return (
     <motion.header
@@ -159,13 +160,18 @@ export function Navbar() {
               <Button
                 variant="primary"
                 size="sm"
-                onClick={connect}
+                onClick={() => setProviderModalOpen(true)}
                 isLoading={isConnecting}
                 leftIcon={<Wallet className="w-3.5 h-3.5" />}
               >
                 Connect
               </Button>
             )}
+
+            <WalletProviderModal
+              open={providerModalOpen}
+              onClose={() => setProviderModalOpen(false)}
+            />
 
             {/* Mobile Menu Toggle */}
             <button
