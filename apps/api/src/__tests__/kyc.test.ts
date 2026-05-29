@@ -12,7 +12,8 @@ const TEST_WALLET = 'GAKYCTESTWALLETXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
 const NON_EXISTENT_USER_ID = NON_EXISTENT_UUID;
 const NON_EXISTENT_DOC_ID = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-default-key-for-dev';
-const INTERNAL_KEY = process.env.INTERNAL_API_KEY || 'generate-a-long-random-secret';
+const INTERNAL_KEY = process.env.INTERNAL_API_KEY || 'test-internal-api-key';
+process.env.INTERNAL_API_KEY = INTERNAL_KEY;
 
 function createApp() {
   return new Elysia().use(errorHandler).use(kycRoutes);
@@ -180,6 +181,28 @@ describe.skipIf(skipIfNoDatabase)('KYC Routes', () => {
   });
 
   describe('GET /kyc/documents/:userId', () => {
+    it.skipIf(skipIfNoDatabase)('returns 401 when no token is provided', async () => {
+      const app = createApp();
+      const response = await app.handle(
+        new Request(`http://localhost/kyc/documents/${testUserId}`),
+      );
+      expect(response.status).toBe(401);
+    });
+
+    it.skipIf(skipIfNoDatabase)('returns 403 for a valid token for a different user', async () => {
+      const app = createApp();
+      const otherToken = jwt.sign(
+        { id: NON_EXISTENT_USER_ID, walletAddress: 'GOTHER' },
+        JWT_SECRET,
+      );
+      const response = await app.handle(
+        new Request(`http://localhost/kyc/documents/${testUserId}`, {
+          headers: { Authorization: `Bearer ${otherToken}` },
+        }),
+      );
+      expect(response.status).toBe(403);
+    });
+
     it.skipIf(skipIfNoDatabase)('returns 404 for non-existent user', async () => {
       const app = createApp();
       const response = await app.handle(

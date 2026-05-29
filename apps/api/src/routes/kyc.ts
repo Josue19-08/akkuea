@@ -75,7 +75,16 @@ const userScoped = new Elysia()
       }
     },
     { beforeHandle: [rateLimit()] },
-  );
+  )
+  .get('/documents/:userId', async ({ params: { userId }, set, getAuthenticatedUser }) => {
+    try {
+      const { id } = await getAuthenticatedUser();
+      if (id !== userId) throw new ApiError(403, 'FORBIDDEN', 'Access denied');
+      return await KYCController.getUserDocuments(userId);
+    } catch (error) {
+      return handleKycError(error, set);
+    }
+  });
 
 // Unauthenticated routes (require JWT but no ownership)
 const jwtScoped = new Elysia()
@@ -157,15 +166,7 @@ const jwtScoped = new Elysia()
         headers: { 'Content-Type': 'application/json' },
       });
     }
-  })
-  .get('/documents/:userId', async ({ params: { userId }, set }) => {
-    try {
-      return await KYCController.getUserDocuments(userId);
-    } catch (error) {
-      return handleKycError(error, set);
-    }
   });
-
 // Internal-only routes (require INTERNAL_API_KEY header and reject user JWTs)
 const internalScoped = new Elysia().post(
   '/verify/:documentId',
@@ -178,11 +179,12 @@ const internalScoped = new Elysia().post(
 
       const key =
         headers['internal-api-key'] || headers['x-internal-api-key'] || headers['internal_api_key'];
-      // Tests and .env.example use a default fallback string when the env var
-      // is not set. Mirror that fallback here so tests that rely on the
-      // example value continue to work in CI/local without explicit env setup.
-      const expected = process.env.INTERNAL_API_KEY || 'generate-a-long-random-secret';
-      if (!expected || key !== expected) {
+      const expected = process.env.INTERNAL_API_KEY;
+      if (!expected) {
+        console.error('INTERNAL_API_KEY is not configured for /kyc/verify');
+        throw new ApiError(500, 'INTERNAL_SERVER_ERROR', 'Internal key configuration missing');
+      }
+      if (key !== expected) {
         throw new ApiError(401, 'UNAUTHORIZED', 'Internal key required');
       }
 
