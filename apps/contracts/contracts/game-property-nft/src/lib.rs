@@ -63,6 +63,7 @@ impl GamePropertyNft {
         env.storage()
             .persistent()
             .set(&(symbol_short!("oidx"), &treasury), &treasury_ids);
+        bump_owner_index(&env, &treasury);
     }
 
     /// Transfer property
@@ -277,6 +278,7 @@ impl GamePropertyNft {
 
         let mut new_old_ids: Vec<u32> = Vec::new(env);
         for i in 0..old_ids.len() {
+            // safe: i is bounded by old_ids.len()
             let x = old_ids.get(i).unwrap();
             if x != id {
                 new_old_ids.push_back(x);
@@ -286,6 +288,7 @@ impl GamePropertyNft {
         env.storage()
             .persistent()
             .set(&(symbol_short!("oidx"), old_owner), &new_old_ids);
+        bump_owner_index(env, old_owner);
 
         let mut new_ids: Vec<u32> = env
             .storage()
@@ -296,6 +299,7 @@ impl GamePropertyNft {
         env.storage()
             .persistent()
             .set(&(symbol_short!("oidx"), new_owner), &new_ids);
+        bump_owner_index(env, new_owner);
     }
 
     pub fn list_by_owner(env: Env, owner: Address) -> Vec<u32> {
@@ -421,4 +425,12 @@ fn save_approvals(env: &Env, approvals: &Map<u32, Address>) {
 
 fn bump_persistent(env: &Env, key: &Symbol) {
     env.storage().persistent().extend_ttl(key, 518_400, 518_400);
+}
+
+fn bump_owner_index(env: &Env, owner: &Address) {
+    env.storage().persistent().extend_ttl(
+        &(symbol_short!("oidx"), owner),
+        518_400,
+        518_400,
+    );
 }
