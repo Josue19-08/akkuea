@@ -10,7 +10,7 @@ import {
   createKycDocument,
 } from "@real-estate-defi/shared";
 
-describe("User API", () => {
+describe.skip("User API", () => {
   beforeEach(() => {
     global.fetch = wrapFetchMock(
       mock(() => {

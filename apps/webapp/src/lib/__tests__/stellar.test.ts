@@ -37,9 +37,9 @@ describe("fetchBalance", () => {
     const result = await fetchBalance("GABC1234", "testnet", server);
     warn.mockRestore();
     expect(result).toBe("0");
-    expect(warn).toHaveBeenCalledWith(
-      expect.stringContaining("[fetchBalance]"),
-      networkError,
-    );
+    expect(warn).toHaveBeenCalled();
+    const callArgs = warn.mock.calls[0];
+    expect(callArgs[0]).toContain("[fetchBalance]");
+    expect(callArgs[1]).toBe(networkError);
   });
 });
