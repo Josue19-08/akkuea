@@ -6,6 +6,7 @@ import {
   walletRegistry,
   StellarWalletsKitProvider,
   SmartAccountKitProvider,
+  PollarProvider,
 } from "@/services/wallet";
 
 // Register providers once at module load (client-side only)
@@ -23,6 +24,12 @@ if (process.env.NEXT_PUBLIC_SMART_ACCOUNT_RPC_URL) {
         process.env.NEXT_PUBLIC_SMART_ACCOUNT_VERIFIER_ADDRESS ?? "",
       appName: "Akkuea",
     }),
+  );
+}
+
+if (process.env.NEXT_PUBLIC_POLLAR_KEY) {
+  walletRegistry.register(
+    new PollarProvider(process.env.NEXT_PUBLIC_POLLAR_KEY),
   );
 }
 
