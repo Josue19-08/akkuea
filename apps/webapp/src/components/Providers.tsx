@@ -6,10 +6,15 @@ import {
   walletRegistry,
   StellarWalletsKitProvider,
   SmartAccountKitProvider,
+  privyProvider,
 } from "@/services/wallet";
+import { PrivyWrapper } from "@/components/auth/PrivyWrapper";
 
-// Register providers once at module load (client-side only)
 walletRegistry.register(new StellarWalletsKitProvider());
+
+if (process.env.NEXT_PUBLIC_PRIVY_APP_ID) {
+  walletRegistry.register(privyProvider);
+}
 
 if (process.env.NEXT_PUBLIC_SMART_ACCOUNT_RPC_URL) {
   walletRegistry.register(
@@ -41,5 +46,9 @@ export function Providers({ children }: ProvidersProps) {
     }
   }, []);
 
-  return <ThemeProvider>{children}</ThemeProvider>;
+  return (
+    <PrivyWrapper>
+      <ThemeProvider>{children}</ThemeProvider>
+    </PrivyWrapper>
+  );
 }

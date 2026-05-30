@@ -28,7 +28,8 @@ import {
   Badge,
   ErrorBoundary,
 } from "@/components/ui";
-import { useWallet } from "@/components/auth/hooks";
+import { useWallet, useWalletConnectModal } from "@/components/auth/hooks";
+import { WalletProviderModal } from "@/components/auth/WalletProviderModal";
 import { usePortfolio } from "@/hooks/usePortfolio";
 import { useHealthFactor } from "@/hooks/useHealthFactor";
 import {
@@ -51,8 +52,8 @@ import {
 } from "@/lib/animations";
 
 export default function DashboardPage() {
-  const { address, balance, isConnected, connect, isConnecting, network } =
-    useWallet();
+  const { address, balance, isConnected, network } = useWallet();
+  const { openConnectModal, connectModalProps } = useWalletConnectModal();
   const [showBalance, setShowBalance] = useState(true);
   const [copied, setCopied] = useState(false);
 
@@ -96,8 +97,7 @@ export default function DashboardPage() {
             </p>
             <Button
               size="lg"
-              onClick={connect}
-              isLoading={isConnecting}
+              onClick={openConnectModal}
               leftIcon={<Wallet className="w-4 h-4" />}
               isSecure
             >
@@ -105,6 +105,7 @@ export default function DashboardPage() {
             </Button>
           </motion.div>
         </main>
+        <WalletProviderModal {...connectModalProps} />
         <Footer />
       </motion.div>
     );

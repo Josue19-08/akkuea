@@ -4,7 +4,7 @@ import { useCallback, useEffect } from "react";
 import { WalletNetwork } from "@creit.tech/stellar-wallets-kit";
 import { useAuthenticationStore } from "../store/data/slices/authentication.slice";
 import { initializeWalletKit, getWalletKit } from "../constant/walletKit";
-import { walletRegistry } from "@/services/wallet/registry";
+import { isSignableWalletProvider, walletRegistry } from "@/services/wallet";
 import { fetchBalance } from "@/lib/stellar";
 
 export const useWallet = () => {
@@ -17,6 +17,15 @@ export const useWallet = () => {
         : WalletNetwork.TESTNET;
     initializeWalletKit(network);
   }, [store.network]);
+
+  useEffect(() => {
+    if (store.selectedWalletId && !walletRegistry.get(store.selectedWalletId)) {
+      store.setSelectedWalletId(null);
+      store.setIsConnected(false);
+    }
+    store.setIsConnecting(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /**
    * Legacy connect: opens the StellarWalletsKit modal.
@@ -79,6 +88,7 @@ export const useWallet = () => {
       } catch (error) {
         console.error("Error connecting wallet:", error);
         store.reset();
+        throw error;
       } finally {
         store.setIsConnecting(false);
       }
@@ -107,6 +117,19 @@ export const useWallet = () => {
     store.setBalance(balance);
   }, [store]);
 
+  const signTransaction = useCallback(
+    async (xdr: string, networkPassphrase: string) => {
+      const provider = walletRegistry.get(store.selectedWalletId ?? "");
+      if (!provider || !isSignableWalletProvider(provider)) {
+        throw new Error(
+          "Connected wallet does not support transaction signing",
+        );
+      }
+      return provider.signTransaction(xdr, networkPassphrase);
+    },
+    [store],
+  );
+
   return {
     address: store.address,
     balance: store.balance,
@@ -120,5 +143,6 @@ export const useWallet = () => {
     disconnect,
     switchNetwork,
     refreshBalance,
+    signTransaction,
   };
 };
