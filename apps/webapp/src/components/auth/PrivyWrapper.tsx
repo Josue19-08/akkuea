@@ -1,11 +1,6 @@
 "use client";
 
-import React, {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-} from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import { PrivyProvider, usePrivy } from "@privy-io/react-auth";
 import {
   privyProvider,

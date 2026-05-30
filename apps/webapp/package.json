@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "type-check": "tsc --noEmit",
-    "test": "bun test",
+    "test": "NEXT_PUBLIC_API_URL=http://localhost:3001 bun test",
     "test:watch": "bun test --watch",
     "test:coverage": "bun test --coverage",
     "clean": "rm -rf .next"

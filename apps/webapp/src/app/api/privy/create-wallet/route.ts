@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPrivyClient, ensureStellarWalletForUser } from "@/lib/privy-server";
 
-function mapCreateWalletError(error: unknown): { message: string; status: number } {
-  const message = error instanceof Error ? error.message : "Failed to create wallet";
+function mapCreateWalletError(error: unknown): {
+  message: string;
+  status: number;
+} {
+  const message =
+    error instanceof Error ? error.message : "Failed to create wallet";
 
   if (message.includes("not configured")) {
     return { message, status: 500 };

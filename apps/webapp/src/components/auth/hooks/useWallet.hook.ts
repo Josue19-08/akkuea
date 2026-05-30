@@ -4,10 +4,7 @@ import { useCallback, useEffect } from "react";
 import { WalletNetwork } from "@creit.tech/stellar-wallets-kit";
 import { useAuthenticationStore } from "../store/data/slices/authentication.slice";
 import { initializeWalletKit, getWalletKit } from "../constant/walletKit";
-import {
-  isSignableWalletProvider,
-  walletRegistry,
-} from "@/services/wallet";
+import { isSignableWalletProvider, walletRegistry } from "@/services/wallet";
 import { fetchBalance } from "@/lib/stellar";
 
 export const useWallet = () => {
@@ -124,7 +121,9 @@ export const useWallet = () => {
     async (xdr: string, networkPassphrase: string) => {
       const provider = walletRegistry.get(store.selectedWalletId ?? "");
       if (!provider || !isSignableWalletProvider(provider)) {
-        throw new Error("Connected wallet does not support transaction signing");
+        throw new Error(
+          "Connected wallet does not support transaction signing",
+        );
       }
       return provider.signTransaction(xdr, networkPassphrase);
     },

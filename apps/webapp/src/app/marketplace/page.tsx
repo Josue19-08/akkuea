@@ -438,7 +438,6 @@ export default function MarketplacePage() {
           }}
         />
       )}
-
     </motion.div>
   );
 }

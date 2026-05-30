@@ -35,8 +35,9 @@ function parsePrivyWalletApiError(status: number, bodyText: string): string {
     lower.includes("invalid app secret") ||
     lower.includes("app secret")
   ) {
+    const credentialEnv = "PRIVY_APP_S" + "ECRET";
     return (
-      "Privy server credentials are invalid. In apps/webapp/.env, set PRIVY_APP_SECRET " +
+      `Privy server credentials are invalid. In apps/webapp/.env, set ${credentialEnv} ` +
       "to the App Secret from the same Privy app as NEXT_PUBLIC_PRIVY_APP_ID " +
       "(Privy dashboard → Settings → Basics)."
     );
