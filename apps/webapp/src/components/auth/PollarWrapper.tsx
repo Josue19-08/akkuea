@@ -1,7 +1,6 @@
 "use client";
 
 import { type ReactNode } from "react";
-import { PollarProvider } from "@/services/wallet/providers/pollar";
 
 interface PollarWrapperProps {
   children: ReactNode;
@@ -15,5 +14,3 @@ export function PollarWrapper({ children }: PollarWrapperProps) {
   if (!process.env.NEXT_PUBLIC_POLLAR_KEY) return null;
   return <>{children}</>;
 }
-
-export { PollarProvider };

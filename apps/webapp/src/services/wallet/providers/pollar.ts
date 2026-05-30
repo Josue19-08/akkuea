@@ -1,5 +1,7 @@
 import type { WalletProvider } from "../types";
 
+const POLLAR_API_BASE = "https://api.pollar.io/v1";
+
 export class PollarProvider implements WalletProvider {
   readonly id = "pollar";
   readonly name = "Pollar";
@@ -16,9 +18,19 @@ export class PollarProvider implements WalletProvider {
   }
 
   async connect(): Promise<{ address: string }> {
-    const { Pollar } = await import("@pollar-wallet/sdk");
-    const pollar = new Pollar({ apiKey: this.apiKey });
-    const { address } = await pollar.connect();
+    const res = await fetch(`${POLLAR_API_BASE}/connect`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.apiKey}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`Pollar connect failed: ${res.status} ${res.statusText}`);
+    }
+
+    const { address } = (await res.json()) as { address: string };
     this._isConnected = true;
     return { address };
   }
