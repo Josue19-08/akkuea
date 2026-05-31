@@ -10,6 +10,7 @@ import {
   xdr,
 } from 'stellar-sdk';
 import { ApiError } from '../errors/ApiError';
+import { getRealEstateTokenContractId } from '../config/contracts';
 
 export interface MintSharesParams {
   contractId: string;
@@ -40,7 +41,7 @@ export class StellarService {
   }
 
   getMintingConfig(): { contractId: string; adminPublicKey: string; adminSecret: string } {
-    const contractId = process.env.REAL_ESTATE_TOKEN_CONTRACT_ID;
+    const contractId = getRealEstateTokenContractId();
     const adminPublicKey = process.env.STELLAR_ADMIN_PUBLIC_KEY;
     const adminSecret = process.env.STELLAR_ADMIN_SECRET;
 
