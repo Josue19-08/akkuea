@@ -79,6 +79,7 @@ export interface ContractValuationPayload {
 }
 export * from "./risk";
 export * from "./pagination";
+export type { GameEventType, PaginatedGameEvents } from "./game-events";
 
 // ─── Akkuea Land game types (Cycle 5) ────────────────────────────────────────
 export type {
