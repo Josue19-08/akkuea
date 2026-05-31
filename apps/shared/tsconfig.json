@@ -4,6 +4,7 @@
     "module": "commonjs",
     "lib": ["ES2020"],
     "types": ["bun-types"],
+    "resolveJsonModule": true,
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
