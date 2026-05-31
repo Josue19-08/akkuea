@@ -14,7 +14,7 @@ import {
   createBorrowPosition,
 } from "@real-estate-defi/shared";
 
-describe.skip("Lending API", () => {
+describe("Lending API", () => {
   beforeEach(() => {
     global.fetch = wrapFetchMock(
       mock(() => {

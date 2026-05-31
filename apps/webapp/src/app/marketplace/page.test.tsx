@@ -164,7 +164,7 @@ const property: PropertyInfo = {
   owner: "GCCVPYFOHY7ZB7557JKENAX62LUAPLMGIWNZJAFV2MITK6T32V37KEJU",
 };
 
-describe.skip("MarketplacePage", () => {
+describe("MarketplacePage", () => {
   beforeEach(() => {
     cleanup();
     propertyApi.getAll = mockGetAll;

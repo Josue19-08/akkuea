@@ -8,7 +8,7 @@ import {
   createProperty,
 } from "@real-estate-defi/shared";
 
-describe.skip("Property API", () => {
+describe("Property API", () => {
   beforeEach(() => {
     global.fetch = wrapFetchMock(
       mock(() => {
