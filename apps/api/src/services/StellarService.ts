@@ -13,7 +13,7 @@ import {
   createNodeContractSigner,
   DefiLendingContractClient,
   RealEstateTokenContractClient,
-} from '@real-estate-defi/shared';
+} from '@akkuea/shared';
 import { ApiError } from '../errors/ApiError';
 
 export interface MintSharesParams {
