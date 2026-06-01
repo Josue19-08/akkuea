@@ -17,6 +17,8 @@
     "@akkuea/shared": "workspace:*",
     "@creit.tech/stellar-wallets-kit": "^1.9.5",
     "@hookform/resolvers": "^3.10.0",
+    "@pollar/core": "^0.8.0",
+    "@pollar/react": "^0.8.0",
     "@privy-io/react-auth": "^2.0.0",
     "@privy-io/server-auth": "^1.32.5",
     "clsx": "^2.1.1",
