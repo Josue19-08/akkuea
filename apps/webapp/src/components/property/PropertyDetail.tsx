@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import type { PropertyInfo } from "@real-estate-defi/shared";
 import { Badge, Button, Card } from "@/components/ui";
-import { PropertyViewer3D } from "./PropertyViewer3D";
+import { PropertyViewer3DDynamic } from "./PropertyViewer3D.dynamic";
 import { formatCurrency } from "@/lib/utils";
 import {
   getPropertyImage,
@@ -44,7 +44,7 @@ export function PropertyDetail({
       {/* 3D Viewer Section */}
       {property.splatUrl && viewer3DEnabled && (
         <Card className="p-0 overflow-hidden">
-          <PropertyViewer3D
+          <PropertyViewer3DDynamic
             splatUrl={property.splatUrl}
             propertyName={property.name}
             onLoadComplete={() => setIsLoadingViewer(false)}
