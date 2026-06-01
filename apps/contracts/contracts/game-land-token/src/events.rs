@@ -35,7 +35,12 @@ pub fn emit_transfer(env: &Env, from: Address, to: Address, amount: i128) {
 }
 
 pub fn emit_approval(env: &Env, from: Address, spender: Address, amount: i128) {
-    ApprovalEvent { from, spender, amount }.publish(env);
+    ApprovalEvent {
+        from,
+        spender,
+        amount,
+    }
+    .publish(env);
 }
 
 pub fn emit_mint(env: &Env, to: Address, amount: i128) {

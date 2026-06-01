@@ -1,4 +1,4 @@
-use soroban_sdk::{contracttype, Address, Env, Symbol, symbol_short};
+use soroban_sdk::{contracttype, symbol_short, Address, Env, Symbol};
 
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -15,31 +15,48 @@ pub enum DataKey {
 }
 
 pub fn get_balance(env: &Env, addr: &Address) -> i128 {
-    env.storage().persistent().get(&DataKey::Balance(addr.clone())).unwrap_or(0)
+    env.storage()
+        .persistent()
+        .get(&DataKey::Balance(addr.clone()))
+        .unwrap_or(0)
 }
 
 pub fn set_balance(env: &Env, addr: &Address, amount: i128) {
-    env.storage().persistent().set(&DataKey::Balance(addr.clone()), &amount);
+    env.storage()
+        .persistent()
+        .set(&DataKey::Balance(addr.clone()), &amount);
 }
 
 pub fn get_allowance(env: &Env, from: &Address, spender: &Address) -> i128 {
-    env.storage().persistent().get(&DataKey::Allowance(from.clone(), spender.clone())).unwrap_or(0)
+    env.storage()
+        .persistent()
+        .get(&DataKey::Allowance(from.clone(), spender.clone()))
+        .unwrap_or(0)
 }
 
 pub fn set_allowance(env: &Env, from: &Address, spender: &Address, amount: i128) {
-    env.storage().persistent().set(&DataKey::Allowance(from.clone(), spender.clone()), &amount);
+    env.storage()
+        .persistent()
+        .set(&DataKey::Allowance(from.clone(), spender.clone()), &amount);
 }
 
 pub fn has_claimed_faucet(env: &Env, addr: &Address) -> bool {
-    env.storage().persistent().has(&DataKey::FaucetClaimed(addr.clone()))
+    env.storage()
+        .persistent()
+        .has(&DataKey::FaucetClaimed(addr.clone()))
 }
 
 pub fn set_faucet_claimed(env: &Env, addr: &Address) {
-    env.storage().persistent().set(&DataKey::FaucetClaimed(addr.clone()), &true);
+    env.storage()
+        .persistent()
+        .set(&DataKey::FaucetClaimed(addr.clone()), &true);
 }
 
 pub fn is_testnet(env: &Env) -> bool {
-    env.storage().instance().get(&DataKey::IsTestnet).unwrap_or(false)
+    env.storage()
+        .instance()
+        .get(&DataKey::IsTestnet)
+        .unwrap_or(false)
 }
 
 pub fn set_testnet(env: &Env, val: bool) {
