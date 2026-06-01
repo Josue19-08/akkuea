@@ -13,7 +13,6 @@ type GameWalletLoginInput =
   | { provider: "email"; email: string }
   | { provider: "freighter" };
 
-
 const AUTH_COOKIE_NAME = "akkuea-authenticated";
 const AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
 
@@ -84,13 +83,12 @@ export function useGameWallet() {
 
   useEffect(() => {
     const client = pollar.getClient();
-    const unsubscribe = client.onAuthStateChange((state: AuthState) => {
-      const step = (state.step as GameWalletAuthStep) ?? "idle";
+    const unsubscribe = client.onAuthStateChange((state) => {
+      const step = (state.step ?? "idle") as GameWalletAuthStep;
       setAuthStep(step);
 
       if (step === "error") {
-        const errorCode = "errorCode" in state ? ((state as Record<string, unknown>).errorCode as string | null) : null;
-        setAuthError(getReadableAuthError(errorCode));
+        setAuthError(getReadableAuthError((state as { errorCode?: string | null }).errorCode ?? null));
       } else if (step === "success" || step === "idle") {
         setAuthError(null);
       }

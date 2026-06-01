@@ -51,6 +51,7 @@ export default function LoginPage() {
     }
   }, [callbackUrl, isConnected, router]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     if (authStatus === "success" || authStatus === "error" || !isConnecting) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
