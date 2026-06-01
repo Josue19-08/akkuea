@@ -21,6 +21,7 @@
     "noPropertyAccessFromIndexSignature": false,
     "baseUrl": ".",
     "paths": {
+      "@akkuea/shared": ["../shared/src"],
       "@real-estate-defi/shared": ["../shared/src"]
     }
   }
