@@ -138,6 +138,8 @@
         "react-hook-form": "^7.71.1",
         "smart-account-kit": "0.2.10",
         "zod": "^3.25.76",
+        "@pollar/core": "^0.7.1",
+        "@pollar/react": "^0.7.1",
         "zustand": "^5.0.11",
       },
       "devDependencies": {
@@ -3937,5 +3939,17 @@
     "@walletconnect/ethereum-provider/@reown/appkit/@walletconnect/universal-provider/@walletconnect/utils/viem/ox/abitype": ["abitype@1.2.3", "", { "peerDependencies": { "typescript": ">=5.0.4", "zod": "^3.22.0 || ^4.0.0" }, "optionalPeers": ["typescript", "zod"] }, "sha512-Ofer5QUnuUdTFsBRwARMoWKOH1ND5ehwYhJ3OJ/BQO+StkwQjHw0XyVh4vDttzHB7QOFhPHa/o413PJ82gU/Tg=="],
 
     "@walletconnect/ethereum-provider/@reown/appkit/@walletconnect/universal-provider/@walletconnect/utils/viem/ox/eventemitter3": ["eventemitter3@5.0.1", "", {}, "sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA=="],
+
+    "@pollar/core": ["@pollar/core@0.7.1", "", { "dependencies": { "@noble/curves": "~1.9.7", "openapi-fetch": "^0.17.0", "@stellar/freighter-api": "^2.0.0" } }, "sha512-wiGi2XjVbUTVP1TuDBzjygDwH8uXmNqlGBiUW+jichTOPN0FHaUC5hquMfZRruENyptdM4iLVMP3k1G5xF0uQ=="],
+
+    "@pollar/react": ["@pollar/react@0.7.1", "", { "dependencies": { "qr.js": "^0.0.0", "@pollar/core": "*" }, "peerDependencies": { "react": ">=18", "react-dom": ">=18", "@pollar/core": "*" } }, "sha512-13/buno2MHxHfab0GJgZgQRj15+EbpBCyY1ehHgEyp3a4sCP33VN3bXJxraQfn50gNAvqOlaEDj3YCEK3HuSkA=="],
+
+    "@pollar/core/@stellar/freighter-api": ["@stellar/freighter-api@2.0.0", "", {}, "sha512-j/R7MLPL8S3QhwOEdAxSl7MgWBTXWlOXQKQyXR8mPk1JMKKR4tF8e4U+Fs9TPQH0HZoYqfVDvLOOUrTMMY058Q=="],
+
+    "openapi-fetch": ["openapi-fetch@0.17.0", "", { "dependencies": { "openapi-typescript-helpers": "^0.1.0" } }, "sha512-PsbZR1wAPcG91eEthKhN+Zn92FMHxv+/faECIwjXdxfTODGSGegYv0sc1Olz+HYPvKOuoXfp+0pA2XVt2cI0Ig=="],
+
+    "openapi-typescript-helpers": ["openapi-typescript-helpers@0.1.0", "", {}, "sha512-OKTGPthhivLw/fHz6c3OPtg72vi86qaMlqbJuVJ23qOvQ+53uw1n7HdmkJFibloF7QEjDrDkzJiOJuockM/ljw=="],
+
+    "qr.js": ["qr.js@0.0.0", "", {}, "sha512-c4iYnWb+k2E+vYpRimHqSu575b1/wKl4XFeJGpFmrJQz5I88v9aY2czh7s0w36srfCM1sXgC/xpoJz5dJfq+OQ=="],
   }
 }
