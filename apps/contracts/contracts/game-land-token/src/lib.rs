@@ -111,19 +111,13 @@ impl GameLandToken {
 
     // --- Custom Logic ---
 
-    pub fn mint(env: Env, to: Address, amount: i128) {
+    pub fn mint(env: Env, caller: Address, to: Address, amount: i128) {
+        caller.require_auth();
         let treasury = get_treasury(&env).unwrap_or_else(|| panic_with_error!(&env, TokenError::Unauthorized));
         let engine = get_engine(&env).unwrap_or_else(|| panic_with_error!(&env, TokenError::Unauthorized));
-        
-        // Either treasury or engine can mint
-        let has_treasury_auth = treasury.check_auth();
-        let has_engine_auth = engine.check_auth();
-
-        if !has_treasury_auth && !has_engine_auth {
-            // Force auth if none provided to trigger panic or return error
-            treasury.require_auth(); 
+        if caller != treasury && caller != engine {
+            panic_with_error!(&env, TokenError::Unauthorized);
         }
-
         let balance = get_balance(&env, &to);
         set_balance(&env, &to, balance + amount);
         events::emit_mint(&env, to, amount);
@@ -232,7 +226,68 @@ mod tests {
         let (treasury, engine, user, client) = setup_test(&env);
         client.initialize(&treasury, &engine, &true);
         
-        client.mint(&user, &1000); // This works in mock_all_auths but should normally fail if auth not matched
+        client.mint(&treasury, &user, &1000);
         assert_eq!(client.balance(&user), 1000);
+    }
+
+    #[test]
+    fn test_approve_and_allowance() {
+        let env = Env::default();
+        env.mock_all_auths();
+        let (treasury, engine, user, client) = setup_test(&env);
+        client.initialize(&treasury, &engine, &true);
+        
+        let spender = Address::generate(&env);
+        client.approve(&user, &spender, &500, &100);
+        assert_eq!(client.allowance(&user, &spender), 500);
+    }
+
+    #[test]
+    fn test_transfer_from() {
+        let env = Env::default();
+        env.mock_all_auths();
+        let (treasury, engine, user, client) = setup_test(&env);
+        client.initialize(&treasury, &engine, &true);
+        
+        client.faucet(&user);
+        let spender = Address::generate(&env);
+        client.approve(&user, &spender, &500, &100);
+        
+        let receiver = Address::generate(&env);
+        client.transfer_from(&spender, &user, &receiver, &200);
+        
+        assert_eq!(client.balance(&user), (1000 * 10_000_000) - 200);
+        assert_eq!(client.balance(&receiver), 200);
+        assert_eq!(client.allowance(&user, &spender), 300);
+    }
+
+    #[test]
+    fn test_burn() {
+        let env = Env::default();
+        env.mock_all_auths();
+        let (treasury, engine, user, client) = setup_test(&env);
+        client.initialize(&treasury, &engine, &true);
+        
+        client.faucet(&user);
+        client.burn(&user, &500);
+        
+        assert_eq!(client.balance(&user), (1000 * 10_000_000) - 500);
+    }
+
+    #[test]
+    fn test_burn_from() {
+        let env = Env::default();
+        env.mock_all_auths();
+        let (treasury, engine, user, client) = setup_test(&env);
+        client.initialize(&treasury, &engine, &true);
+        
+        client.faucet(&user);
+        let spender = Address::generate(&env);
+        client.approve(&user, &spender, &500, &100);
+        
+        client.burn_from(&spender, &user, &200);
+        
+        assert_eq!(client.balance(&user), (1000 * 10_000_000) - 200);
+        assert_eq!(client.allowance(&user, &spender), 300);
     }
 }

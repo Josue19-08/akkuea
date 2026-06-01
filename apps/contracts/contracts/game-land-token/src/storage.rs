@@ -31,11 +31,11 @@ pub fn set_allowance(env: &Env, from: &Address, spender: &Address, amount: i128)
 }
 
 pub fn has_claimed_faucet(env: &Env, addr: &Address) -> bool {
-    env.storage().instance().has(&DataKey::FaucetClaimed(addr.clone()))
+    env.storage().persistent().has(&DataKey::FaucetClaimed(addr.clone()))
 }
 
 pub fn set_faucet_claimed(env: &Env, addr: &Address) {
-    env.storage().instance().set(&DataKey::FaucetClaimed(addr.clone()), &true);
+    env.storage().persistent().set(&DataKey::FaucetClaimed(addr.clone()), &true);
 }
 
 pub fn is_testnet(env: &Env) -> bool {
