@@ -1,7 +1,7 @@
 #![no_std]
 
 use soroban_sdk::{
-    contract, contracterror, contractimpl, panic_with_error, symbol_short, Address, Env, Map, String, Symbol,
+    contract, contracterror, contractimpl, panic_with_error, Address, Env, String,
 };
 
 #[contracterror]
@@ -44,6 +44,7 @@ impl GameLandToken {
     pub fn mint(env: Env, caller: Address, to: Address, amount: i128) {
         caller.require_auth();
 
+        // safe: storage is always set during initialize; panics on uninitialized contract
         let admin: Address = env.storage().instance().get(&DataKey::Admin).unwrap();
         let is_authorized = caller == admin || Self::authorized(env.clone(), caller.clone());
         if !is_authorized {
@@ -163,6 +164,7 @@ impl GameLandToken {
     }
 
     pub fn set_authorized(env: Env, id: Address, authorize: bool) {
+        // safe: storage is always set during initialize; panics on uninitialized contract
         let admin: Address = env.storage().instance().get(&DataKey::Admin).unwrap();
         admin.require_auth();
         env.storage().instance().set(&DataKey::Authorized(id), &authorize);

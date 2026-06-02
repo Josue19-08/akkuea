@@ -1,4 +1,5 @@
 #![no_std]
+#![allow(deprecated)]
 
 extern crate alloc;
 
@@ -88,7 +89,9 @@ impl GameEngine {
     pub fn improve(env: Env, caller: Address, property_id: u32) {
         caller.require_auth();
 
+        // safe: storage is always set during initialize; panics on uninitialized contract
         let nft_contract: Address = env.storage().instance().get(&StorageKey::NftContract).unwrap();
+        // safe: storage is always set during initialize; panics on uninitialized contract
         let token_contract: Address = env.storage().instance().get(&StorageKey::TokenContract).unwrap();
 
         let nft_client = GamePropertyNftClient::new(&env, &nft_contract);
@@ -116,7 +119,9 @@ impl GameEngine {
     pub fn claim_rental(env: Env, caller: Address, property_id: u32) {
         caller.require_auth();
 
+        // safe: storage is always set during initialize; panics on uninitialized contract
         let nft_contract: Address = env.storage().instance().get(&StorageKey::NftContract).unwrap();
+        // safe: storage is always set during initialize; panics on uninitialized contract
         let token_contract: Address = env.storage().instance().get(&StorageKey::TokenContract).unwrap();
 
         let nft_client = GamePropertyNftClient::new(&env, &nft_contract);
@@ -149,6 +154,7 @@ impl GameEngine {
     }
 
     pub fn get_accrued_income(env: Env, property_id: u32) -> i128 {
+        // safe: storage is always set during initialize; panics on uninitialized contract
         let nft_contract: Address = env.storage().instance().get(&StorageKey::NftContract).unwrap();
         let nft_client = GamePropertyNftClient::new(&env, &nft_contract);
 
@@ -248,7 +254,14 @@ pub fn calculate_accrued_income(
         _ => MULTIPLIER_VACANT,
     };
 
-    (BASE_RENTAL_RATE * num / den) * epochs_elapsed as i128
+    let rate_multiplier = BASE_RENTAL_RATE
+        .checked_mul(num)
+        .and_then(|r| r.checked_div(den));
+
+    match rate_multiplier {
+        Some(rate) => rate.checked_mul(epochs_elapsed as i128).unwrap_or(0),
+        None => 0,
+    }
 }
 
 // ================= Unit Tests =================
@@ -264,9 +277,6 @@ mod tests {
         env: Env,
         treasury: Address,
         owner: Address,
-        engine_id: Address,
-        nft_id: Address,
-        token_id: Address,
         engine_client: GameEngineClient<'static>,
         nft_client: GamePropertyNftClient<'static>,
         token_client: GameLandTokenClient<'static>,
@@ -318,9 +328,6 @@ mod tests {
             env,
             treasury,
             owner,
-            engine_id,
-            nft_id,
-            token_id,
             engine_client,
             nft_client,
             token_client,

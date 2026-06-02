@@ -26,6 +26,7 @@ pub mod app {
         PostUpdate,
     }
 
+    #[allow(clippy::type_complexity)]
     pub struct System {
         pub name: &'static str,
         pub stage: ScheduleStage,
