@@ -8,3 +8,4 @@ export {
 } from "./clientConfig";
 export { RealEstateTokenContractClient } from "./realEstateToken";
 export { DefiLendingContractClient } from "./defiLending";
+export * from "./game";

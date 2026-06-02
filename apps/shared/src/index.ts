@@ -12,6 +12,7 @@ export {
 } from "./contracts/clientConfig";
 export { RealEstateTokenContractClient } from "./contracts/realEstateToken";
 export { DefiLendingContractClient } from "./contracts/defiLending";
+export * from "./contracts/game";
 export * from "./utils/stellar";
 export * from "./utils/validation";
 export * from "./utils/format";
