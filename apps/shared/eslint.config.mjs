@@ -9,6 +9,8 @@ export default [
       "dist/",
       "node_modules/",
       "src/contracts/generated/**/*.ts",
+      "src/contracts/game/generated/**/*.ts",
+      "src/contracts/game/generated/**/*.js",
       "**/*.test.ts",
       "**/*.spec.ts",
     ],
