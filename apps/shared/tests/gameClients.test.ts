@@ -1,4 +1,5 @@
 import { describe, test, expect } from "bun:test";
+// Trigger CI workflow
 import {
   PropertyNftClient,
   LandTokenClient,
