@@ -18,9 +18,10 @@ import type {
   u256,
   i256,
   Option,
-  Timepoint,
-  Duration,
 } from "@stellar/stellar-sdk/contract";
+// Timepoint and Duration are not exported by stellar-sdk/contract in v13.x
+export type Timepoint = bigint;
+export type Duration = bigint;
 export * from "@stellar/stellar-sdk";
 export * as contract from "@stellar/stellar-sdk/contract";
 export * as rpc from "@stellar/stellar-sdk/rpc";
