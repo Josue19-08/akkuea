@@ -74,6 +74,7 @@ mod nft_interface {
     use soroban_sdk::{contractclient, Address, Env};
 
     #[contractclient(name = "NftContractClient")]
+    #[allow(dead_code)]
     pub trait NftInterface {
         fn transfer(env: Env, from: Address, to: Address, property_id: u32);
         fn transfer_from(env: Env, spender: Address, from: Address, to: Address, property_id: u32);
@@ -142,9 +143,7 @@ impl GameMarketplace {
             .get(&DataKey::AllListings)
             .unwrap_or_else(|| Vec::new(&env));
         ids.push_back(property_id);
-        env.storage()
-            .instance()
-            .set(&DataKey::AllListings, &ids);
+        env.storage().instance().set(&DataKey::AllListings, &ids);
     }
 
     /// Purchase a listed property.
@@ -154,8 +153,7 @@ impl GameMarketplace {
     pub fn buy(env: Env, buyer: Address, property_id: u32) {
         buyer.require_auth();
 
-        let _guard =
-            ExecutionGuard::acquire(&env).unwrap_or_else(|e| panic_with_error!(&env, e));
+        let _guard = ExecutionGuard::acquire(&env).unwrap_or_else(|e| panic_with_error!(&env, e));
 
         let listing: Listing = env
             .storage()
@@ -230,9 +228,7 @@ impl GameMarketplace {
 
     /// Return a single listing.
     pub fn get_listing(env: Env, property_id: u32) -> Option<Listing> {
-        env.storage()
-            .instance()
-            .get(&DataKey::Listing(property_id))
+        env.storage().instance().get(&DataKey::Listing(property_id))
     }
 
     /// Return a paginated slice of active listings.
@@ -315,9 +311,7 @@ mod tests {
         let nft = GamePropertyNftClient::new(&env, &nft_id);
         nft.initialize(&treasury, &game_engine);
 
-        let land_id = env
-            .register_stellar_asset_contract_v2(land_admin)
-            .address();
+        let land_id = env.register_stellar_asset_contract_v2(land_admin).address();
 
         let marketplace_id = env.register(GameMarketplace, ());
         let marketplace = GameMarketplaceClient::new(&env, &marketplace_id);
@@ -427,8 +421,7 @@ mod tests {
         let s = setup();
         for id in 0..5_u32 {
             s.nft.approve(&s.treasury, &s.marketplace_id, &id);
-            s.marketplace
-                .list(&s.treasury, &id, &(id as i128 * 100));
+            s.marketplace.list(&s.treasury, &id, &(id as i128 * 100));
         }
 
         assert_eq!(s.marketplace.get_all_listings(&0, &3).len(), 3);
