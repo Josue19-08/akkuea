@@ -31,101 +31,152 @@ if (typeof window !== "undefined") {
   window.Buffer = window.Buffer || Buffer;
 }
 
-
-
-
-export type DataKey = {tag: "Balance", values: readonly [string]} | {tag: "Allowance", values: readonly [string, string]} | {tag: "Admin", values: void} | {tag: "Testnet", values: void} | {tag: "Authorized", values: readonly [string]} | {tag: "FaucetClaimed", values: readonly [string]};
+export type DataKey =
+  | { tag: "Balance"; values: readonly [string] }
+  | { tag: "Allowance"; values: readonly [string, string] }
+  | { tag: "Admin"; values: void }
+  | { tag: "Testnet"; values: void }
+  | { tag: "Authorized"; values: readonly [string] }
+  | { tag: "FaucetClaimed"; values: readonly [string] };
 
 export const TokenError = {
-  1: {message:"AlreadyInitialized"},
-  2: {message:"InsufficientBalance"},
-  3: {message:"InsufficientAllowance"},
-  4: {message:"FaucetDisabled"},
-  5: {message:"FaucetAlreadyClaimed"},
-  6: {message:"Unauthorized"}
-}
+  1: { message: "AlreadyInitialized" },
+  2: { message: "InsufficientBalance" },
+  3: { message: "InsufficientAllowance" },
+  4: { message: "FaucetDisabled" },
+  5: { message: "FaucetAlreadyClaimed" },
+  6: { message: "Unauthorized" },
+};
 
 export interface Client {
   /**
    * Construct and simulate a burn transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
-  burn: ({from, amount}: {from: string, amount: i128}, options?: MethodOptions) => Promise<AssembledTransaction<null>>
+  burn: (
+    { from, amount }: { from: string; amount: i128 },
+    options?: MethodOptions,
+  ) => Promise<AssembledTransaction<null>>;
 
   /**
    * Construct and simulate a mint transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
-  mint: ({caller, to, amount}: {caller: string, to: string, amount: i128}, options?: MethodOptions) => Promise<AssembledTransaction<null>>
+  mint: (
+    { caller, to, amount }: { caller: string; to: string; amount: i128 },
+    options?: MethodOptions,
+  ) => Promise<AssembledTransaction<null>>;
 
   /**
    * Construct and simulate a name transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
-  name: (options?: MethodOptions) => Promise<AssembledTransaction<string>>
+  name: (options?: MethodOptions) => Promise<AssembledTransaction<string>>;
 
   /**
    * Construct and simulate a faucet transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
-  faucet: ({recipient}: {recipient: string}, options?: MethodOptions) => Promise<AssembledTransaction<null>>
+  faucet: (
+    { recipient }: { recipient: string },
+    options?: MethodOptions,
+  ) => Promise<AssembledTransaction<null>>;
 
   /**
    * Construct and simulate a symbol transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
-  symbol: (options?: MethodOptions) => Promise<AssembledTransaction<string>>
+  symbol: (options?: MethodOptions) => Promise<AssembledTransaction<string>>;
 
   /**
    * Construct and simulate a approve transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
-  approve: ({from, spender, amount, expiration_ledger}: {from: string, spender: string, amount: i128, expiration_ledger: u32}, options?: MethodOptions) => Promise<AssembledTransaction<null>>
+  approve: (
+    {
+      from,
+      spender,
+      amount,
+      expiration_ledger,
+    }: { from: string; spender: string; amount: i128; expiration_ledger: u32 },
+    options?: MethodOptions,
+  ) => Promise<AssembledTransaction<null>>;
 
   /**
    * Construct and simulate a balance transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
-  balance: ({id}: {id: string}, options?: MethodOptions) => Promise<AssembledTransaction<i128>>
+  balance: (
+    { id }: { id: string },
+    options?: MethodOptions,
+  ) => Promise<AssembledTransaction<i128>>;
 
   /**
    * Construct and simulate a decimals transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
-  decimals: (options?: MethodOptions) => Promise<AssembledTransaction<u32>>
+  decimals: (options?: MethodOptions) => Promise<AssembledTransaction<u32>>;
 
   /**
    * Construct and simulate a transfer transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
-  transfer: ({from, to, amount}: {from: string, to: string, amount: i128}, options?: MethodOptions) => Promise<AssembledTransaction<null>>
+  transfer: (
+    { from, to, amount }: { from: string; to: string; amount: i128 },
+    options?: MethodOptions,
+  ) => Promise<AssembledTransaction<null>>;
 
   /**
    * Construct and simulate a allowance transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
-  allowance: ({from, spender}: {from: string, spender: string}, options?: MethodOptions) => Promise<AssembledTransaction<i128>>
+  allowance: (
+    { from, spender }: { from: string; spender: string },
+    options?: MethodOptions,
+  ) => Promise<AssembledTransaction<i128>>;
 
   /**
    * Construct and simulate a burn_from transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
-  burn_from: ({spender, from, amount}: {spender: string, from: string, amount: i128}, options?: MethodOptions) => Promise<AssembledTransaction<null>>
+  burn_from: (
+    { spender, from, amount }: { spender: string; from: string; amount: i128 },
+    options?: MethodOptions,
+  ) => Promise<AssembledTransaction<null>>;
 
   /**
    * Construct and simulate a authorized transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
-  authorized: ({id}: {id: string}, options?: MethodOptions) => Promise<AssembledTransaction<boolean>>
+  authorized: (
+    { id }: { id: string },
+    options?: MethodOptions,
+  ) => Promise<AssembledTransaction<boolean>>;
 
   /**
    * Construct and simulate a initialize transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
-  initialize: ({admin, testnet_mode}: {admin: string, testnet_mode: boolean}, options?: MethodOptions) => Promise<AssembledTransaction<null>>
+  initialize: (
+    { admin, testnet_mode }: { admin: string; testnet_mode: boolean },
+    options?: MethodOptions,
+  ) => Promise<AssembledTransaction<null>>;
 
   /**
    * Construct and simulate a transfer_from transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
-  transfer_from: ({spender, from, to, amount}: {spender: string, from: string, to: string, amount: i128}, options?: MethodOptions) => Promise<AssembledTransaction<null>>
+  transfer_from: (
+    {
+      spender,
+      from,
+      to,
+      amount,
+    }: { spender: string; from: string; to: string; amount: i128 },
+    options?: MethodOptions,
+  ) => Promise<AssembledTransaction<null>>;
 
   /**
    * Construct and simulate a set_authorized transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
-  set_authorized: ({id, authorize}: {id: string, authorize: boolean}, options?: MethodOptions) => Promise<AssembledTransaction<null>>
+  set_authorized: (
+    { id, authorize }: { id: string; authorize: boolean },
+    options?: MethodOptions,
+  ) => Promise<AssembledTransaction<null>>;
 
   /**
    * Construct and simulate a spendable_balance transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
-  spendable_balance: ({id}: {id: string}, options?: MethodOptions) => Promise<AssembledTransaction<i128>>
-
+  spendable_balance: (
+    { id }: { id: string },
+    options?: MethodOptions,
+  ) => Promise<AssembledTransaction<i128>>;
 }
 export class Client extends ContractClient {
   static async deploy<T = Client>(
@@ -138,13 +189,14 @@ export class Client extends ContractClient {
         salt?: Buffer | Uint8Array;
         /** The format used to decode `wasmHash`, if it's provided as a string. */
         format?: "hex" | "base64";
-      }
+      },
   ): Promise<AssembledTransaction<T>> {
-    return ContractClient.deploy(null, options)
+    return ContractClient.deploy(null, options);
   }
   constructor(public readonly options: ContractClientOptions) {
     super(
-      new ContractSpec([ "AAAAAgAAAAAAAAAAAAAAB0RhdGFLZXkAAAAABgAAAAEAAAAAAAAAB0JhbGFuY2UAAAAAAQAAABMAAAABAAAAAAAAAAlBbGxvd2FuY2UAAAAAAAACAAAAEwAAABMAAAAAAAAAAAAAAAVBZG1pbgAAAAAAAAAAAAAAAAAAB1Rlc3RuZXQAAAAAAQAAAAAAAAAKQXV0aG9yaXplZAAAAAAAAQAAABMAAAABAAAAAAAAAA1GYXVjZXRDbGFpbWVkAAAAAAAAAQAAABM=",
+      new ContractSpec([
+        "AAAAAgAAAAAAAAAAAAAAB0RhdGFLZXkAAAAABgAAAAEAAAAAAAAAB0JhbGFuY2UAAAAAAQAAABMAAAABAAAAAAAAAAlBbGxvd2FuY2UAAAAAAAACAAAAEwAAABMAAAAAAAAAAAAAAAVBZG1pbgAAAAAAAAAAAAAAAAAAB1Rlc3RuZXQAAAAAAQAAAAAAAAAKQXV0aG9yaXplZAAAAAAAAQAAABMAAAABAAAAAAAAAA1GYXVjZXRDbGFpbWVkAAAAAAAAAQAAABM=",
         "AAAABAAAAAAAAAAAAAAAClRva2VuRXJyb3IAAAAAAAYAAAAAAAAAEkFscmVhZHlJbml0aWFsaXplZAAAAAAAAQAAAAAAAAATSW5zdWZmaWNpZW50QmFsYW5jZQAAAAACAAAAAAAAABVJbnN1ZmZpY2llbnRBbGxvd2FuY2UAAAAAAAADAAAAAAAAAA5GYXVjZXREaXNhYmxlZAAAAAAABAAAAAAAAAAURmF1Y2V0QWxyZWFkeUNsYWltZWQAAAAFAAAAAAAAAAxVbmF1dGhvcml6ZWQAAAAG",
         "AAAAAAAAAAAAAAAEYnVybgAAAAIAAAAAAAAABGZyb20AAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAAA",
         "AAAAAAAAAAAAAAAEbWludAAAAAMAAAAAAAAABmNhbGxlcgAAAAAAEwAAAAAAAAACdG8AAAAAABMAAAAAAAAABmFtb3VudAAAAAAACwAAAAA=",
@@ -161,26 +213,27 @@ export class Client extends ContractClient {
         "AAAAAAAAAAAAAAAKaW5pdGlhbGl6ZQAAAAAAAgAAAAAAAAAFYWRtaW4AAAAAAAATAAAAAAAAAAx0ZXN0bmV0X21vZGUAAAABAAAAAA==",
         "AAAAAAAAAAAAAAANdHJhbnNmZXJfZnJvbQAAAAAAAAQAAAAAAAAAB3NwZW5kZXIAAAAAEwAAAAAAAAAEZnJvbQAAABMAAAAAAAAAAnRvAAAAAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAAA",
         "AAAAAAAAAAAAAAAOc2V0X2F1dGhvcml6ZWQAAAAAAAIAAAAAAAAAAmlkAAAAAAATAAAAAAAAAAlhdXRob3JpemUAAAAAAAABAAAAAA==",
-        "AAAAAAAAAAAAAAARc3BlbmRhYmxlX2JhbGFuY2UAAAAAAAABAAAAAAAAAAJpZAAAAAAAEwAAAAEAAAAL" ]),
-      options
-    )
+        "AAAAAAAAAAAAAAARc3BlbmRhYmxlX2JhbGFuY2UAAAAAAAABAAAAAAAAAAJpZAAAAAAAEwAAAAEAAAAL",
+      ]),
+      options,
+    );
   }
   public readonly fromJSON = {
     burn: this.txFromJSON<null>,
-        mint: this.txFromJSON<null>,
-        name: this.txFromJSON<string>,
-        faucet: this.txFromJSON<null>,
-        symbol: this.txFromJSON<string>,
-        approve: this.txFromJSON<null>,
-        balance: this.txFromJSON<i128>,
-        decimals: this.txFromJSON<u32>,
-        transfer: this.txFromJSON<null>,
-        allowance: this.txFromJSON<i128>,
-        burn_from: this.txFromJSON<null>,
-        authorized: this.txFromJSON<boolean>,
-        initialize: this.txFromJSON<null>,
-        transfer_from: this.txFromJSON<null>,
-        set_authorized: this.txFromJSON<null>,
-        spendable_balance: this.txFromJSON<i128>
-  }
+    mint: this.txFromJSON<null>,
+    name: this.txFromJSON<string>,
+    faucet: this.txFromJSON<null>,
+    symbol: this.txFromJSON<string>,
+    approve: this.txFromJSON<null>,
+    balance: this.txFromJSON<i128>,
+    decimals: this.txFromJSON<u32>,
+    transfer: this.txFromJSON<null>,
+    allowance: this.txFromJSON<i128>,
+    burn_from: this.txFromJSON<null>,
+    authorized: this.txFromJSON<boolean>,
+    initialize: this.txFromJSON<null>,
+    transfer_from: this.txFromJSON<null>,
+    set_authorized: this.txFromJSON<null>,
+    spendable_balance: this.txFromJSON<i128>,
+  };
 }

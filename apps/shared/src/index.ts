@@ -16,4 +16,3 @@ export * from "./contracts/game";
 export * from "./utils/stellar";
 export * from "./utils/validation";
 export * from "./utils/format";
-

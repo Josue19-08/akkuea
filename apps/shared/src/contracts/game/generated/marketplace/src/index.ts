@@ -31,16 +31,11 @@ if (typeof window !== "undefined") {
   window.Buffer = window.Buffer || Buffer;
 }
 
-
-
-
-
 export interface Client {
   /**
    * Construct and simulate a init transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
-  init: (options?: MethodOptions) => Promise<AssembledTransaction<null>>
-
+  init: (options?: MethodOptions) => Promise<AssembledTransaction<null>>;
 }
 export class Client extends ContractClient {
   static async deploy<T = Client>(
@@ -53,17 +48,14 @@ export class Client extends ContractClient {
         salt?: Buffer | Uint8Array;
         /** The format used to decode `wasmHash`, if it's provided as a string. */
         format?: "hex" | "base64";
-      }
+      },
   ): Promise<AssembledTransaction<T>> {
-    return ContractClient.deploy(null, options)
+    return ContractClient.deploy(null, options);
   }
   constructor(public readonly options: ContractClientOptions) {
-    super(
-      new ContractSpec([ "AAAAAAAAAAAAAAAEaW5pdAAAAAAAAAAA" ]),
-      options
-    )
+    super(new ContractSpec(["AAAAAAAAAAAAAAAEaW5pdAAAAAAAAAAA"]), options);
   }
   public readonly fromJSON = {
-    init: this.txFromJSON<null>
-  }
+    init: this.txFromJSON<null>,
+  };
 }

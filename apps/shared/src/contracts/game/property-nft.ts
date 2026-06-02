@@ -1,34 +1,21 @@
 import { Buffer } from "buffer";
-import { Address } from "@stellar/stellar-sdk";
-import {
+import type {
   AssembledTransaction,
-  Client as ContractClient,
   ClientOptions as ContractClientOptions,
   MethodOptions,
-  Result,
+} from "@stellar/stellar-sdk/contract";
+import {
+  Client as ContractClient,
   Spec as ContractSpec,
 } from "@stellar/stellar-sdk/contract";
-import type {
-  u32,
-  i32,
-  u64,
-  i64,
-  u128,
-  i128,
-  u256,
-  i256,
-  Option,
-} from "@stellar/stellar-sdk/contract";
+import type { u32, u64, Option } from "@stellar/stellar-sdk/contract";
+
 // Timepoint and Duration are not exported by stellar-sdk/contract in v13.x
 export type Timepoint = bigint;
 export type Duration = bigint;
-export * from "@stellar/stellar-sdk";
-export * as contract from "@stellar/stellar-sdk/contract";
-export * as rpc from "@stellar/stellar-sdk/rpc";
 
-if (typeof window !== "undefined") {
-  //@ts-ignore Buffer exists
-  window.Buffer = window.Buffer || Buffer;
+if (typeof globalThis !== "undefined" && !globalThis.Buffer) {
+  (globalThis as typeof globalThis & { Buffer: typeof Buffer }).Buffer = Buffer;
 }
 
 export interface PropertyMeta {
@@ -65,19 +52,13 @@ export const NftError = {
   6: { message: "Unauthorized" },
 };
 
-export interface Client {
-  /**
-   * Construct and simulate a pause transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
-   */
+export interface PropertyNftClientInterface {
+  /** Pause the contract. */
   pause: (
     { admin }: { admin: string },
     options?: MethodOptions,
   ) => Promise<AssembledTransaction<null>>;
-
-  /**
-   * Construct and simulate a approve transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
-   * Approve spender
-   */
+  /** Approve spender. */
   approve: (
     {
       owner,
@@ -86,62 +67,35 @@ export interface Client {
     }: { owner: string; spender: string; property_id: u32 },
     options?: MethodOptions,
   ) => Promise<AssembledTransaction<null>>;
-
-  /**
-   * Construct and simulate a unpause transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
-   */
+  /** Unpause the contract. */
   unpause: (
     { admin }: { admin: string },
     options?: MethodOptions,
   ) => Promise<AssembledTransaction<null>>;
-
-  /**
-   * Construct and simulate a transfer transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
-   * Transfer property
-   */
+  /** Transfer property. */
   transfer: (
     { from, to, property_id }: { from: string; to: string; property_id: u32 },
     options?: MethodOptions,
   ) => Promise<AssembledTransaction<null>>;
-
-  /**
-   * Construct and simulate a get_owner transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
-   */
   get_owner: (
     { property_id }: { property_id: u32 },
     options?: MethodOptions,
   ) => Promise<AssembledTransaction<string>>;
-
-  /**
-   * Construct and simulate a initialize transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
-   * Mint all 400 tiles to `treasury` logically.
-   */
+  /** Mint all 400 tiles to `treasury` logically. */
   initialize: (
     { treasury, game_engine }: { treasury: string; game_engine: string },
     options?: MethodOptions,
   ) => Promise<AssembledTransaction<null>>;
-
-  /**
-   * Construct and simulate a get_property transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
-   * Get property
-   */
+  /** Get property. */
   get_property: (
     { property_id }: { property_id: u32 },
     options?: MethodOptions,
   ) => Promise<AssembledTransaction<PropertyState>>;
-
-  /**
-   * Construct and simulate a list_by_owner transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
-   */
   list_by_owner: (
     { owner }: { owner: string },
     options?: MethodOptions,
   ) => Promise<AssembledTransaction<Array<u32>>>;
-
-  /**
-   * Construct and simulate a transfer_from transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
-   * Transfer from approved spender
-   */
+  /** Transfer from approved spender. */
   transfer_from: (
     {
       spender,
@@ -151,10 +105,6 @@ export interface Client {
     }: { spender: string; from: string; to: string; property_id: u32 },
     options?: MethodOptions,
   ) => Promise<AssembledTransaction<null>>;
-
-  /**
-   * Construct and simulate a set_improvement_level transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
-   */
   set_improvement_level: (
     {
       caller,
@@ -163,10 +113,6 @@ export interface Client {
     }: { caller: string; property_id: u32; level: u32 },
     options?: MethodOptions,
   ) => Promise<AssembledTransaction<null>>;
-
-  /**
-   * Construct and simulate a set_last_claimed_ledger transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
-   */
   set_last_claimed_ledger: (
     {
       caller,
@@ -176,22 +122,20 @@ export interface Client {
     options?: MethodOptions,
   ) => Promise<AssembledTransaction<null>>;
 }
-export class Client extends ContractClient {
-  static async deploy<T = Client>(
-    /** Options for initializing a Client as well as for calling a method, with extras specific to deploying. */
+
+export class PropertyNftClient extends ContractClient {
+  static override async deploy<T = PropertyNftClient>(
     options: MethodOptions &
       Omit<ContractClientOptions, "contractId"> & {
-        /** The hash of the Wasm blob, which must already be installed on-chain. */
         wasmHash: Buffer | string;
-        /** Salt used to generate the contract's ID. Passed through to {@link Operation.createCustomContract}. Default: random. */
         salt?: Buffer | Uint8Array;
-        /** The format used to decode `wasmHash`, if it's provided as a string. */
         format?: "hex" | "base64";
       },
   ): Promise<AssembledTransaction<T>> {
     return ContractClient.deploy(null, options);
   }
-  constructor(public readonly options: ContractClientOptions) {
+
+  constructor(public override readonly options: ContractClientOptions) {
     super(
       new ContractSpec([
         "AAAAAQAAAAAAAAAAAAAADFByb3BlcnR5TWV0YQAAAAMAAAAAAAAAEGFwcHJvdmVkX3NwZW5kZXIAAAAEAAAAAAAAABNsYXN0X2NsYWltZWRfbGVkZ2VyAAAAAAYAAAAAAAAABWxldmVsAAAAAAAABA==",
@@ -216,6 +160,7 @@ export class Client extends ContractClient {
       options,
     );
   }
+
   public readonly fromJSON = {
     pause: this.txFromJSON<null>,
     approve: this.txFromJSON<null>,
