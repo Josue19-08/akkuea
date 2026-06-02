@@ -331,7 +331,6 @@ mod tests {
         // Initialize LandToken in testnet_mode = true
         token_client.initialize(&treasury, &engine_id, &true);
 
-
         // Initialize GameEngine
         engine_client.initialize(&nft_id, &token_id, &treasury);
 
