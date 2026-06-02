@@ -19,3 +19,17 @@ export interface WalletProvider {
   /** Disconnect and clear any local session state */
   disconnect(): Promise<void>;
 }
+
+/** Optional extension for providers that sign Stellar transaction XDR. */
+export interface SignableWalletProvider extends WalletProvider {
+  signTransaction: (xdr: string, networkPassphrase: string) => Promise<string>;
+}
+
+export function isSignableWalletProvider(
+  provider: WalletProvider,
+): provider is SignableWalletProvider {
+  return (
+    "signTransaction" in provider &&
+    typeof provider.signTransaction === "function"
+  );
+}

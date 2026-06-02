@@ -6,10 +6,17 @@ import {
   walletRegistry,
   StellarWalletsKitProvider,
   SmartAccountKitProvider,
+  privyProvider,
+  pollarProvider,
 } from "@/services/wallet";
+import { PrivyWrapper } from "@/components/auth/PrivyWrapper";
+import { PollarWrapper } from "@/components/auth/PollarWrapper";
 
-// Register providers once at module load (client-side only)
 walletRegistry.register(new StellarWalletsKitProvider());
+
+if (process.env.NEXT_PUBLIC_PRIVY_APP_ID) {
+  walletRegistry.register(privyProvider);
+}
 
 if (process.env.NEXT_PUBLIC_SMART_ACCOUNT_RPC_URL) {
   walletRegistry.register(
@@ -24,6 +31,10 @@ if (process.env.NEXT_PUBLIC_SMART_ACCOUNT_RPC_URL) {
       appName: "Akkuea",
     }),
   );
+}
+
+if (process.env.NEXT_PUBLIC_POLLAR_KEY) {
+  walletRegistry.register(pollarProvider);
 }
 
 interface ProvidersProps {
@@ -41,5 +52,11 @@ export function Providers({ children }: ProvidersProps) {
     }
   }, []);
 
-  return <ThemeProvider>{children}</ThemeProvider>;
+  return (
+    <PrivyWrapper>
+      <PollarWrapper>
+        <ThemeProvider>{children}</ThemeProvider>
+      </PollarWrapper>
+    </PrivyWrapper>
+  );
 }

@@ -229,8 +229,7 @@ export default function MarketplacePage() {
     lastUpdatedAt,
     isPolling,
   } = useProperties();
-  const { isConnected, connect, isConnecting, address, refreshBalance } =
-    useWallet();
+  const { isConnected, connect, address, refreshBalance } = useWallet();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRegion, setSelectedRegion] = useState(MARKETPLACE_ALL_REGIONS);
@@ -438,12 +437,6 @@ export default function MarketplacePage() {
             void refreshBalance();
           }}
         />
-      )}
-
-      {isConnecting && (
-        <div className="pointer-events-none fixed bottom-6 right-6 rounded-full border border-[#262626] bg-[#0a0a0a] px-4 py-2 text-xs text-white shadow-lg">
-          Connecting wallet...
-        </div>
       )}
     </motion.div>
   );

@@ -25,7 +25,7 @@ import {
   APARTMENT_MULTIPLIER,
   SKYSCRAPER_MULTIPLIER,
 } from "@akkuea/shared";
-import { SorobanRpc } from "stellar-sdk";
+import { rpc as SorobanRpc } from "@stellar/stellar-sdk";
 import { GameProperty, BuildingLevel } from "@/types/game.types";
 import { getWalletKit } from "@/lib/walletKit";
 
