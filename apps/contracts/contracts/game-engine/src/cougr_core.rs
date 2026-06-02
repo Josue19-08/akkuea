@@ -14,10 +14,10 @@ pub mod world {
 }
 
 pub mod app {
-    use soroban_sdk::Env;
-    use crate::cougr_core::world::SimpleWorld;
     use crate::alloc::boxed::Box;
     use crate::alloc::vec::Vec;
+    use crate::cougr_core::world::SimpleWorld;
+    use soroban_sdk::Env;
 
     #[derive(Clone, Copy, Debug, Eq, PartialEq)]
     pub enum ScheduleStage {

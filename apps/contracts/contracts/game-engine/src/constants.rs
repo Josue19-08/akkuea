@@ -8,8 +8,8 @@ pub const IMPROVEMENT_COST_SKYSCRAPER: i128 = 1_800 * 10_000_000;
 // Rental multipliers as integer ratios (numerator, denominator)
 pub const MULTIPLIER_VACANT: (i128, i128) = (1, 1);
 pub const MULTIPLIER_RESIDENTIAL: (i128, i128) = (3, 2); // 1.5x
-pub const MULTIPLIER_COMMERCIAL: (i128, i128) = (3, 1);  // 3x
-pub const MULTIPLIER_SKYSCRAPER: (i128, i128) = (6, 1);  // 6x
+pub const MULTIPLIER_COMMERCIAL: (i128, i128) = (3, 1); // 3x
+pub const MULTIPLIER_SKYSCRAPER: (i128, i128) = (6, 1); // 6x
 
 pub const LEVEL_VACANT: u32 = 0;
 pub const LEVEL_RESIDENTIAL: u32 = 1;

@@ -1,8 +1,6 @@
 #![no_std]
 
-use soroban_sdk::{
-    contract, contracterror, contractimpl, panic_with_error, Address, Env, String,
-};
+use soroban_sdk::{contract, contracterror, contractimpl, panic_with_error, Address, Env, String};
 
 #[contracterror]
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -36,9 +34,13 @@ impl GameLandToken {
             panic_with_error!(&env, TokenError::AlreadyInitialized);
         }
         env.storage().instance().set(&DataKey::Admin, &admin);
-        env.storage().instance().set(&DataKey::Testnet, &testnet_mode);
+        env.storage()
+            .instance()
+            .set(&DataKey::Testnet, &testnet_mode);
         // By default, admin is authorized to mint/manage
-        env.storage().instance().set(&DataKey::Authorized(admin), &true);
+        env.storage()
+            .instance()
+            .set(&DataKey::Authorized(admin), &true);
     }
 
     pub fn mint(env: Env, caller: Address, to: Address, amount: i128) {
@@ -52,10 +54,14 @@ impl GameLandToken {
         }
 
         let balance = Self::balance(env.clone(), to.clone());
-        env.storage().persistent().set(&DataKey::Balance(to.clone()), &(balance + amount));
-        
+        env.storage()
+            .persistent()
+            .set(&DataKey::Balance(to.clone()), &(balance + amount));
+
         let key = DataKey::Balance(to);
-        env.storage().persistent().extend_ttl(&key, 518_400, 518_400);
+        env.storage()
+            .persistent()
+            .extend_ttl(&key, 518_400, 518_400);
     }
 
     pub fn burn(env: Env, from: Address, amount: i128) {
@@ -64,10 +70,14 @@ impl GameLandToken {
         if balance < amount {
             panic_with_error!(&env, TokenError::InsufficientBalance);
         }
-        env.storage().persistent().set(&DataKey::Balance(from.clone()), &(balance - amount));
-        
+        env.storage()
+            .persistent()
+            .set(&DataKey::Balance(from.clone()), &(balance - amount));
+
         let key = DataKey::Balance(from);
-        env.storage().persistent().extend_ttl(&key, 518_400, 518_400);
+        env.storage()
+            .persistent()
+            .extend_ttl(&key, 518_400, 518_400);
     }
 
     pub fn burn_from(env: Env, spender: Address, from: Address, amount: i128) {
@@ -81,13 +91,22 @@ impl GameLandToken {
             panic_with_error!(&env, TokenError::InsufficientBalance);
         }
 
-        env.storage().persistent().set(&DataKey::Allowance(from.clone(), spender.clone()), &(allowance - amount));
-        env.storage().persistent().set(&DataKey::Balance(from.clone()), &(balance - amount));
+        env.storage().persistent().set(
+            &DataKey::Allowance(from.clone(), spender.clone()),
+            &(allowance - amount),
+        );
+        env.storage()
+            .persistent()
+            .set(&DataKey::Balance(from.clone()), &(balance - amount));
 
         let key_bal = DataKey::Balance(from.clone());
-        env.storage().persistent().extend_ttl(&key_bal, 518_400, 518_400);
+        env.storage()
+            .persistent()
+            .extend_ttl(&key_bal, 518_400, 518_400);
         let key_allow = DataKey::Allowance(from, spender);
-        env.storage().persistent().extend_ttl(&key_allow, 518_400, 518_400);
+        env.storage()
+            .persistent()
+            .extend_ttl(&key_allow, 518_400, 518_400);
     }
 
     pub fn transfer(env: Env, from: Address, to: Address, amount: i128) {
@@ -98,13 +117,21 @@ impl GameLandToken {
         }
         let to_balance = Self::balance(env.clone(), to.clone());
 
-        env.storage().persistent().set(&DataKey::Balance(from.clone()), &(from_balance - amount));
-        env.storage().persistent().set(&DataKey::Balance(to.clone()), &(to_balance + amount));
+        env.storage()
+            .persistent()
+            .set(&DataKey::Balance(from.clone()), &(from_balance - amount));
+        env.storage()
+            .persistent()
+            .set(&DataKey::Balance(to.clone()), &(to_balance + amount));
 
         let key_from = DataKey::Balance(from);
-        env.storage().persistent().extend_ttl(&key_from, 518_400, 518_400);
+        env.storage()
+            .persistent()
+            .extend_ttl(&key_from, 518_400, 518_400);
         let key_to = DataKey::Balance(to);
-        env.storage().persistent().extend_ttl(&key_to, 518_400, 518_400);
+        env.storage()
+            .persistent()
+            .extend_ttl(&key_to, 518_400, 518_400);
     }
 
     pub fn transfer_from(env: Env, spender: Address, from: Address, to: Address, amount: i128) {
@@ -119,23 +146,44 @@ impl GameLandToken {
         }
         let to_balance = Self::balance(env.clone(), to.clone());
 
-        env.storage().persistent().set(&DataKey::Allowance(from.clone(), spender.clone()), &(allowance - amount));
-        env.storage().persistent().set(&DataKey::Balance(from.clone()), &(from_balance - amount));
-        env.storage().persistent().set(&DataKey::Balance(to.clone()), &(to_balance + amount));
+        env.storage().persistent().set(
+            &DataKey::Allowance(from.clone(), spender.clone()),
+            &(allowance - amount),
+        );
+        env.storage()
+            .persistent()
+            .set(&DataKey::Balance(from.clone()), &(from_balance - amount));
+        env.storage()
+            .persistent()
+            .set(&DataKey::Balance(to.clone()), &(to_balance + amount));
 
         let key_from = DataKey::Balance(from.clone());
-        env.storage().persistent().extend_ttl(&key_from, 518_400, 518_400);
+        env.storage()
+            .persistent()
+            .extend_ttl(&key_from, 518_400, 518_400);
         let key_to = DataKey::Balance(to);
-        env.storage().persistent().extend_ttl(&key_to, 518_400, 518_400);
+        env.storage()
+            .persistent()
+            .extend_ttl(&key_to, 518_400, 518_400);
         let key_allow = DataKey::Allowance(from, spender);
-        env.storage().persistent().extend_ttl(&key_allow, 518_400, 518_400);
+        env.storage()
+            .persistent()
+            .extend_ttl(&key_allow, 518_400, 518_400);
     }
 
-    pub fn approve(env: Env, from: Address, spender: Address, amount: i128, _expiration_ledger: u32) {
+    pub fn approve(
+        env: Env,
+        from: Address,
+        spender: Address,
+        amount: i128,
+        _expiration_ledger: u32,
+    ) {
         from.require_auth();
         let key = DataKey::Allowance(from.clone(), spender.clone());
         env.storage().persistent().set(&key, &amount);
-        env.storage().persistent().extend_ttl(&key, 518_400, 518_400);
+        env.storage()
+            .persistent()
+            .extend_ttl(&key, 518_400, 518_400);
     }
 
     pub fn allowance(env: Env, from: Address, spender: Address) -> i128 {
@@ -167,7 +215,9 @@ impl GameLandToken {
         // safe: storage is always set during initialize; panics on uninitialized contract
         let admin: Address = env.storage().instance().get(&DataKey::Admin).unwrap();
         admin.require_auth();
-        env.storage().instance().set(&DataKey::Authorized(id), &authorize);
+        env.storage()
+            .instance()
+            .set(&DataKey::Authorized(id), &authorize);
     }
 
     pub fn decimals(_env: Env) -> u32 {
@@ -211,11 +261,14 @@ impl GameLandToken {
         // Faucet amount is 1,000 LAND (10^10 stroops)
         let faucet_amount: i128 = 10_000_000_000;
         let balance = Self::balance(env.clone(), recipient.clone());
-        env.storage()
-            .persistent()
-            .set(&DataKey::Balance(recipient.clone()), &(balance + faucet_amount));
+        env.storage().persistent().set(
+            &DataKey::Balance(recipient.clone()),
+            &(balance + faucet_amount),
+        );
 
         let key = DataKey::Balance(recipient);
-        env.storage().persistent().extend_ttl(&key, 518_400, 518_400);
+        env.storage()
+            .persistent()
+            .extend_ttl(&key, 518_400, 518_400);
     }
 }

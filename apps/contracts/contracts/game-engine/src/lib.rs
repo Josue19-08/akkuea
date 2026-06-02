@@ -71,28 +71,39 @@ pub struct GameEngine;
 
 #[contractimpl]
 impl GameEngine {
-    pub fn initialize(
-        env: Env,
-        nft_contract: Address,
-        token_contract: Address,
-        treasury: Address,
-    ) {
+    pub fn initialize(env: Env, nft_contract: Address, token_contract: Address, treasury: Address) {
         if env.storage().instance().has(&StorageKey::Initialized) {
             panic_with_error!(&env, EngineError::AlreadyInitialized);
         }
-        env.storage().instance().set(&StorageKey::NftContract, &nft_contract);
-        env.storage().instance().set(&StorageKey::TokenContract, &token_contract);
-        env.storage().instance().set(&StorageKey::Treasury, &treasury);
-        env.storage().instance().set(&StorageKey::Initialized, &true);
+        env.storage()
+            .instance()
+            .set(&StorageKey::NftContract, &nft_contract);
+        env.storage()
+            .instance()
+            .set(&StorageKey::TokenContract, &token_contract);
+        env.storage()
+            .instance()
+            .set(&StorageKey::Treasury, &treasury);
+        env.storage()
+            .instance()
+            .set(&StorageKey::Initialized, &true);
     }
 
     pub fn improve(env: Env, caller: Address, property_id: u32) {
         caller.require_auth();
 
         // safe: storage is always set during initialize; panics on uninitialized contract
-        let nft_contract: Address = env.storage().instance().get(&StorageKey::NftContract).unwrap();
+        let nft_contract: Address = env
+            .storage()
+            .instance()
+            .get(&StorageKey::NftContract)
+            .unwrap();
         // safe: storage is always set during initialize; panics on uninitialized contract
-        let token_contract: Address = env.storage().instance().get(&StorageKey::TokenContract).unwrap();
+        let token_contract: Address = env
+            .storage()
+            .instance()
+            .get(&StorageKey::TokenContract)
+            .unwrap();
 
         let nft_client = GamePropertyNftClient::new(&env, &nft_contract);
         let prop = nft_client.get_property(&property_id);
@@ -120,9 +131,17 @@ impl GameEngine {
         caller.require_auth();
 
         // safe: storage is always set during initialize; panics on uninitialized contract
-        let nft_contract: Address = env.storage().instance().get(&StorageKey::NftContract).unwrap();
+        let nft_contract: Address = env
+            .storage()
+            .instance()
+            .get(&StorageKey::NftContract)
+            .unwrap();
         // safe: storage is always set during initialize; panics on uninitialized contract
-        let token_contract: Address = env.storage().instance().get(&StorageKey::TokenContract).unwrap();
+        let token_contract: Address = env
+            .storage()
+            .instance()
+            .get(&StorageKey::TokenContract)
+            .unwrap();
 
         let nft_client = GamePropertyNftClient::new(&env, &nft_contract);
 
@@ -144,18 +163,24 @@ impl GameEngine {
 
         // Update last claimed ledger
         let current_ledger = env.ledger().sequence() as u64;
-        nft_client.set_last_claimed_ledger(&env.current_contract_address(), &property_id, &current_ledger);
+        nft_client.set_last_claimed_ledger(
+            &env.current_contract_address(),
+            &property_id,
+            &current_ledger,
+        );
 
         // Emit claimed event
-        env.events().publish(
-            (symbol_short!("claimed"), caller, property_id),
-            income,
-        );
+        env.events()
+            .publish((symbol_short!("claimed"), caller, property_id), income);
     }
 
     pub fn get_accrued_income(env: Env, property_id: u32) -> i128 {
         // safe: storage is always set during initialize; panics on uninitialized contract
-        let nft_contract: Address = env.storage().instance().get(&StorageKey::NftContract).unwrap();
+        let nft_contract: Address = env
+            .storage()
+            .instance()
+            .get(&StorageKey::NftContract)
+            .unwrap();
         let nft_client = GamePropertyNftClient::new(&env, &nft_contract);
 
         let prop = nft_client.get_property(&property_id);
@@ -179,7 +204,7 @@ fn build_improve_app(
 
     let caller_pre = caller.clone();
     let nft_pre = nft_contract.clone();
-    
+
     let caller_upd = caller.clone();
     let token_upd = token_contract.clone();
 
@@ -196,7 +221,6 @@ fn build_improve_app(
             }
         })
         .in_stage(ScheduleStage::PreUpdate),
-
         // Update: Improvement cost deduction
         named_system("deduct_improvement_cost", move |_world, env| {
             let cost = match target_level {
@@ -215,12 +239,15 @@ fn build_improve_app(
             token_client.burn_from(&env.current_contract_address(), &caller_upd, &cost);
         })
         .in_stage(ScheduleStage::Update),
-
         // PostUpdate: Upgrade application, contract event emission
         named_system("apply_improvement", move |_world, env| {
             let nft_client = GamePropertyNftClient::new(env, &nft_post);
-            nft_client.set_improvement_level(&env.current_contract_address(), &property_id, &target_level);
-            
+            nft_client.set_improvement_level(
+                &env.current_contract_address(),
+                &property_id,
+                &target_level,
+            );
+
             env.events().publish(
                 (symbol_short!("improved"), caller_post.clone(), property_id),
                 target_level,
@@ -234,11 +261,7 @@ fn build_improve_app(
 
 // ================= Rental Income Helper =================
 
-pub fn calculate_accrued_income(
-    current_ledger: u64,
-    last_claimed_ledger: u64,
-    level: u32,
-) -> i128 {
+pub fn calculate_accrued_income(current_ledger: u64, last_claimed_ledger: u64, level: u32) -> i128 {
     if current_ledger <= last_claimed_ledger {
         return 0;
     }
@@ -269,9 +292,12 @@ pub fn calculate_accrued_income(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use soroban_sdk::{testutils::{Address as _, Ledger}, Address, Env};
-    use game_property_nft::GamePropertyNft;
     use game_land_token::GameLandToken;
+    use game_property_nft::GamePropertyNft;
+    use soroban_sdk::{
+        testutils::{Address as _, Ledger},
+        Address, Env,
+    };
 
     struct TestEnv {
         env: Env,
@@ -384,17 +410,26 @@ mod tests {
         // Improve Vacant -> Residential (Cost: 200 LAND)
         test.engine_client.improve(&test.owner, &0);
         let balance_after_res = test.token_client.balance(&test.owner);
-        assert_eq!(balance_start - balance_after_res, IMPROVEMENT_COST_RESIDENTIAL);
+        assert_eq!(
+            balance_start - balance_after_res,
+            IMPROVEMENT_COST_RESIDENTIAL
+        );
 
         // Improve Residential -> Commercial (Cost: 600 LAND)
         test.engine_client.improve(&test.owner, &0);
         let balance_after_comm = test.token_client.balance(&test.owner);
-        assert_eq!(balance_after_res - balance_after_comm, IMPROVEMENT_COST_COMMERCIAL);
+        assert_eq!(
+            balance_after_res - balance_after_comm,
+            IMPROVEMENT_COST_COMMERCIAL
+        );
 
         // Improve Commercial -> Skyscraper (Cost: 1,800 LAND)
         test.engine_client.improve(&test.owner, &0);
         let balance_after_sky = test.token_client.balance(&test.owner);
-        assert_eq!(balance_after_comm - balance_after_sky, IMPROVEMENT_COST_SKYSCRAPER);
+        assert_eq!(
+            balance_after_comm - balance_after_sky,
+            IMPROVEMENT_COST_SKYSCRAPER
+        );
     }
 
     #[test]
@@ -500,7 +535,10 @@ mod tests {
         test.env.ledger().set(ledger);
 
         // Accrued income should be: BASE_RENTAL_RATE * 5 = 50 LAND
-        assert_eq!(test.engine_client.get_accrued_income(&0), BASE_RENTAL_RATE * 5);
+        assert_eq!(
+            test.engine_client.get_accrued_income(&0),
+            BASE_RENTAL_RATE * 5
+        );
     }
 
     #[test]
