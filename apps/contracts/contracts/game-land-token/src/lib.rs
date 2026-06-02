@@ -1,6 +1,6 @@
 #![no_std]
 
-use soroban_sdk::{contract, contractimpl, panic_with_error, symbol_short, Address, Env, String};
+use soroban_sdk::{contract, contractimpl, panic_with_error, Address, Env, String};
 
 mod errors;
 mod events;
