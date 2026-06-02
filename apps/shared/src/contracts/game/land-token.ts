@@ -24,7 +24,7 @@ import {
   Client as ContractClient,
   Spec as ContractSpec,
 } from "@stellar/stellar-sdk/contract";
-import type { u32, u64, i128 } from "@stellar/stellar-sdk/contract";
+import type { u32, i128 } from "@stellar/stellar-sdk/contract";
 
 // Timepoint and Duration are not exported by stellar-sdk/contract in v13.x
 export type Timepoint = bigint;
