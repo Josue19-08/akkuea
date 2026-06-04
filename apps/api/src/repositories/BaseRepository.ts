@@ -20,18 +20,18 @@ export abstract class BaseRepository<
   }
 
   async findById(id: string): Promise<TSelect | undefined> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const results = await db
       .select()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .from(this.table as any)
       .where(eq(this.table.id, id));
     return results[0] as TSelect | undefined;
   }
 
   async findWhere(condition: SQL): Promise<TSelect[]> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const results = await db
       .select()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .from(this.table as any)
       .where(condition);
     return results as TSelect[];
