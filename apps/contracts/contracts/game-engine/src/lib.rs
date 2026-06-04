@@ -38,12 +38,12 @@ pub trait GamePropertyNft {
 
 #[soroban_sdk::contractclient(name = "GameLandTokenClient")]
 pub trait GameLandToken {
-    fn initialize(env: Env, admin: Address, testnet_mode: bool);
+    fn initialize(env: Env, treasury: Address, engine: Address, is_testnet: bool);
     fn mint(env: Env, caller: Address, to: Address, amount: i128);
     fn burn_from(env: Env, spender: Address, from: Address, amount: i128);
     fn approve(env: Env, from: Address, spender: Address, amount: i128, expiration_ledger: u32);
     fn balance(env: Env, id: Address) -> i128;
-    fn set_authorized(env: Env, id: Address, authorize: bool);
+
     fn faucet(env: Env, recipient: Address);
 }
 
@@ -329,10 +329,7 @@ mod tests {
         nft_client.initialize(&treasury, &engine_id);
 
         // Initialize LandToken in testnet_mode = true
-        token_client.initialize(&treasury, &true);
-
-        // Authorize GameEngine on LandToken to execute burn_from
-        token_client.set_authorized(&engine_id, &true);
+        token_client.initialize(&treasury, &engine_id, &true);
 
         // Initialize GameEngine
         engine_client.initialize(&nft_id, &token_id, &treasury);
