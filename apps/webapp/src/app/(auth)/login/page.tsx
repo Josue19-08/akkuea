@@ -37,7 +37,6 @@ export default function LoginPage() {
   const {
     isConnected,
     isConnecting,
-    authStatus,
     authError,
     login,
   } = useGameWallet();
@@ -51,12 +50,7 @@ export default function LoginPage() {
     }
   }, [callbackUrl, isConnected, router]);
 
-  useEffect(() => {
-    if (authStatus === "success" || authStatus === "error" || !isConnecting) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setPendingAction(null);
-    }
-  }, [authStatus, isConnecting]);
+  const visiblePendingAction = isConnecting ? pendingAction : null;
 
   const handleGoogle = () => {
     setEmailError(null);
@@ -159,10 +153,10 @@ export default function LoginPage() {
                   size="lg"
                   className={cn(
                     "w-full justify-start border border-white/10 bg-white text-black hover:bg-neutral-200",
-                    pendingAction === "google" && "opacity-80",
+                    visiblePendingAction === "google" && "opacity-80",
                   )}
                   onClick={handleGoogle}
-                  isLoading={pendingAction === "google" && isConnecting}
+                  isLoading={visiblePendingAction === "google"}
                   leftIcon={<Sparkles className="h-4 w-4" />}
                 >
                   Continue with Google
@@ -197,7 +191,7 @@ export default function LoginPage() {
                       size="lg"
                       className="w-full"
                       onClick={handleEmail}
-                      isLoading={pendingAction === "email" && isConnecting}
+                      isLoading={visiblePendingAction === "email"}
                       leftIcon={<ArrowRight className="h-4 w-4" />}
                     >
                       Send code
@@ -210,10 +204,10 @@ export default function LoginPage() {
                   size="lg"
                   className={cn(
                     "w-full justify-start border-[#404040] bg-transparent text-white hover:bg-white/5",
-                    pendingAction === "freighter" && "opacity-80",
+                    visiblePendingAction === "freighter" && "opacity-80",
                   )}
                   onClick={handleFreighter}
-                  isLoading={pendingAction === "freighter" && isConnecting}
+                  isLoading={visiblePendingAction === "freighter"}
                   leftIcon={<Wallet className="h-4 w-4" />}
                 >
                   Connect Freighter
