@@ -10,9 +10,7 @@ import type {
 const RPC_URL =
   process.env.STELLAR_RPC_URL ?? "https://soroban-testnet.stellar.org";
 
-const CONTRACT_IDS: string[] = (
-  process.env.GAME_CONTRACT_IDS ?? ""
-)
+const CONTRACT_IDS: string[] = (process.env.GAME_CONTRACT_IDS ?? "")
   .split(",")
   .map((s) => s.trim())
   .filter(Boolean);
@@ -43,10 +41,8 @@ function parseEvent(
     if (!v) return "";
     if (v.switch().name === "scvString") return v.str().toString();
     if (v.switch().name === "scvSymbol") return v.sym().toString();
-    if (v.switch().name === "scvAddress")
-      return v.address().toString();
-    if (v.switch().name === "scvI128")
-      return v.i128().lo().toString();
+    if (v.switch().name === "scvAddress") return v.address().toString();
+    if (v.switch().name === "scvI128") return v.i128().lo().toString();
     return "";
   };
 
@@ -107,7 +103,10 @@ export async function pollGameEvents(startLedger: number): Promise<PollResult> {
 
   const filters: SorobanRpc.Server.GetEventsRequest["filters"] =
     CONTRACT_IDS.length > 0
-      ? CONTRACT_IDS.map((contractId) => ({ type: "contract" as const, contractIds: [contractId] }))
+      ? CONTRACT_IDS.map((contractId) => ({
+          type: "contract" as const,
+          contractIds: [contractId],
+        }))
       : [{ type: "contract" as const }];
 
   const response = await server.getEvents({

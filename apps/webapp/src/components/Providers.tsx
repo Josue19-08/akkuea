@@ -52,7 +52,8 @@ export function Providers({ children }: ProvidersProps) {
   }, []);
 
   const publishableKey =
-    process.env.NEXT_PUBLIC_POLLAR_PUBLISHABLE_KEY ?? "pub_testnet_please_set_me";
+    process.env.NEXT_PUBLIC_POLLAR_PUBLISHABLE_KEY ??
+    "pub_testnet_please_set_me";
 
   return (
     <PrivyWrapper>

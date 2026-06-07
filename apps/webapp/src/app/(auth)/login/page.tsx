@@ -34,15 +34,12 @@ export default function LoginPage() {
     () => sanitizeCallbackUrl(searchParams.get("callbackUrl")),
     [searchParams],
   );
-  const {
-    isConnected,
-    isConnecting,
-    authError,
-    login,
-  } = useGameWallet();
+  const { isConnected, isConnecting, authError, login } = useGameWallet();
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState<string | null>(null);
-  const [pendingAction, setPendingAction] = useState<"google" | "email" | "freighter" | null>(null);
+  const [pendingAction, setPendingAction] = useState<
+    "google" | "email" | "freighter" | null
+  >(null);
 
   useEffect(() => {
     if (isConnected) {
@@ -87,7 +84,10 @@ export default function LoginPage() {
           animate="visible"
           className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]"
         >
-          <motion.section variants={staggerItem} className="flex flex-col justify-center gap-6">
+          <motion.section
+            variants={staggerItem}
+            className="flex flex-col justify-center gap-6"
+          >
             <BrandLogo href="/" className="w-fit" />
 
             <div className="max-w-xl space-y-4">
@@ -124,17 +124,30 @@ export default function LoginPage() {
                   text: "Keep your own Stellar wallet if you want it.",
                 },
               ].map((item) => (
-                <Card key={item.title} className="border-white/5 bg-white/[0.03] p-4">
+                <Card
+                  key={item.title}
+                  className="border-white/5 bg-white/[0.03] p-4"
+                >
                   <item.icon className="mb-3 h-5 w-5 text-[#ff3e00]" />
-                  <h2 className="mb-1 text-sm font-medium text-white">{item.title}</h2>
-                  <p className="text-xs leading-5 text-neutral-500">{item.text}</p>
+                  <h2 className="mb-1 text-sm font-medium text-white">
+                    {item.title}
+                  </h2>
+                  <p className="text-xs leading-5 text-neutral-500">
+                    {item.text}
+                  </p>
                 </Card>
               ))}
             </div>
           </motion.section>
 
-          <motion.section variants={staggerItem} className="flex items-center justify-center">
-            <Card variant="gradient" className="w-full max-w-md border-white/10 p-6 shadow-2xl shadow-black/40 sm:p-8">
+          <motion.section
+            variants={staggerItem}
+            className="flex items-center justify-center"
+          >
+            <Card
+              variant="gradient"
+              className="w-full max-w-md border-white/10 p-6 shadow-2xl shadow-black/40 sm:p-8"
+            >
               <div className="mb-6 space-y-2">
                 <p className="text-[10px] uppercase tracking-[0.3em] text-neutral-500">
                   Sign in

@@ -50,7 +50,8 @@ export function WalletStatusWidget() {
           <span className="text-[10px] uppercase tracking-wider text-neutral-400">
             {Number.parseFloat(wallet.balance || "0").toLocaleString("en-US", {
               maximumFractionDigits: 2,
-            })} LAND
+            })}{" "}
+            LAND
           </span>
         </span>
       </Button>
@@ -77,9 +78,7 @@ export function WalletStatusWidget() {
                 <p className="mb-1 text-[10px] uppercase tracking-wider text-neutral-500">
                   Wallet
                 </p>
-                <p className="font-mono text-xs text-white">
-                  {wallet.address}
-                </p>
+                <p className="font-mono text-xs text-white">{wallet.address}</p>
               </div>
               <button
                 type="button"

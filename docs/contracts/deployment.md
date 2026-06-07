@@ -360,10 +360,10 @@ Both instances were deployed from the same `rwa_defi_contract.wasm` (built with
 - **Deployed on**: 2026-05-31
 - **Source of truth**: [`apps/shared/src/contracts.testnet.json`](../../apps/shared/src/contracts.testnet.json)
 
-| Contract | Contract ID | Deploy (create) tx |
-| --- | --- | --- |
+| Contract            | Contract ID                                                | Deploy (create) tx                                                 |
+| ------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------ |
 | `REAL_ESTATE_TOKEN` | `CBFQV2RY5VHVFU3HT2I72FLXWY5YNZC37LWJSOZQCX45B76NBO4YZHM4` | `ff4c6b52080df05d9ad443a6a3907894fb771e187b04dbd837306c62add89724` |
-| `DEFI_LENDING` | `CBFOZBCYMIDIZLNHT6ANMBU6LSGC6REM6Z5M4ST35E5T5FDWWZAWZLTX` | `490a50682d4da46c85a8080cc5ae6b50d727bf1156c97a2c9a00c532c441bdd4` |
+| `DEFI_LENDING`      | `CBFOZBCYMIDIZLNHT6ANMBU6LSGC6REM6Z5M4ST35E5T5FDWWZAWZLTX` | `490a50682d4da46c85a8080cc5ae6b50d727bf1156c97a2c9a00c532c441bdd4` |
 
 **WASM upload transaction** (shared by both instances; submitted with the first
 deploy): `c5e2fd6753437a1c8dc217e5a9797b4abdd7621aed6747fedbd03c9c72ab8079`

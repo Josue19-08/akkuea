@@ -21,15 +21,21 @@ import { GameProperty, BuildingLevel } from "../../../types/game.types";
 // Mock framer-motion to bypass layout/sheet animations for synchronous UI assertions
 mock.module("framer-motion", () => {
   return {
-    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => (
+      <>{children}</>
+    ),
     motion: {
       div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-      button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+      button: ({ children, ...props }: any) => (
+        <button {...props}>{children}</button>
+      ),
     },
   };
 });
 
-const mockSignTransaction = vi.fn().mockResolvedValue({ signedTxXdr: "mock-xdr" });
+const mockSignTransaction = vi
+  .fn()
+  .mockResolvedValue({ signedTxXdr: "mock-xdr" });
 
 vi.mock("@/lib/walletKit", () => ({
   getWalletKit: () => ({ signTransaction: mockSignTransaction }),
@@ -49,7 +55,7 @@ const baseProperty: GameProperty = {
     country: "Japan",
     coordinates: {
       latitude: 40.7128,
-      longitude: -74.0060,
+      longitude: -74.006,
     },
   },
   totalValue: "1500000",
@@ -87,16 +93,18 @@ describe("PropertyPanel Tests", () => {
         isConnected={false}
         onConnect={onConnect}
         onClose={onClose}
-      />
+      />,
     );
 
     // Verify coordinates, name are visible
     expect(view.queryByText("Neo Tokyo Quadrant")).not.toBeNull();
     expect(view.queryByText("[40.7128, -74.0060]")).not.toBeNull();
-    
+
     // Verify wallet required prompt and connect button are visible
     expect(view.queryByText("Stellar Wallet Required")).not.toBeNull();
-    expect(view.queryByRole("button", { name: /Connect Wallet/i })).not.toBeNull();
+    expect(
+      view.queryByRole("button", { name: /Connect Wallet/i }),
+    ).not.toBeNull();
 
     // Verify close action triggers onClose callback
     fireEvent.click(view.getAllByRole("button")[0]); // Close button is first icon button
@@ -106,7 +114,8 @@ describe("PropertyPanel Tests", () => {
   // State 2: unowned (viewer connected, owner is GBTREASURY)
   it("renders state 2: unowned (Treasury owned) tile and allows purchase", async () => {
     const onUpdate = mock(() => {});
-    const viewerAddress = "GDVIEWER1234567890123456789012345678901234567890123456";
+    const viewerAddress =
+      "GDVIEWER1234567890123456789012345678901234567890123456";
 
     const view = render(
       <PropertyPanel
@@ -115,14 +124,16 @@ describe("PropertyPanel Tests", () => {
         viewerAddress={viewerAddress}
         isConnected={true}
         onClose={() => {}}
-      />
+      />,
     );
 
     // Verify treasury property badge
     expect(view.queryByText("Treasury Property")).not.toBeNull();
 
     // Verify Buy from Treasury button exists
-    const buyButton = view.queryByRole("button", { name: /Buy from Treasury/i });
+    const buyButton = view.queryByRole("button", {
+      name: /Buy from Treasury/i,
+    });
     expect(buyButton).not.toBeNull();
 
     // Trigger purchase and verify signature call + optimistic UI update
@@ -142,7 +153,8 @@ describe("PropertyPanel Tests", () => {
   // State 3a: owned_by_viewer - Claiming Rent
   it("renders state 3: owned_by_viewer and allows claiming income", () => {
     const onUpdate = mock(() => {});
-    const viewerAddress = "GDVIEWER1234567890123456789012345678901234567890123456";
+    const viewerAddress =
+      "GDVIEWER1234567890123456789012345678901234567890123456";
     const propertyOwned = {
       ...baseProperty,
       owner: viewerAddress,
@@ -157,7 +169,7 @@ describe("PropertyPanel Tests", () => {
         viewerAddress={viewerAddress}
         isConnected={true}
         onClose={() => {}}
-      />
+      />,
     );
 
     // Verify "Owned by You" badge
@@ -180,7 +192,8 @@ describe("PropertyPanel Tests", () => {
   // State 3b: owned_by_viewer - Improving building
   it("renders state 3: owned_by_viewer and allows improving the building", () => {
     const onUpdate = mock(() => {});
-    const viewerAddress = "GDVIEWER1234567890123456789012345678901234567890123456";
+    const viewerAddress =
+      "GDVIEWER1234567890123456789012345678901234567890123456";
     const propertyOwned = {
       ...baseProperty,
       owner: viewerAddress,
@@ -195,7 +208,7 @@ describe("PropertyPanel Tests", () => {
         viewerAddress={viewerAddress}
         isConnected={true}
         onClose={() => {}}
-      />
+      />,
     );
 
     // Verify improve button works and increments building level
@@ -209,8 +222,10 @@ describe("PropertyPanel Tests", () => {
   // State 4: listed_by_other (viewer connected, owner is another address)
   it("renders state 4: listed_by_other and allows purchase", async () => {
     const onUpdate = mock(() => {});
-    const viewerAddress = "GDVIEWER1234567890123456789012345678901234567890123456";
-    const otherAddress = "GDOTHER12345678901234567890123456789012345678901234567";
+    const viewerAddress =
+      "GDVIEWER1234567890123456789012345678901234567890123456";
+    const otherAddress =
+      "GDOTHER12345678901234567890123456789012345678901234567";
     const propertyListed = {
       ...baseProperty,
       owner: otherAddress,
@@ -224,7 +239,7 @@ describe("PropertyPanel Tests", () => {
         viewerAddress={viewerAddress}
         isConnected={true}
         onClose={() => {}}
-      />
+      />,
     );
 
     // Verify "Listed for Sale" badge

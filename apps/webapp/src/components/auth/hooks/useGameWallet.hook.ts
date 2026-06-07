@@ -6,7 +6,14 @@ import { WalletType } from "@pollar/core";
 import { usePollar } from "@pollar/react";
 
 type GameWalletNetwork = "testnet" | "mainnet";
-type GameWalletAuthStep = "idle" | "oauth" | "email" | "wallet" | "success" | "error" | "creating_session";
+type GameWalletAuthStep =
+  | "idle"
+  | "oauth"
+  | "email"
+  | "wallet"
+  | "success"
+  | "error"
+  | "creating_session";
 
 type GameWalletLoginInput =
   | { provider: "google" }
@@ -49,7 +56,12 @@ function extractBalance(walletBalance: unknown): string {
 
   const balanceState = walletBalance as {
     balance?: string;
-    balances?: Array<{ asset?: string; asset_code?: string; asset_type?: string; balance?: string }>;
+    balances?: Array<{
+      asset?: string;
+      asset_code?: string;
+      asset_type?: string;
+      balance?: string;
+    }>;
     value?: string;
   };
 
@@ -70,7 +82,10 @@ function extractBalance(walletBalance: unknown): string {
 
 function getReadableAuthError(errorCode?: string | null): string | null {
   if (!errorCode) return null;
-  return FRIENDLY_AUTH_ERRORS[errorCode] ?? "We couldn't complete sign in. Please try again.";
+  return (
+    FRIENDLY_AUTH_ERRORS[errorCode] ??
+    "We couldn't complete sign in. Please try again."
+  );
 }
 
 export function useGameWallet() {
@@ -88,7 +103,11 @@ export function useGameWallet() {
       setAuthStep(step);
 
       if (step === "error") {
-        setAuthError(getReadableAuthError((state as { errorCode?: string | null }).errorCode ?? null));
+        setAuthError(
+          getReadableAuthError(
+            (state as { errorCode?: string | null }).errorCode ?? null,
+          ),
+        );
       } else if (step === "success" || step === "idle") {
         setAuthError(null);
       }
@@ -168,8 +187,10 @@ export function useGameWallet() {
     address: wallet.address,
     balance: wallet.balance,
     isConnected,
-    isConnecting: authStep === "oauth" || authStep === "email" || authStep === "wallet",
-    isAuthenticating: authStep === "oauth" || authStep === "email" || authStep === "wallet",
+    isConnecting:
+      authStep === "oauth" || authStep === "email" || authStep === "wallet",
+    isAuthenticating:
+      authStep === "oauth" || authStep === "email" || authStep === "wallet",
     authStatus: authStep,
     authError,
     network,
