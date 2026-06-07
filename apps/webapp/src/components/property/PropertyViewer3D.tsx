@@ -27,7 +27,6 @@ export function PropertyViewer3D({
 }: PropertyViewer3DProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationIdRef = useRef<number | undefined>(undefined);
 
   const [state, setState] = useState<Viewer3DState>({
     isLoading: true,
@@ -188,12 +187,6 @@ export function PropertyViewer3D({
     };
 
     initializeViewer();
-
-    return () => {
-      if (animationIdRef.current) {
-        cancelAnimationFrame(animationIdRef.current);
-      }
-    };
   }, [splatUrl, onLoadComplete, onError, checkWebGLSupport]);
 
   const handleFullscreen = useCallback(() => {

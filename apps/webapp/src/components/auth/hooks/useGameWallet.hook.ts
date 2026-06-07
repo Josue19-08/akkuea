@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { WalletType, type AuthState } from "@pollar/core";
+import { WalletType } from "@pollar/core";
 import { usePollar } from "@pollar/react";
 
 type GameWalletNetwork = "testnet" | "mainnet";
