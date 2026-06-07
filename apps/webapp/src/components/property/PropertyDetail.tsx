@@ -31,7 +31,6 @@ export function PropertyDetail({
   compact = false,
 }: PropertyDetailProps) {
   const [viewer3DEnabled, setViewer3DEnabled] = useState(true);
-  const [isLoadingViewer, setIsLoadingViewer] = useState(false);
 
   const displayImage = getPropertyImage(property);
   const fundingPercentage = Math.round(
@@ -47,7 +46,6 @@ export function PropertyDetail({
           <PropertyViewer3DDynamic
             splatUrl={property.splatUrl}
             propertyName={property.name}
-            onLoadComplete={() => setIsLoadingViewer(false)}
             onError={(error) => {
               console.error("3D viewer error:", error);
               setViewer3DEnabled(false);

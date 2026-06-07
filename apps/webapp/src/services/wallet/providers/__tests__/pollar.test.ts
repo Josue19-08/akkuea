@@ -9,7 +9,7 @@ function makeInterface(
     logout: () => {},
     getAddress: () => "GABC123",
     isAuthenticated: () => true,
-    signTx: async (_xdr: string) => "signed-xdr",
+    signTx: async () => "signed-xdr",
     ...overrides,
   };
 }

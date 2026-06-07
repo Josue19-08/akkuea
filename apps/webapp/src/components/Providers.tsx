@@ -1,6 +1,6 @@
 "use client";
-
 import { type ReactNode, useEffect } from "react";
+import { PollarProvider } from "@pollar/react";
 import { ThemeProvider } from "@/context/ThemeContext";
 import {
   walletRegistry,
@@ -10,7 +10,6 @@ import {
   pollarProvider,
 } from "@/services/wallet";
 import { PrivyWrapper } from "@/components/auth/PrivyWrapper";
-import { PollarWrapper } from "@/components/auth/PollarWrapper";
 
 walletRegistry.register(new StellarWalletsKitProvider());
 
@@ -52,11 +51,21 @@ export function Providers({ children }: ProvidersProps) {
     }
   }, []);
 
+  const publishableKey =
+    process.env.NEXT_PUBLIC_POLLAR_PUBLISHABLE_KEY ??
+    "pub_testnet_please_set_me";
+
   return (
     <PrivyWrapper>
-      <PollarWrapper>
+      <PollarProvider
+        client={{
+          apiKey: publishableKey,
+          stellarNetwork: "testnet",
+          deviceLabel: "Akkuea web",
+        }}
+      >
         <ThemeProvider>{children}</ThemeProvider>
-      </PollarWrapper>
+      </PollarProvider>
     </PrivyWrapper>
   );
 }

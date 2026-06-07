@@ -639,6 +639,8 @@ dependencies = [
 name = "game-marketplace"
 version = "0.0.0"
 dependencies = [
+ "game-land-token",
+ "game-property-nft",
  "soroban-sdk",
 ]
 
