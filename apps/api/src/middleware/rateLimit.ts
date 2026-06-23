@@ -128,7 +128,7 @@ export function rateLimit(options: RateLimitOptions = {}) {
       'X-RateLimit-Limit': String(max),
       'X-RateLimit-Remaining': String(result.remaining),
       'X-RateLimit-Reset': String(Math.ceil(result.resetAt / 1000)),
-    };
+    } as Context['set']['headers'];
 
     if (!result.allowed) {
       set.status = 429;

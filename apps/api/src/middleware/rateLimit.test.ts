@@ -1,6 +1,11 @@
 import { describe, it, expect } from 'bun:test';
-import { rateLimit, createRedisStore, createMemoryStore } from './rateLimit';
+import { rateLimit as originalRateLimit, createRedisStore, createMemoryStore } from './rateLimit';
 import type { RateLimitRedisClient } from './rateLimit';
+import type { Context } from 'elysia';
+
+const rateLimit = originalRateLimit as unknown as (
+  options?: Parameters<typeof originalRateLimit>[0]
+) => (ctx: { request: Request; set: Context['set'] }) => Promise<any>;
 
 function createMockRequest(options: { headers?: Record<string, string> } = {}) {
   const headers = new Headers(options.headers ?? {});
@@ -10,8 +15,8 @@ function createMockRequest(options: { headers?: Record<string, string> } = {}) {
 function createMockSet() {
   return {
     status: undefined as number | string | undefined,
-    headers: undefined as Record<string, string> | undefined,
-  };
+    headers: {} as Record<string, string>,
+  } as unknown as Context['set'];
 }
 
 // ---------------------------------------------------------------------------
