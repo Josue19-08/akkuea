@@ -114,7 +114,7 @@ export function rateLimit(options: RateLimitOptions = {}) {
     storeReady = Promise.resolve(createMemoryStore());
   }
 
-  return async function rateLimitMiddleware({ request, set }: Context) {
+  return async function rateLimitMiddleware({ request, set }: Pick<Context, 'request' | 'set'>) {
     if (request.headers.get('x-test-bypass-ratelimit') === 'true') {
       return;
     }
@@ -123,12 +123,12 @@ export function rateLimit(options: RateLimitOptions = {}) {
     const store = await storeReady;
     const result = await store.checkLimit(identifier, windowMs, max);
 
-    set.headers = {
-      ...(set.headers ?? {}),
-      'X-RateLimit-Limit': String(max),
-      'X-RateLimit-Remaining': String(result.remaining),
-      'X-RateLimit-Reset': String(Math.ceil(result.resetAt / 1000)),
-    } as Context['set']['headers'];
+    if (!set.headers) {
+      set.headers = {};
+    }
+    set.headers['X-RateLimit-Limit'] = String(max);
+    set.headers['X-RateLimit-Remaining'] = String(result.remaining);
+    set.headers['X-RateLimit-Reset'] = String(Math.ceil(result.resetAt / 1000));
 
     if (!result.allowed) {
       set.status = 429;
